@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Jeremy Robards — Portfolio</title>
+<meta name="color-scheme" content="dark light" />
+<style>
+  :root{
+    --bg: #0b0d12;
+    --panel: #11141b;
+    --text: #e7e9ee;
+    --muted:#a4adbd;
+    --accent: #7c5cff;
+    --accent-2:#22d3ee;
+    --ring: color-mix(in oklab, var(--accent) 50%, transparent);
+    --card: color-mix(in oklab, var(--panel) 92%, white 8%);
+    --radius: 16px;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f6f7fb; --panel:#ffffff; --text:#0d1421; --muted:#5c6a83;
+      --card:#ffffff; --shadow: 0 8px 24px rgba(22,28,45,.08);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+    color:var(--text); background:
+      radial-gradient(1200px 600px at 10% -10%, color-mix(in oklab, var(--accent) 20%, transparent), transparent),
+      radial-gradient(900px 500px at 110% 10%, color-mix(in oklab, var(--accent-2) 22%, transparent), transparent),
+      var(--bg);
+  }
+
+  /* Top bar */
+  .nav{
+    position:sticky; top:0; z-index:50; backdrop-filter: blur(10px);
+    background: color-mix(in oklab, var(--panel) 70%, transparent);
+    border-bottom:1px solid color-mix(in oklab, var(--text) 6%, transparent);
+  }
+  .wrap{max-width:1100px; margin:auto; padding:16px 20px; display:flex; align-items:center; gap:16px}
+  .brand{
+    font-weight:700; letter-spacing:.3px; display:flex; align-items:center; gap:.6rem
+  }
+  .brand-badge{
+    inline-size:28px; block-size:28px; border-radius:9px;
+    background: conic-gradient(from 210deg, var(--accent), var(--accent-2), var(--accent));
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--ring) 55%, transparent);
+  }
+  .spacer{flex:1}
+  .nav a{color:var(--muted); text-decoration:none; font-weight:600; margin:0 8px}
+  .nav a:hover{color:var(--text)}
+  .btn{
+    border:1px solid color-mix(in oklab, var(--text) 10%, transparent);
+    border-radius:999px; padding:8px 14px; background:transparent; color:var(--text);
+    display:inline-flex; align-items:center; gap:.5rem; cursor:pointer
+  }
+
+  /* Hero */
+  .hero{max-width:1100px; margin:48px auto; padding:0 20px; display:grid; gap:22px}
+  .eyebrow{color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.12em; font-size:.78rem}
+  h1{
+    margin:0; font-size: clamp(2rem, 5vw, 3.25rem); line-height:1.1; letter-spacing:.2px;
+    background: linear-gradient(90deg, var(--text), color-mix(in oklab, var(--accent) 45%, var(--text)));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p{color:var(--muted); max-width:62ch}
+  .cta{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px}
+  .cta .primary{
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color:#05070c; border:none; box-shadow: var(--shadow)
+  }
+  .cta .ghost:hover{border-color: color-mix(in oklab, var(--accent) 55%, transparent)}
+
+  /* Sections */
+  section{max-width:1100px; margin:64px auto; padding:0 20px}
+  .section-title{display:flex; align-items:center; gap:10px; margin-bottom:18px}
+  .section-title h2{margin:0; font-size:1.4rem}
+  .section-title .line{flex:1; height:1px; background: color-mix(in oklab, var(--text) 10%, transparent)}
+
+  /* Project grid */
+  .grid{display:grid; gap:18px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))}
+  .card{
+    position:relative; border-radius: var(--radius); background:var(--card);
+    border:1px solid color-mix(in oklab, var(--text) 7%, transparent);
+    box-shadow: var(--shadow); overflow:hidden; transform: translate3d(0,0,0)
+  }
+  .card::before{
+    content:""; position:absolute; inset:-1px; border-radius:inherit;
+    background: linear-gradient(140deg, color-mix(in oklab, var(--accent) 45%, transparent), transparent 40%, color-mix(in oklab, var(--accent-2) 35%, transparent) 70%);
+    mask: linear-gradient(#000 0 0) exclude, linear-gradient(#000 0 0);
+    opacity:.5; filter: blur(12px); pointer-events:none;
+  }
+  .thumb{aspect-ratio: 16/10; background: #0d1117; display:grid; place-items:center}
+  .thumb img{width:100%; height:100%; object-fit:cover; display:block}
+  .meta{padding:14px}
+  .meta h3{margin:0 0 6px 0; font-size:1.05rem}
+  .meta p{margin:0; color:var(--muted); font-size:.94rem}
+  .tags{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+  .tag{font-size:.7rem; padding:4px 8px; border-radius:999px; color:var(--text);
+    border:1px solid color-mix(in oklab, var(--text) 12%, transparent)}
+  .card:hover{translate:0 -6px}
+  .card a.cover{
+    position:absolute; inset:0; border-radius:inherit; outline: none;
+  }
+
+  /* About / Contact */
+  .about{
+    display:grid; gap:20px; grid-template-columns: 1.2fr .8fr; align-items:start
+  }
+  .panel{
+    border:1px solid color-mix(in oklab, var(--text) 7%, transparent);
+    background:var(--card); border-radius: var(--radius); padding:18px; box-shadow: var(--shadow)
+  }
+
+  /* Footer */
+  footer{margin:72px 0 28px; text-align:center; color:var(--muted)}
+
+  /* Reveal animations */
+  .reveal{opacity:0; translate: 0 12px; transition: opacity .6s ease, translate .6s ease}
+  .reveal.show{opacity:1; translate: 0 0}
+  @media (prefers-reduced-motion: reduce){
+    .reveal, .card:hover{transition:none; translate:0}
+  }
+
+  /* Theme toggle */
+  .toggle{inline-size:42px; block-size:26px; border-radius:999px; background:var(--card);
+    border:1px solid color-mix(in oklab, var(--text) 10%, transparent); position:relative}
+  .knob{position:absolute; inset:3px auto 3px 3px; inline-size:20px; block-size:20px; border-radius:50%;
+    background: linear-gradient(180deg, #fff, #d9d9d9); transition: inset .25s ease}
+  .toggle[data-mode="light"] .knob{inset:3px 3px 3px auto}
+</style>
+</head>
+<body>
+  <!-- NAV -->
+  <div class="nav">
+    <div class="wrap">
+      <div class="brand"><span class="brand-badge"></span> Jeremy Robards</div>
+      <div class="spacer"></div>
+      <nav class="hide-mobile">
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button id="themeBtn" class="btn" aria-label="Toggle theme">
+        <span class="toggle" id="toggle"><span class="knob"></span></span>
+        Theme
+      </button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero reveal">
+    <span class="eyebrow">Developer • Designer • Advanced Prompt Engineer</span>
+    <h1>Building thoughtful, fast, and slightly obsessed experiences.</h1>
+    <p>I ship small things weekly and big things when they’re great. Below is a living list of projects—future and present. Tap in, kick the tires, and say hi.</p>
+    <div class="cta">
+      <a class="btn primary" href="#projects">View Projects</a>
+      <a class="btn ghost" href="#contact">Contact</a>
+    </div>
+  </header>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-title"><h2>Projects</h2><div class="line"></div></div>
+    <div id="projectGrid" class="grid"></div>
+  </section>
+
+  <!-- ABOUT / CONTACT -->
+  <section id="about" class="about">
+    <div class="panel reveal">
+      <h2>About</h2>
+      <p>Hi, I’m Jeremy Robards. I’m exploring Advanced Prompt Engineering, web engineering, and interactive storytelling. I care about craft, accessibility, and performance.</p>
+      <p>Stack: HTML • CSS • JS • Python • Vite/React • Tailwind • ElevenLabs • Suno • SD</p>
+    </div>
+    <div id="contact" class="panel reveal">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:you@example.com">you@example.com</a><br/>
+         GitHub: <a href="#" target="_blank" rel="noopener">github.com/yourname</a><br/>
+         X: <a href="#" target="_blank" rel="noopener">@yourhandle</a></p>
+    </div>
+  </section>
+
+  <footer>© <span id="year"></span> Jeremy Robards • Made with focus & caffeine</footer>
+
+<script>
+  // --- Projects data: add future items here ---
+  const projects = [
+    {
+      title: "KAIA — Neurodivergent Productivity Engine",
+      desc: "Modular web app with NPC coach, gamified tasks, and exportable journals.",
+      tags: ["Web", "AI", "Design"],
+      url: "#",
+      img: "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+      title: "R3S3T — Concept Track",
+      desc: "Industrial futurepop track with ARG hooks and multiverse lore.",
+      tags: ["Audio", "Suno", "Story"],
+      url: "#",
+      img: "https://images.unsplash.com/photo-1527443154391-507e9dc6c5cc?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+      title: "DigiArtifact",
+      desc: "Lightweight marketplace for AI-generated digital goods and prompt packs.",
+      tags: ["Marketplace", "Next up"],
+      url: "#",
+      img: "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+      title: "THE S33K3R Transmission",
+      desc: "Transmedia intro video with glitchy UI and timeline shards.",
+      tags: ["Video", "ElevenLabs", "Sora/Kling"],
+      url: "#",
+      img: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop"
+    }
+  ];
+
+  // Render projects
+  const grid = document.getElementById("projectGrid");
+  const card = p => `
+    <article class="card reveal">
+      <a class="cover" href="${p.url}" aria-label="${p.title}"></a>
+      <div class="thumb">${p.img ? `<img src="${p.img}" alt="">` : ""}</div>
+      <div class="meta">
+        <h3>${p.title}</h3>
+        <p>${p.desc}</p>
+        <div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+      </div>
+    </article>
+  `;
+  grid.innerHTML = projects.map(card).join("");
+
+  // Scroll reveal
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); }});
+  }, {threshold:.12, rootMargin:"0px 0px -40px 0px"});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // Year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Theme toggle (respects system, persists choice)
+  const themeBtn = document.getElementById('themeBtn');
+  const toggle = document.getElementById('toggle');
+  const setMode = m=>{
+    document.documentElement.dataset.theme = m;
+    localStorage.setItem('theme', m);
+    toggle.dataset.mode = m;
+    if(m==='light'){ document.documentElement.style.colorScheme='light'; }
+    else { document.documentElement.style.colorScheme='dark'; }
+  };
+  const saved = localStorage.getItem('theme');
+  if(saved){ setMode(saved); }
+  else{
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    setMode(prefersLight ? 'light' : 'dark');
+  }
+  themeBtn.addEventListener('click', ()=> setMode(toggle.dataset.mode==='light' ? 'dark' : 'light'));
+</script>
+</body>
+</html>
