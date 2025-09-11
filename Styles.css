@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+/* Style the header */
+header {
+    background-color: #222; /* Black background */
+    color: white; /* White text */
+    padding: 40px 20px;
+    text-align: center;
+}
+
+/* Adjust header text */
+header h1 {
+    font-size: 2.5em;
+    margin: 0;
+}
+
+header p {
+    font-size: 1.2em;
+    opacity: 0.8;
+}
+
+/* style sections as cards */
+section {
+    padding: 40px 20px;
+    max-width: 800px;
+    margin: 20px auto;
+    background: whitesmoke;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Center section headings */
+section h2 {
+    text-align: center;
+}
+
+#skills h2 {
+    text-align: center;
+}
+
+#skills ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Center skills horizontally */
+    gap: 10px;
+    max-width: 600px;
+    margin: auto;
+}
+
+#skills li {
+    position: relative;
+    display: inline-block;
+    background: black;
+    color: white;
+    padding: 12px 18px;
+    margin: 10px;
+    border-radius: 33px;
+    font-size: 1.1em;s
+    font-weight: bold;
+    transition:all 0.3s ease-in-out;
+}
+
+/* Shadow effect on hover */
+#skills li:hover {
+    transform: scale(1.05); /* Slightly enlarge button */
+    box-shadow: 3px 3px 12px rgba(255, 69, 0, 0.7); /* Adds a nice glowing effect */
+}
+
+#skills li::after {
+    content: attr(data-description); /* Pulls the text from the HTML data attribute */
+    position: absolute;
+    bottom: 120%; /* Positions the tooltip above the button */
+    left: 50%;
+    transform: translateX(-50%);
+    background: orangered;
+    color: whitesmoke;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover effect */
+#skills li:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%); translateY (-5px)
+}
+

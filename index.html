@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jeremy Robards — Portfolio</title>
+  <meta name="description" content="Jeremy Robards — Advanced Prompt Engineering • Front‑End Engineering • React • Tailwind • Vite • Python" />
+  <meta name="color-scheme" content="dark light" />
+  <!-- Tailwind Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["ui-sans-serif","system-ui","Segoe UI","Inter","Roboto","Helvetica Neue","Arial","Noto Sans","Apple Color Emoji","Segoe UI Emoji"],
+          },
+          colors: {
+            brand: {
+              100: "#eae6ff",
+              300: "#c4b8ff",
+              500: "#8b5cf6",
+              600: "#7c3aed",
+              700: "#6d28d9",
+            },
+            cyanx: "#22d3ee"
+          },
+          boxShadow: {
+            soft: "0 10px 30px rgba(0,0,0,.25)",
+          },
+          keyframes: {
+            glow: {
+              '0%,100%': { opacity: .75, filter: 'blur(36px) hue-rotate(0deg)' },
+              '50%': { opacity: 1, filter: 'blur(48px) hue-rotate(25deg)' }
+            },
+            floaty: {
+              '0%,100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-6px)' }
+            },
+            fadeUp: {
+              '0%': { opacity: 0, transform: 'translateY(14px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' }
+            }
+          },
+          animation: {
+            glow: 'glow 5s ease-in-out infinite',
+            floaty: 'floaty 6s ease-in-out infinite',
+            fadeUp: 'fadeUp .7s ease both'
+          },
+          backdropBlur: {
+            xs: '2px'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- React + Babel (no build needed; perfect for GitHub Pages) -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    /* gradient background with subtle texture */
+    .bg-mesh {
+      background:
+        radial-gradient(1200px 500px at 10% -10%, rgba(124,92,246,.22), transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, rgba(34,211,238,.18), transparent 55%),
+        linear-gradient(180deg, #080a12 0%, #0e1220 60%, #0b0f1a 100%);
+    }
+    .prose-muted { color: rgb(180 188 205 / 92%); }
+  </style>
+</head>
+<body class="bg-mesh min-h-screen text-slate-100 antialiased selection:bg-brand-600 selection:text-white">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useEffect, useState } = React;
+
+    // --- Data you will edit over time ---
+    const projects = [
+      {
+        title: 'KAIA — Modular Productivity Engine',
+        desc: 'Neuro-inclusive productivity system with journal, task graph, and exportable data. Built with modern front-end patterns and component-driven UX.',
+        tags: ['React', 'Tailwind', 'Design'],
+        url: '#'
+      },
+      {
+        title: 'DigiArtifact',
+        desc: 'Static-first storefront for downloadable digital assets with clean CI/CD to GitHub Pages.',
+        tags: ['Vite', 'TypeScript (WIP)', 'UI'],
+        url: '#'
+      },
+      {
+        title: 'R3S3T Visualizer',
+        desc: 'Lightweight WebGL/Canvas motion system for kinetic typography and pulses synced to audio peaks.',
+        tags: ['Canvas', 'Animation'],
+        url: '#'
+      }
+    ];
+
+    const blogPreviews = [
+      { title: 'From Prompts to Products: Systems Thinking for Front‑End Devs', date: 'Aug 2025', url: '#'},
+      { title: 'Ship Small, Weekly: My Iteration Playbook', date: 'Aug 2025', url: '#'},
+      { title: 'Designing for Neurodivergent Focus', date: 'Jul 2025', url: '#'}
+    ];
+
+    // --- Components ---
+    function AuraTitle({ children }){
+      return (
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-0 animate-glow">
+            <div className="absolute -inset-6 rounded-[28px] bg-gradient-to-r from-brand-600 via-cyanx/70 to-brand-500 opacity-70 blur-3xl"></div>
+          </div>
+          <h1 className="relative text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-[0_2px_12px_rgba(124,92,246,.35)]">
+            {children}
+          </h1>
+        </div>
+      );
+    }
+
+    function SectionTitle({ children }){
+      return (
+        <div className="flex items-center gap-3 mb-5">
+          <h2 className="text-xl font-semibold tracking-tight">{children}</h2>
+          <div className="h-px flex-1 bg-white/10"></div>
+        </div>
+      );
+    }
+
+    function Chip({ children }){
+      return <span className="text-xs px-2.5 py-1 rounded-full border border-white/15 bg-white/5 text-slate-200">{children}</span>
+    }
+
+    function ProjectCard({p, i}){
+      return (
+        <article className="group relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xs shadow-soft overflow-hidden animate-fadeUp" style={{animationDelay: `${i*60}ms`}}>
+          <a href={p.url} className="absolute inset-0" aria-label={p.title}></a>
+          <div className="aspect-[16/10] bg-slate-900/60 grid place-items-center">
+            <div className="size-24 rounded-xl bg-gradient-to-br from-brand-500 to-cyanx/70 blur-2xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
+          </div>
+          <div className="p-4">
+            <h3 className="font-semibold text-lg">{p.title}</h3>
+            <p className="prose-muted mt-1 text-sm">{p.desc}</p>
+            <div className="mt-3 flex flex-wrap gap-2">{p.tags.map((t,idx)=>(<Chip key={idx}>{t}</Chip>))}</div>
+          </div>
+          <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-brand-600/0 via-brand-600/70 to-cyanx/70 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </article>
+      )
+    }
+
+    function BlogTeaser(){
+      return (
+        <div className="grid sm:grid-cols-3 gap-3">
+          {blogPreviews.map((b, i)=> (
+            <a key={i} href={b.url} className="group rounded-xl border border-white/10 bg-white/5 p-4 overflow-hidden shadow-soft transform transition-all hover:scale-[1.02]">
+              <div className="text-xs text-slate-300/80">{b.date}</div>
+              <div className="mt-1 font-semibold leading-snug">{b.title}</div>
+              <div className="mt-3 h-8 rounded-md bg-gradient-to-r from-brand-600/30 to-cyanx/30 blur group-hover:blur-[2px] transition-all"></div>
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    function App(){
+      const [year, setYear] = useState(new Date().getFullYear());
+      useEffect(()=>{ setYear(new Date().getFullYear()); },[]);
+
+      return (
+        <main>
+          {/* NAV */}
+          <nav className="sticky top-0 z-50 backdrop-blur border-b border-white/10 bg-black/30">
+            <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+              <div className="h-6 w-6 rounded-md bg-gradient-to-br from-brand-600 to-cyanx"></div>
+              <span className="font-bold tracking-wide">JEREMY ROBARDS</span>
+              <div className="ml-auto hidden sm:flex items-center gap-5 text-sm text-slate-300">
+                <a href="#projects" className="hover:text-white">Projects</a>
+                <a href="#skills" className="hover:text-white">Skills</a>
+                <a href="#blog" className="hover:text-white">Blog</a>
+                <a href="#contact" className="hover:text-white">Contact</a>
+              </div>
+            </div>
+          </nav>
+
+          {/* HERO */}
+          <header className="max-w-6xl mx-auto px-4 pt-12 pb-10">
+            <p className="uppercase tracking-[.2em] text-xs text-slate-300">Software Developer • Front‑End Engineer</p>
+            <div className="mt-3">
+              <AuraTitle>Design‑minded engineer crafting fast, resilient interfaces.</AuraTitle>
+            </div>
+            <p className="mt-4 max-w-3xl text-slate-200/90 text-lg md:text-xl animate-fadeUp">
+              I specialize in <span className="font-semibold text-white">Advanced Prompt Engineering</span>, modern web development, and human‑centered UI. I turn ambiguous goals into well‑shipped, production‑ready features.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a href="#projects" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-brand-600 to-cyanx px-5 py-2.5 font-semibold text-black shadow-soft hover:brightness-110 transition">View Projects</a>
+              <a href="#contact" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 font-semibold hover:bg-white/10">Contact</a>
+            </div>
+          </header>
+
+          {/* PROJECTS */}
+          <section id="projects" className="max-w-6xl mx-auto px-4 pb-4">
+            <SectionTitle>Selected Work</SectionTitle>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {projects.map((p,i)=> <ProjectCard key={i} p={p} i={i} />)}
+            </div>
+          </section>
+
+          {/* SKILLS */}
+          <section id="skills" className="max-w-6xl mx-auto px-4 mt-10">
+            <SectionTitle>Core Skills</SectionTitle>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-soft">
+              <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-y-2 gap-x-6 text-sm">
+                {[
+                  'Advanced Prompt Engineering',
+                  'HTML / CSS (Semantic, Accessible, Performant)',
+                  'Tailwind CSS',
+                  'React + Vite',
+                  'TypeScript (in progress)',
+                  'Python (automation, scripting)',
+                  'Graphic Design (UI/UX systems)',
+                  'Video Editing',
+                  'Animation & Motion Graphics',
+                  'Git & GitHub (CI/CD with Pages)'
+                ].map((s,i)=> (
+                  <li key={i} className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-brand-600 to-cyanx animate-floaty"></span>
+                    <span className="prose-muted">{s}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+
+          {/* BLOG PREVIEW */}
+          <section id="blog" className="max-w-6xl mx-auto px-4 mt-10">
+            <SectionTitle>Latest Writing</SectionTitle>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-soft">
+              <BlogTeaser />
+              <div className="text-right mt-3"><a href="#" className="text-sm text-brand-300 hover:text-white">Open Blog →</a></div>
+            </div>
+          </section>
+
+          {/* CONTACT */}
+          <section id="contact" className="max-w-6xl mx-auto px-4 mt-12">
+            <SectionTitle>Contact</SectionTitle>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-soft grid sm:grid-cols-2 gap-4">
+              <div>
+                <p className="prose-muted">Available for front‑end engineering roles and selective freelance. I value clear scope, quick feedback loops, and shipping value early.</p>
+              </div>
+              <div className="grid gap-2 text-sm">
+                <div><span className="text-slate-300">Email:</span> <a className="hover:underline" href="mailto:contact@jeremyrobards.com">contact@jeremyrobards.com</a></div>
+                <div><span className="text-slate-300">GitHub:</span> <a className="hover:underline" href="https://github.com/TheSeeker713" target="_blank" rel="noopener">github.com/TheSeeker713</a></div>
+                <div><span className="text-slate-300">Website:</span> <a className="hover:underline" href="https://www.jeremyrobards.com" target="_blank" rel="noopener">www.JeremyRobards.com</a></div>
+              </div>
+            </div>
+          </section>
+
+          <footer className="max-w-6xl mx-auto px-4 text-center text-slate-400/80 py-10">© {year} Jeremy Robards</footer>
+        </main>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>
