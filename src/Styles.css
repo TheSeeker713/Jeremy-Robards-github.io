@@ -63,9 +63,9 @@ section h2 {
     padding: 12px 18px;
     margin: 10px;
     border-radius: 33px;
-    font-size: 1.1em;s
+    font-size: 1.1em;
     font-weight: bold;
-    transition:all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
 }
 
 /* Shadow effect on hover */
@@ -96,6 +96,6 @@ section h2 {
 #skills li:hover::after {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%); translateY (-5px)
+    transform: translateX(-50%) translateY(-5px);
 }
 
