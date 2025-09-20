@@ -49,8 +49,8 @@
       position: fixed;
       inset: 0;
       z-index: -10;
-      /* Use raw.githubusercontent.com URL with correct branch */
-      background-image: url('https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/src/assets/koi.png');
+      /* background-image set by loader JS at runtime (avoids path/case/branch issues) */
+      background-image: none;
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;
@@ -364,25 +364,79 @@
     loadBlog();
   </script>
 
-  <!-- Replace the diagnostic script with this enhanced version -->
+  <!-- Replace the diagnostic script with an asset probe + loader -->
   <script>
-  window.addEventListener('load', () => {
-    console.log('Asset diagnostics:');
-    
-    // Test background
-    const bg = getComputedStyle(document.querySelector('.bg-fixed-layer')).backgroundImage;
-    console.log('Background URL:', bg);
-    // Test load
-    const img = new Image();
-    img.onload = () => console.log('✅ Background image loaded');
-    img.onerror = () => console.error('❌ Background failed to load');
-    img.src = 'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/src/assets/koi.png';
-    
-    // Test GIF
-    const gif = document.querySelector('img[alt="Development preview animation"]');
-    console.log('GIF status:', gif.complete ? '✅ Loaded' : '❌ Failed');
-    if (!gif.complete) console.log('Try viewing GIF directly:', gif.src);
-  });
-</script>
+  (function(){
+    // Candidates for koi.png (try relative paths first, then raw.githubusercontent main/master)
+    const koiCandidates = [
+      'src/assets/koi.png',
+      '/src/assets/koi.png',
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/src/assets/koi.png',
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/master/src/assets/koi.png'
+    ];
+
+    // Candidates for dev GIF — try both casings
+    const gifCandidates = [
+      'src/assets/Dev1.gif',
+      'src/assets/dev1.gif',
+      '/src/assets/Dev1.gif',
+      '/src/assets/dev1.gif',
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/src/assets/Dev1.gif',
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/src/assets/dev1.gif',
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/master/src/assets/Dev1.gif',
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/master/src/assets/dev1.gif'
+    ];
+
+    function probe(url){
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => resolve({ ok: true, url });
+        img.onerror = () => resolve({ ok: false, url });
+        // small timeout to avoid hanging
+        const t = setTimeout(() => { img.src = ''; resolve({ ok:false, url }); }, 6000);
+        img.src = url;
+      });
+    }
+
+    async function findFirst(candidates){
+      for (const c of candidates){
+        try {
+          const r = await probe(c);
+          if (r.ok) return c;
+        } catch (e) { /* ignore */ }
+      }
+      return null;
+    }
+
+    async function initAssets(){
+      console.log('Probing assets for koi.png and Dev1.gif ...');
+
+      const bgUrl = await findFirst(koiCandidates);
+      if (bgUrl) {
+        document.querySelector('.bg-fixed-layer').style.backgroundImage = `url('${bgUrl}')`;
+        console.log('Using background:', bgUrl);
+      } else {
+        console.warn('No background koi.png found from candidates. Check paths or branch.');
+      }
+
+      const gifUrl = await findFirst(gifCandidates);
+      const heroImg = document.querySelector('img[alt="Development preview animation"]');
+      if (gifUrl && heroImg) {
+        heroImg.src = gifUrl;
+        console.log('Using hero GIF:', gifUrl);
+      } else {
+        if (!gifUrl) console.warn('No hero GIF found from candidates. Check filename casing / branch.');
+        if (!heroImg) console.warn('Hero img element not found in DOM.');
+      }
+    }
+
+    // run after DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAssets);
+    } else {
+      initAssets();
+    }
+  })();
+  </script>
 </body>
 </html>
