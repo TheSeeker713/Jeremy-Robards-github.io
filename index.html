@@ -506,9 +506,39 @@
         return;
       }
 
-      // Nothing found: inform the user
-      // eslint-disable-next-line no-alert
-      alert('Sorry — the secret page is not available on the server yet (11.11.2025).\n\nCheck that [www.p3epro.com] is deployed to your Pages branch or try again after deployment.');
+      // Nothing found: inform the user non-intrusively (no blocking alert)
+      console.warn('Secret page not available on the server yet (11.11.2025). Check deployment.');
+
+      // transient toast notification (non-blocking)
+      (function showSecretNotice(msg){
+        try {
+          const id = 'secretToastNotice';
+          if (document.getElementById(id)) return;
+          const el = document.createElement('div');
+          el.id = id;
+          el.textContent = msg;
+          Object.assign(el.style, {
+            position: 'fixed',
+            right: '14px',
+            bottom: '14px',
+            zIndex: '9999',
+            background: 'rgba(20,20,30,0.9)',
+            color: 'white',
+            padding: '12px 16px',
+            borderRadius: '10px',
+            boxShadow: '0 6px 18px rgba(2,6,23,.35)',
+            fontSize: '13px',
+            maxWidth: '320px',
+            opacity: '0',
+            transition: 'opacity .25s ease'
+          });
+          document.body.appendChild(el);
+          // fade in
+          requestAnimationFrame(() => { el.style.opacity = '1'; });
+          // remove after delay
+          setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 6000);
+        } catch (e) { /* ignore */ }
+      })("Sorry — the secret page is not available on the server yet. Check that your Pages deployment includes /713/ and try again.");
     });
   })();
   </script>
