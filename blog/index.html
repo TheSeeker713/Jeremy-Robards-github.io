@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Blog - Jeremy Robards</title>
+  <meta name="description" content="Jeremy Robards — Blog listing" />
+  <meta property="og:title" content="Jeremy Robards — Blog" />
+  <meta property="og:description" content="Thoughts and projects by Jeremy Robards." />
+  <meta name="twitter:card" content="summary" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/src/Styles.css" />
+  <script type="module" src="/blog/assets/auth.js" defer></script>
+  <script type="module" src="/blog/assets/blog.js" defer></script>
+</head>
+<body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+  <header class="max-w-4xl mx-auto p-6 flex justify-between items-center">
+    <h1 class="text-2xl font-bold"><a href="/">Jeremy Robards</a> — Blog</h1>
+    <div class="flex items-center gap-4">
+      <button id="theme-toggle" class="p-2 rounded" aria-label="Toggle theme">🌙</button>
+      <div id="auth-ui" class="flex items-center gap-4"></div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-semibold">Posts</h2>
+      <div>
+        <a id="new-post-btn" class="hidden inline-block bg-blue-600 text-white px-3 py-1 rounded" href="/blog/editor.html">New Post</a>
+      </div>
+    </div>
+
+    <section id="posts" class="grid gap-4"></section>
+  </main>
+
+  <template id="post-card">
+    <article class="p-4 bg-gray-50 dark:bg-gray-800 rounded shadow-sm">
+      <h3 class="text-lg font-bold"><a class="post-link" href="#"></a></h3>
+      <p class="text-sm text-gray-600 dark:text-gray-300 meta"></p>
+      <p class="excerpt mt-2 text-gray-700 dark:text-gray-200"></p>
+    </article>
+  </template>
+
+    <script type="module">
+      import { enableThemeToggle } from './assets/blog-utils.js';
+      enableThemeToggle('theme-toggle');
+    </script>
+
+</body>
+</html>

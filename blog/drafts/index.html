@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Drafts - Blog</title>
+  <meta name="description" content="Your drafts" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module" src="/blog/assets/auth.js" defer></script>
+  <script type="module" src="/blog/assets/drafts.js" defer></script>
+  <link rel="stylesheet" href="/src/Styles.css" />
+</head>
+<body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+  <header class="max-w-4xl mx-auto p-6 flex justify-between items-center"><h1 class="text-2xl font-bold">Drafts</h1><div id="auth-ui"></div></header>
+  <main class="max-w-4xl mx-auto p-6" id="draft-list"></main>
+  <script type="module">
+    import { listDraftsUI } from '../assets/drafts.js';
+    import { onAuthChange } from '../assets/auth.js';
+    const root = document.getElementById('draft-list'); listDraftsUI(root);
+    onAuthChange(()=>listDraftsUI(root));
+  </script>
+</body>
+</html>

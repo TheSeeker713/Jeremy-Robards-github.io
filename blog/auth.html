@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Auth - Blog</title>
+  <meta name="description" content="Sign in or sign up for the blog" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module" src="/blog/assets/auth.js" defer></script>
+  <link rel="stylesheet" href="/src/Styles.css" />
+</head>
+<body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+  <main class="max-w-md mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-4">Sign In (Admin Only)</h1>
+      <form id="signin-form" class="space-y-3">
+        <div><label class="block text-sm">Username<input name="username" class="w-full p-2 border rounded" required></label></div>
+        <div><label class="block text-sm">Password<input type="password" name="password" class="w-full p-2 border rounded" required></label></div>
+        <div><button class="px-3 py-1 bg-blue-600 text-white rounded">Sign In</button></div>
+      </form>
+
+      <p class="mt-6 text-sm text-gray-600">Sign-up is disabled on this demo. If no users exist a default admin account will be created locally with username <code>admin</code> and password <code>admin123</code>. Change the password by editing your `users.json` before publishing.</p>
+  </main>
+
+  <script type="module">
+    import { signIn } from './assets/auth.js';
+    const signin = document.getElementById('signin-form');
+    signin.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(signin));
+      try{ await signIn(data.username, data.password); alert('Signed in'); window.location.href='/blog/'; }
+      catch(err){ alert(err.message); }
+    });
+  </script>
+</body>
+</html>
