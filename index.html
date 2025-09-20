@@ -45,18 +45,18 @@
      url('https://images.unsplash.com/photo-1591123120675-8f3a7a457769?q=80&w=1920&auto=format&fit=crop');
      */
      }
-    .bg-fixed-layer{
+    .bg-fixed-layer {
       position: fixed;
       inset: 0;
       z-index: -10;
-      /* Use the koi PNG explicitly so the GIF cannot be picked up accidentally */
-      background-image: url('src/assets/koi.png');
+      /* Use raw.githubusercontent.com URL temporarily */
+      background-image: url('https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/src/assets/koi.png');
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;
-      background-attachment: fixed; /* static feel */
+      background-attachment: fixed;
       filter: saturate(0.9);
-      opacity: .5;                /* 50% opacity as requested */
+      opacity: .5;
       pointer-events: none;
     }
     /* Subtle readable overlay for dark mode only */
@@ -116,13 +116,13 @@
         </div>
       </div>
       <div class="relative z-10">
-        <!-- hero GIF: uses the gif at src/assets/dev1.gif (served as /src/assets/dev1.gif) -->
         <div class="aspect-[16/10] rounded-2xl border border-slate-200/70 dark:border-slate-800/70 overflow-hidden bg-white/50 dark:bg-black/30 backdrop-blur-sm">
           <img
-            src="src/assets/dev1.gif"
+            src="https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/src/assets/dev1.gif"
             alt="Development preview animation"
             loading="lazy"
             class="w-full h-full object-cover"
+            onerror="console.error('Failed to load GIF:', this.src)"
           />
         </div>
       </div>
@@ -363,5 +363,20 @@
 
     loadBlog();
   </script>
+
+  <!-- Add this diagnostic script before </body> -->
+  <script>
+  // Asset load diagnostics
+  window.addEventListener('load', () => {
+    console.log('Checking assets...');
+    // Test background image
+    const bg = getComputedStyle(document.querySelector('.bg-fixed-layer')).backgroundImage;
+    console.log('Background image:', bg);
+    
+    // Test GIF
+    const img = document.querySelector('img[alt="Development preview animation"]');
+    console.log('GIF status:', img.complete ? 'loaded' : 'failed');
+  });
+</script>
 </body>
 </html>
