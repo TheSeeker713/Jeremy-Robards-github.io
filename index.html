@@ -213,7 +213,7 @@
   <p>
     From AI-powered automation and data workflows to full-stack web systems, his work is
     <!-- use a site-root path; JS will probe and navigate or fall back -->
-    <a id="secret713" href="/713/" class="inline-flex items-center rounded-xl bg-[var(--leaf)] text-white px-3 py-1.5 text-sm font-semibold card-hover" aria-label="Secret link 713">
+    <a id="secret713" href="/713/index.html" class="inline-flex items-center rounded-xl bg-[var(--leaf)] text-white px-3 py-1.5 text-sm font-semibold card-hover" aria-label="Secret link 713">
       secret link — 713
     </a>
     built to outperform competitors and stand up to real-world demands.
@@ -495,19 +495,9 @@
       ev.preventDefault();
       const href = a.getAttribute('href');
 
-      // Try the relative href first
+      // Try the explicit file href first (avoid SPA history fallback returning index.html)
       console.log('Secret link probe →', href);
-      const ok = await exists(href);
-      if (ok) {
-        // navigate in same tab
-        window.location.href = href;
-        return;
-      }
-
-      // Try site-root absolute variant (common when deployed)
-      const rootVariant = '/' + href.replace(/^\/+/,'')
-      console.log('Trying root variant →', rootVariant);
-      if (await exists(rootVariant)) { window.location.href = rootVariant; return; }
+      if (await exists(href)) { window.location.href = href; return; }
 
       // Try raw.githubusercontent fallback (opens in new tab)
       console.log('Trying raw fallback →', rawFallback);
