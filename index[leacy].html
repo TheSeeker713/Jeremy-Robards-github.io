@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jeremy Robards — Certified Prompt Engineer & Full-Stack Web Developer</title>
+  <meta name="description" content="Portfolio of Jeremy Robards — Certified Prompt Engineer & Full-Stack Web Developer. Projects: ChronicleOS, KAIA, more." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23000000'/%3E%3Ctext x='50' y='60' text-anchor='middle' font-size='60' fill='white'%3EJ%3C/text%3E%3C/svg%3E">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Tailwind dark mode: 'class'
+    tailwind.config = { darkMode: 'class' };
+
+    // Persisted theme
+    (function () {
+      const stored = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = stored ? stored === 'dark' : prefersDark;
+      document.documentElement.classList.toggle('dark', isDark);
+    })();
+  </script>
+  <style>
+    /* Subtle card hover */
+    .card-hover { transition: transform 200ms ease, box-shadow 200ms ease; }
+    .card-hover:hover { transform: translateY(-2px); }
+  </style>
+</head>
+<body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased">
+  <!-- Site Header -->
+  <header class="sticky top-0 z-50 border-b border-slate-200/60 dark:border-slate-800/80 backdrop-blur bg-white/70 dark:bg-slate-950/70">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="#" class="font-semibold tracking-tight text-lg">Jeremy Robards</a>
+      <nav class="hidden sm:flex items-center gap-6 text-sm">
+        <a href="#proof" class="hover:opacity-80">Projects</a>
+        <a href="#blog" class="hover:opacity-80">Blog</a>
+        <a href="#about" class="hover:opacity-80">About</a>
+        <a href="#roadmap" class="hover:opacity-80">Roadmap</a>
+        <a href="#links" class="hover:opacity-80">Links</a>
+        <a href="#contact" class="hover:opacity-80">Contact</a>
+      </nav>
+      <button id="themeToggle" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm card-hover">
+        <span id="themeLabel">Dark</span>
+        <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0-1.06-1.06M6.696 6.696l-1.06-1.06"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-4 py-12 sm:py-16">
+    <div class="grid md:grid-cols-2 gap-8 items-center">
+      <div>
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight">
+          Certified Prompt Engineer & Full-Stack Web Developer
+        </h1>
+        <p class="mt-4 text-lg text-slate-600 dark:text-slate-300">
+          I build interactive, AI-powered web experiences. Below is immediate proof—live projects, working code, and real deliverables.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="#proof" class="rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-5 py-2.5 text-sm font-semibold card-hover">See Projects</a>
+          <a href="#contact" class="rounded-xl border border-slate-300 dark:border-slate-700 px-5 py-2.5 text-sm font-semibold card-hover">Hire Me</a>
+        </div>
+      </div>
+      <div class="relative">
+        <!-- Placeholder visual; replace with brand graphic if desired -->
+        <div class="aspect-[16/10] rounded-2xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center">
+          <span class="text-slate-500 dark:text-slate-400 text-sm">Hero visual (optional)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proof: Project Cards -->
+  <section id="proof" class="max-w-6xl mx-auto px-4 py-8">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Project Proof</h2>
+    <p class="mt-2 text-slate-600 dark:text-slate-300">Three core deliverables demonstrating capability and execution.</p>
+
+    <div class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Card 1: ChronicleOS -->
+      <a href="https://www.chronicleos.com" class="block rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden card-hover" target="_blank" rel="noopener">
+        <div class="aspect-[16/10] bg-slate-100 dark:bg-slate-900">
+          <!-- DEV NOTE: Replace static screenshot below with a looping animated thumbnail (webm/mp4/gif) when available -->
+          <img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1200&auto=format&fit=crop"
+               alt="ChronicleOS preview" class="w-full h-full object-cover">
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold">ChronicleOS</h3>
+          <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+            Web-first platform for interactive branching narratives. Cartridge-style content, mobile-friendly delivery.
+          </p>
+        </div>
+      </a>
+
+      <!-- Card 2: KAIA -->
+      <a href="https://www.digiartifact.com/kaia" class="block rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden card-hover" target="_blank" rel="noopener">
+        <div class="aspect-[16/10] bg-slate-100 dark:bg-slate-900">
+          <!-- DEV NOTE: Replace static screenshot below with a looping animated thumbnail (webm/mp4/gif) when available -->
+          <img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1200&auto=format&fit=crop"
+               alt="KAIA preview" class="w-full h-full object-cover">
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold">Keep At It, Always (KAIA)</h3>
+          <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+            Productivity Sherpa & AI copilot designed for neurodivergent creators. Prompts, routines, and automation.
+          </p>
+        </div>
+      </a>
+
+      <!-- Card 3: Coming Soon -->
+      <div class="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-4 flex flex-col">
+        <div class="aspect-[16/10] rounded-xl bg-slate-100 dark:bg-slate-900 grid place-items-center">
+          <span class="text-slate-500 dark:text-slate-400">Coming Soon</span>
+        </div>
+        <div class="p-2">
+          <h3 class="font-semibold mt-2">Project 3 — Coming Soon</h3>
+          <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Reserved for the next shipped build.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog (JSON-fed, modal reader) -->
+  <section id="blog" class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Latest Posts</h2>
+    <p class="mt-2 text-slate-600 dark:text-slate-300">Three posts are loaded from <code>/blog.json</code>. Click to read in-page.</p>
+
+    <div id="blogGrid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+    <!-- Modal Reader -->
+    <div id="blogModal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="blogBackdrop"></div>
+      <div class="relative max-w-3xl mx-auto mt-16 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+          <h3 id="modalTitle" class="font-semibold"></h3>
+          <button id="modalClose" class="rounded-lg px-2 py-1 text-slate-500 hover:text-slate-900 dark:hover:text-white" aria-label="Close">✕</button>
+        </div>
+        <div id="modalBody" class="prose prose-slate dark:prose-invert max-w-none p-4"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">About</h2>
+    <div class="mt-4 grid md:grid-cols-3 gap-6">
+      <div class="md:col-span-2 space-y-3">
+        <p>
+          I’m Jeremy Robards — a <strong>Certified Prompt Engineer</strong> and <strong>Full-Stack Web Developer</strong>. 
+          I build fast, pragmatic solutions that blend AI systems design with clean front-end engineering.
+        </p>
+        <p>
+          Focus areas: prompt architectures, structured outputs, context design, Tailwind/JS front-ends, and shipping MVPs quickly.
+        </p>
+      </div>
+      <ul class="space-y-2 text-sm">
+        <li><span class="font-semibold">Core:</span> Prompt Eng, HTML, CSS/Tailwind, JavaScript</li>
+        <li><span class="font-semibold">Working:</span> React, Python scripting, SQLite</li>
+        <li><span class="font-semibold">Creative:</span> Interactive narratives, ARG design, video/music integration</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Roadmap -->
+  <section id="roadmap" class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Project Roadmap</h2>
+    <div class="mt-6 grid md:grid-cols-2 gap-6">
+      <div class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5">
+        <h3 class="font-semibold">Q4 — Ship & Prove</h3>
+        <ul class="mt-3 list-disc pl-5 space-y-2 text-sm">
+          <li>ChronicleOS: playable cartridge demo + docs</li>
+          <li>KAIA: daily routine flows + landing page</li>
+          <li>Blog: hook up JSON → SQLite backed posts</li>
+        </ul>
+      </div>
+      <div class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5">
+        <h3 class="font-semibold">Q1 — Scale & Polish</h3>
+        <ul class="mt-3 list-disc pl-5 space-y-2 text-sm">
+          <li>ChronicleOS Store prototype</li>
+          <li>Agentic workflows (prompt packs, templates)</li>
+          <li>Public portfolio case studies</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Links -->
+  <section id="links" class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">All Project Links</h2>
+    <div class="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover" href="https://www.chronicleos.com" target="_blank" rel="noopener">ChronicleOS</a>
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover" href="https://www.digiartifact.com/kaia" target="_blank" rel="noopener">KAIA</a>
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover" href="https://www.jeremyrobards.com" target="_blank" rel="noopener">jeremyrobards.com</a>
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover" href="https://www.digiartifact.com" target="_blank" rel="noopener">digiartifact.com</a>
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover" href="https://www.p3epro.com" target="_blank" rel="noopener">p3epro.com</a>
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover" href="mailto:contact@chronicleos.com" target="_blank" rel="noopener">Email: contact@chronicleos.com</a>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Contact</h2>
+    <p class="mt-2 text-slate-600 dark:text-slate-300 text-sm">Prefer email? <a class="underline" href="mailto:contact@chronicleos.com">contact@chronicleos.com</a></p>
+    <form class="mt-6 grid gap-4 max-w-xl" onsubmit="event.preventDefault(); alert('Thanks — I’ll get back to you shortly.');">
+      <input required type="text" placeholder="Your name" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-4 py-3">
+      <input required type="email" placeholder="Your email" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-4 py-3">
+      <textarea required rows="5" placeholder="What would you like to build?" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent px-4 py-3"></textarea>
+      <button class="justify-self-start rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-5 py-2.5 text-sm font-semibold card-hover">Send</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-500 dark:text-slate-400">
+      © <span id="year"></span> Jeremy Robards. Certified Prompt Engineer.
+    </div>
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Theme toggle
+    const toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const dark = !html.classList.contains('dark');
+      html.classList.toggle('dark', dark);
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+      document.getElementById('themeLabel').textContent = dark ? 'Light' : 'Dark';
+    });
+    // Initialize label
+    document.getElementById('themeLabel').textContent = document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
+
+    // Blog loader
+    const blogGrid = document.getElementById('blogGrid');
+    const modal = document.getElementById('blogModal');
+    const modalBody = document.getElementById('modalBody');
+    const modalTitle = document.getElementById('modalTitle');
+    const closeModal = () => { modal.classList.add('hidden'); modal.setAttribute('aria-hidden','true'); };
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('blogBackdrop').addEventListener('click', closeModal);
+    window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    async function loadBlog() {
+      try {
+        const res = await fetch('/blog.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('no blog.json');
+        const data = await res.json();
+        renderBlogCards((data.posts || []).slice(0,3));
+      } catch {
+        // Fallback demo posts
+        renderBlogCards([
+          {
+            id: 'cert',
+            title: 'Certified Prompt Engineer — What That Actually Means',
+            subtitle: 'Tactics I use in real projects (ChronicleOS, KAIA).',
+            date: new Date().toISOString(),
+            // You can provide full HTML in your real JSON.
+            contentHtml: `<p>I completed the Prompt Engineering Bootcamp (ZTM) and apply structured prompting, system persona design, and JSON-first outputs in production work. This post breaks down patterns I ship and why they work.</p>`
+          },
+          {
+            id: 'build-fast',
+            title: 'Shipping Fast with Tailwind + Vanilla JS',
+            subtitle: 'Sane defaults, zero fluff.',
+            date: new Date().toISOString(),
+            contentHtml: `<p>My stack for simple sites: Tailwind CDN, semantic HTML, tiny JS modules, and progressive enhancement. It’s fast, portable, and maintainable.</p>`
+          },
+          {
+            id: 'chronicles',
+            title: 'ChronicleOS: Design Notes',
+            subtitle: 'Cartridge data model & reader flow.',
+            date: new Date().toISOString(),
+            contentHtml: `<p>Cartridges are JSON + media. The reader resolves scenes, choices, and assets at runtime. Future: store, trading, creator tools.</p>`
+          }
+        ]);
+      }
+    }
+
+    function renderBlogCards(posts) {
+      blogGrid.innerHTML = '';
+      posts.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'rounded-2xl border border-slate-200 dark:border-slate-800 p-4 card-hover cursor-pointer';
+        card.innerHTML = `
+          <div class="text-xs text-slate-500 dark:text-slate-400">${new Date(p.date).toLocaleString()}</div>
+          <h3 class="mt-1 font-semibold">${p.title}</h3>
+          <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">${p.subtitle || ''}</p>
+        `;
+        card.addEventListener('click', () => {
+          modalTitle.textContent = p.title;
+          modalBody.innerHTML = p.contentHtml || '<p>No content.</p>';
+          modal.classList.remove('hidden');
+          modal.setAttribute('aria-hidden','false');
+        });
+        blogGrid.appendChild(card);
+      });
+    }
+
+    loadBlog();
+  </script>
+</body>
+</html>

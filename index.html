@@ -1,265 +1,360 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Jeremy Robards — Portfolio</title>
-  <meta name="description" content="Jeremy Robards — Advanced Prompt Engineering • Front‑End Engineering • React • Tailwind • Vite • Python" />
-  <meta name="color-scheme" content="dark light" />
-  <!-- Tailwind Play CDN -->
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jeremy Robards — Full-Stack Web Developer & Certified AI Engineer</title>
+  <meta name="description" content="Portfolio of Jeremy Robards — Certified Prompt Engineer & Full-Stack Web Developer. Projects: ChronicleOS, KAIA, more." />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ["ui-sans-serif","system-ui","Segoe UI","Inter","Roboto","Helvetica Neue","Arial","Noto Sans","Apple Color Emoji","Segoe UI Emoji"],
-          },
-          colors: {
-            brand: {
-              100: "#eae6ff",
-              300: "#c4b8ff",
-              500: "#8b5cf6",
-              600: "#7c3aed",
-              700: "#6d28d9",
-            },
-            cyanx: "#22d3ee"
-          },
-          boxShadow: {
-            soft: "0 10px 30px rgba(0,0,0,.25)",
-          },
-          keyframes: {
-            glow: {
-              '0%,100%': { opacity: .75, filter: 'blur(36px) hue-rotate(0deg)' },
-              '50%': { opacity: 1, filter: 'blur(48px) hue-rotate(25deg)' }
-            },
-            floaty: {
-              '0%,100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-6px)' }
-            },
-            fadeUp: {
-              '0%': { opacity: 0, transform: 'translateY(14px)' },
-              '100%': { opacity: 1, transform: 'translateY(0)' }
-            }
-          },
-          animation: {
-            glow: 'glow 5s ease-in-out infinite',
-            floaty: 'floaty 6s ease-in-out infinite',
-            fadeUp: 'fadeUp .7s ease both'
-          },
-          backdropBlur: {
-            xs: '2px'
-          }
-        }
-      }
-    }
+    // Tailwind dark mode via class
+    tailwind.config = { darkMode: 'class' };
+
+    // Persist theme
+    (function () {
+      const stored = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = stored ? stored === 'dark' : prefersDark;
+      document.documentElement.classList.toggle('dark', isDark);
+    })();
   </script>
-  <!-- React + Babel (no build needed; perfect for GitHub Pages) -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    /* gradient background with subtle texture */
-    .bg-mesh {
-      background:
-        radial-gradient(1200px 500px at 10% -10%, rgba(124,92,246,.22), transparent 60%),
-        radial-gradient(900px 500px at 110% 10%, rgba(34,211,238,.18), transparent 55%),
-        linear-gradient(180deg, #080a12 0%, #0e1220 60%, #0b0f1a 100%);
+    :root{
+      /* Palette tuned to koi pond image */
+      --ink: #0b1320;        /* deep slate/navy for text in light mode */
+      --paper: #ffffff;      /* base light surface */
+      --pond: #062a2a;       /* deep teal for dark surfaces */
+      --leaf: #10b981;       /* emerald for accents */
+      --leaf-600: #059669;
+      --koi: #f59e0b;        /* amber accent (koi) */
+      --koi-700: #b45309;
     }
-    .prose-muted { color: rgb(180 188 205 / 92%); }
+    .card-hover { transition: transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease; }
+    .card-hover:hover { transform: translateY(-2px); opacity: 0.98; }
+
+    /* === BACKGROUND LAYER ===
+       Fixed, static, 50% opacity behind all content.
+       DEV NOTE: To use your own file, replace the --bg-url value.
+    */
+    :root {
+      /* Publicly available koi/lilypad image (Unsplash) */
+      --bg-url: url('https://images.unsplash.com/photo-1591123120675-8f3a7a457769?q=80&w=1920&auto=format&fit=crop');
+      /* Similar options you can try:
+      url('https://images.unsplash.com/photo-1530908295418-a12e326966ba?q=80&w=1920&auto=format&fit=crop');
+      url('https://images.unsplash.com/photo-1591123120675-8f3a7a457769?q=80&w=1920&auto=format&fit=crop');
+      */
+    }
+    /* If you host your attachment, uncomment and set:
+       :root { --bg-url: url('/assets/koi-pond.webp'); }
+    */
+    .bg-fixed-layer{
+      position: fixed;
+      inset: 0;
+      z-index: -1;                /* keep behind everything */
+      background-image: var(--bg-url);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed; /* static feel */
+      filter: saturate(0.9);
+      opacity: .5;                /* 50% opacity as requested */
+    }
+    /* Subtle readable overlay for dark mode only */
+    .bg-overlay-dark{
+      position: fixed; inset: 0; z-index: -1;
+      background: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,.25), rgba(0,0,0,.45));
+      pointer-events: none;
+    }
+
+    /* Typography helpers for in-page blog modal */
+    .prose :where(a){ color: var(--leaf); }
+    .prose :where(a):hover{ color: var(--leaf-600); }
   </style>
 </head>
-<body class="bg-mesh min-h-screen text-slate-100 antialiased selection:bg-brand-600 selection:text-white">
-  <div id="root"></div>
+<body class="bg-white text-[var(--ink)] dark:bg-[var(--pond)] dark:text-slate-100 antialiased">
+  <!-- Background (static, 50% opacity) -->
+  <div class="bg-fixed-layer"></div>
+  <div class="bg-overlay-dark hidden dark:block"></div>
 
-  <script type="text/babel">
-    const { useEffect, useState } = React;
+  <!-- Header -->
+  <header class="sticky top-0 z-50 border-b border-slate-200/60 dark:border-slate-800/80 backdrop-blur bg-white/70 dark:bg-[color:rgba(6,42,42,0.7)]">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="#" class="font-semibold tracking-tight text-lg">Jeremy Robards</a>
+      <nav class="hidden sm:flex items-center gap-6 text-sm">
+        <a href="#proof" class="hover:opacity-80">Projects</a>
+        <a href="#blog" class="hover:opacity-80">Blog</a>
+        <a href="#about" class="hover:opacity-80">About</a>
+        <a href="#roadmap" class="hover:opacity-80">Roadmap</a>
+        <a href="#links" class="hover:opacity-80">Links</a>
+        <a href="#contact" class="hover:opacity-80">Contact</a>
+      </nav>
+      <button id="themeToggle" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm card-hover bg-white/70 dark:bg-white/5">
+        <span id="themeLabel">Dark</span>
+        <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0-1.06-1.06M6.696 6.696l-1.06-1.06"/></svg>
+      </button>
+    </div>
+  </header>
 
-    // --- Data you will edit over time ---
-    const projects = [
-      {
-        title: 'KAIA — Modular Productivity Engine',
-        desc: 'Neuro-inclusive productivity system with journal, task graph, and exportable data. Built with modern front-end patterns and component-driven UX.',
-        tags: ['React', 'Tailwind', 'Design'],
-        url: '#'
-      },
-      {
-        title: 'DigiArtifact',
-        desc: 'Static-first storefront for downloadable digital assets with clean CI/CD to GitHub Pages.',
-        tags: ['Vite', 'TypeScript (WIP)', 'UI'],
-        url: '#'
-      },
-      {
-        title: 'R3S3T Visualizer',
-        desc: 'Lightweight WebGL/Canvas motion system for kinetic typography and pulses synced to audio peaks.',
-        tags: ['Canvas', 'Animation'],
-        url: '#'
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-4 py-12 sm:py-16">
+    <div class="grid md:grid-cols-2 gap-8 items-center">
+      <div>
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight">
+          Full-Stack Web Developer & Certified AI Engineer
+        </h1>
+        <p class="mt-4 text-lg text-slate-700 dark:text-slate-300">
+          I architect and deliver AI-driven solutions that don’t just work, they outperform expectations. As a Certified AI Engineer and Full-Stack Web Developer, I build scalable, future-ready applications that turn complex problems into elegant, profitable solutions.
+
+          Where others offer code, I deliver measurable outcomes: faster performance, smarter automation, and experiences designed to convert. My approach blends cutting-edge AI engineering with clean, maintainable web development, giving clients a competitive edge and users an unforgettable experience.
+
+          If you’re looking for someone who can prototype fast, iterate intelligently, and ship production-grade solutions that stand out, you’ve just found your partner.
+
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="#proof" class="rounded-xl bg-[var(--leaf)] text-white px-5 py-2.5 text-sm font-semibold card-hover">See Projects</a>
+          <a href="#contact" class="rounded-xl border border-[var(--leaf)] text-[var(--leaf)] px-5 py-2.5 text-sm font-semibold card-hover dark:border-white/30 dark:text-white">Hire Me</a>
+        </div>
+      </div>
+      <div class="relative">
+        <div class="aspect-[16/10] rounded-2xl border border-slate-200/70 dark:border-slate-800/70 bg-white/50 dark:bg-black/30 flex items-center justify-center backdrop-blur-sm">
+          <span class="text-slate-600 dark:text-slate-300 text-sm">Hero visual (optional)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proof: Project Cards -->
+  <section id="proof" class="max-w-6xl mx-auto px-4 py-8">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Project Proof</h2>
+    <p class="mt-2 text-slate-700 dark:text-slate-300">Three core deliverables demonstrating capability and execution.</p>
+
+    <div class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- ChronicleOS -->
+      <a href="https://www.chronicleos.com" class="block rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden card-hover bg-white/70 dark:bg-black/30 backdrop-blur-sm" target="_blank" rel="noopener">
+        <div class="aspect-[16/10]">
+          <!-- DEV NOTE: Replace with a short animated loop when ready -->
+          <img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1200&auto=format&fit=crop"
+               alt="ChronicleOS preview" class="w-full h-full object-cover">
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold">ChronicleOS</h3>
+          <p class="mt-1 text-sm text-slate-700 dark:text-slate-300">
+            Web-first platform for interactive branching narratives. Cartridge-style content, mobile-first delivery.
+          </p>
+        </div>
+      </a>
+
+      <!-- KAIA -->
+      <a href="https://www.digiartifact.com/kaia" class="block rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden card-hover bg-white/70 dark:bg-black/30 backdrop-blur-sm" target="_blank" rel="noopener">
+        <div class="aspect-[16/10]">
+          <!-- DEV NOTE: Replace with a short animated loop when ready -->
+          <img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1200&auto=format&fit=crop"
+               alt="KAIA preview" class="w-full h-full object-cover">
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold">Keep At It, Always (KAIA)</h3>
+          <p class="mt-1 text-sm text-slate-700 dark:text-slate-300">
+            Productivity Sherpa & AI copilot designed for neurodivergent creators. Prompts, routines, and automation.
+          </p>
+        </div>
+      </a>
+
+      <!-- Coming Soon -->
+      <div class="rounded-2xl border border-dashed border-[var(--koi-700)]/40 p-4 bg-white/60 dark:bg-black/20 backdrop-blur-sm flex flex-col">
+        <div class="aspect-[16/10] rounded-xl bg-gradient-to-br from-[var(--koi)]/25 to-[var(--leaf)]/20 grid place-items-center">
+          <span class="text-[var(--koi-700)]">Coming Soon</span>
+        </div>
+        <div class="p-2">
+          <h3 class="font-semibold mt-2">Project 3 — Coming Soon</h3>
+          <p class="mt-1 text-sm text-slate-700 dark:text-slate-300">Reserved for the next shipped build.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog (JSON-fed, modal reader) -->
+  <section id="blog" class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Latest Posts</h2>
+    <p class="mt-2 text-slate-700 dark:text-slate-300">Three posts load from <code>/blog.json</code>. Click to read in-page.</p>
+    <div id="blogGrid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+    <!-- Modal -->
+    <div id="blogModal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="blogBackdrop"></div>
+      <div class="relative max-w-3xl mx-auto mt-16 bg-white/95 dark:bg-[color:rgba(6,42,42,0.95)] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl">
+        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+          <h3 id="modalTitle" class="font-semibold"></h3>
+          <button id="modalClose" class="rounded-lg px-2 py-1 text-slate-500 hover:text-slate-900 dark:hover:text-white" aria-label="Close">✕</button>
+        </div>
+        <div id="modalBody" class="prose prose-slate dark:prose-invert max-w-none p-4"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">About</h2>
+    <div class="mt-4 grid md:grid-cols-3 gap-6">
+      <div class="md:col-span-2 space-y-3 bg-white/60 dark:bg-black/20 border border-slate-200/60 dark:border-slate-800/60 rounded-2xl p-5 backdrop-blur-sm">
+        <p>
+  I’m Jeremy Robards — a <strong>Certified AI Engineer</strong> and <strong>Full-Stack Web Developer</strong>.  
+  I don’t just write code — I design and deliver intelligent, scalable solutions that save time, cut costs, and create measurable impact.
+</p>
+
+<p>
+  My specialty is turning complex problems into elegant, high-performance applications that ship fast and scale with ease.  
+  From AI-powered automation and data workflows to full-stack web systems, my work is built to outperform competitors and stand up to real-world demands.
+</p>
+
+<p>
+  Focus areas: AI-driven product design, LLM prompt architecture, structured outputs, automation pipelines, Tailwind/JS/React front-ends, and MVP-to-production delivery.
+</p>
+
+      </div>
+      <ul class="space-y-2 text-sm bg-white/60 dark:bg-black/20 border border-slate-200/60 dark:border-slate-800/60 rounded-2xl p-5 backdrop-blur-sm">
+        <li><span class="font-semibold">Core:</span> Prompt Eng, HTML, CSS/Tailwind, JavaScript</li>
+        <li><span class="font-semibold">Working:</span> React, Python scripting, SQLite</li>
+        <li><span class="font-semibold">Creative:</span> Interactive narratives, ARG design, video/music integration</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Roadmap -->
+  <section id="roadmap" class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Project Roadmap</h2>
+    <div class="mt-6 grid md:grid-cols-2 gap-6">
+      <div class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 bg-white/60 dark:bg-black/20 backdrop-blur-sm">
+        <h3 class="font-semibold text-[var(--leaf)]">Q4 — Ship & Prove</h3>
+        <ul class="mt-3 list-disc pl-5 space-y-2 text-sm">
+          <li>ChronicleOS: playable cartridge demo + docs</li>
+          <li>KAIA: daily routine flows + landing page</li>
+          <li>Blog: hook up JSON → SQLite backed posts</li>
+        </ul>
+      </div>
+      <div class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 bg-white/60 dark:bg-black/20 backdrop-blur-sm">
+        <h3 class="font-semibold text-[var(--koi-700)]">Q1 — Scale & Polish</h3>
+        <ul class="mt-3 list-disc pl-5 space-y-2 text-sm">
+          <li>ChronicleOS Store prototype</li>
+          <li>Agentic workflows (prompt packs, templates)</li>
+          <li>Public portfolio case studies</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Links -->
+  <section id="links" class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">All Project Links</h2>
+    <div class="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover bg-white/60 dark:bg-black/20 backdrop-blur-sm" href="https://www.chronicleos.com" target="_blank" rel="noopener">ChronicleOS</a>
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover bg-white/60 dark:bg-black/20 backdrop-blur-sm" href="https://www.digiartifact.com/kaia" target="_blank" rel="noopener">KAIA</a>
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover bg-white/60 dark:bg-black/20 backdrop-blur-sm" href="https://www.jeremyrobards.com" target="_blank" rel="noopener">jeremyrobards.com</a>
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover bg-white/60 dark:bg-black/20 backdrop-blur-sm" href="https://www.digiartifact.com" target="_blank" rel="noopener">digiartifact.com</a>
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover bg-white/60 dark:bg-black/20 backdrop-blur-sm" href="https://www.p3epro.com" target="_blank" rel="noopener">p3epro.com</a>
+      <a class="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 card-hover bg-white/60 dark:bg-black/20 backdrop-blur-sm" href="mailto:contact@chronicleos.com" target="_blank" rel="noopener">Email: contact@chronicleos.com</a>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Contact</h2>
+    <p class="mt-2 text-slate-700 dark:text-slate-300 text-sm">
+      Prefer email? <a class="underline text-[var(--leaf)] hover:text-[var(--leaf-600)]" href="mailto:contact@chronicleos.com">contact@chronicleos.com</a>
+    </p>
+    <form class="mt-6 grid gap-4 max-w-xl" onsubmit="event.preventDefault(); alert('Thanks — I’ll get back to you shortly.');">
+      <input required type="text" placeholder="Your name" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-white/5 px-4 py-3 backdrop-blur-sm">
+      <input required type="email" placeholder="Your email" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-white/5 px-4 py-3 backdrop-blur-sm">
+      <textarea required rows="5" placeholder="What would you like to build?" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-white/5 px-4 py-3 backdrop-blur-sm"></textarea>
+      <button class="justify-self-start rounded-xl bg-[var(--koi)] text-white px-5 py-2.5 text-sm font-semibold card-hover hover:bg-[var(--koi-700)]">Send</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-black/20 backdrop-blur-sm">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-700 dark:text-slate-300">
+      © <span id="year"></span> Jeremy Robards. Certified Prompt Engineer.
+    </div>
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Theme toggle
+    const toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const dark = !html.classList.contains('dark');
+      html.classList.toggle('dark', dark);
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+      document.getElementById('themeLabel').textContent = dark ? 'Light' : 'Dark';
+    });
+    document.getElementById('themeLabel').textContent =
+      document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
+
+    // Blog loader
+    const blogGrid = document.getElementById('blogGrid');
+    const modal = document.getElementById('blogModal');
+    const modalBody = document.getElementById('modalBody');
+    const modalTitle = document.getElementById('modalTitle');
+    const closeModal = () => { modal.classList.add('hidden'); modal.setAttribute('aria-hidden','true'); };
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('blogBackdrop').addEventListener('click', closeModal);
+    window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    async function loadBlog() {
+      try {
+        const res = await fetch('/blog.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('no blog.json');
+        const data = await res.json();
+        renderBlogCards((data.posts || []).slice(0,3));
+      } catch {
+        renderBlogCards([
+          {
+            id: 'cert',
+            title: 'Certified Prompt Engineer — What That Actually Means',
+            subtitle: 'Tactics I use in real projects (ChronicleOS, KAIA).',
+            date: new Date().toISOString(),
+            contentHtml: `<p>I completed a comprehensive Prompt Engineering bootcamp and apply structured prompting, system persona design, and JSON-first outputs in production work. This post breaks down patterns I ship and why they work.</p>`
+          },
+          {
+            id: 'build-fast',
+            title: 'Shipping Fast with Tailwind + Vanilla JS',
+            subtitle: 'Sane defaults, zero fluff.',
+            date: new Date().toISOString(),
+            contentHtml: `<p>My stack for simple sites: Tailwind CDN, semantic HTML, tiny JS modules, and progressive enhancement. It’s fast, portable, and maintainable.</p>`
+          },
+          {
+            id: 'chronicles',
+            title: 'ChronicleOS: Design Notes',
+            subtitle: 'Cartridge data model & reader flow.',
+            date: new Date().toISOString(),
+            contentHtml: `<p>Cartridges are JSON + media. The reader resolves scenes, choices, and assets at runtime. Future: store, trading, creator tools.</p>`
+          }
+        ]);
       }
-    ];
-
-    const blogPreviews = [
-      { title: 'From Prompts to Products: Systems Thinking for Front‑End Devs', date: 'Aug 2025', url: '#'},
-      { title: 'Ship Small, Weekly: My Iteration Playbook', date: 'Aug 2025', url: '#'},
-      { title: 'Designing for Neurodivergent Focus', date: 'Jul 2025', url: '#'}
-    ];
-
-    // --- Components ---
-    function AuraTitle({ children }){
-      return (
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-0 animate-glow">
-            <div className="absolute -inset-6 rounded-[28px] bg-gradient-to-r from-brand-600 via-cyanx/70 to-brand-500 opacity-70 blur-3xl"></div>
-          </div>
-          <h1 className="relative text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-[0_2px_12px_rgba(124,92,246,.35)]">
-            {children}
-          </h1>
-        </div>
-      );
     }
 
-    function SectionTitle({ children }){
-      return (
-        <div className="flex items-center gap-3 mb-5">
-          <h2 className="text-xl font-semibold tracking-tight">{children}</h2>
-          <div className="h-px flex-1 bg-white/10"></div>
-        </div>
-      );
+    function renderBlogCards(posts) {
+      blogGrid.innerHTML = '';
+      posts.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'rounded-2xl border border-slate-200 dark:border-slate-800 p-4 card-hover cursor-pointer bg-white/60 dark:bg-black/20 backdrop-blur-sm';
+        card.innerHTML = `
+          <div class="text-xs text-slate-600 dark:text-slate-400">${new Date(p.date).toLocaleString()}</div>
+          <h3 class="mt-1 font-semibold">${p.title}</h3>
+          <p class="mt-1 text-sm text-slate-700 dark:text-slate-300">${p.subtitle || ''}</p>
+        `;
+        card.addEventListener('click', () => {
+          modalTitle.textContent = p.title;
+          modalBody.innerHTML = p.contentHtml || '<p>No content.</p>';
+          modal.classList.remove('hidden');
+          modal.setAttribute('aria-hidden','false');
+        });
+        blogGrid.appendChild(card);
+      });
     }
 
-    function Chip({ children }){
-      return <span className="text-xs px-2.5 py-1 rounded-full border border-white/15 bg-white/5 text-slate-200">{children}</span>
-    }
-
-    function ProjectCard({p, i}){
-      return (
-        <article className="group relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xs shadow-soft overflow-hidden animate-fadeUp" style={{animationDelay: `${i*60}ms`}}>
-          <a href={p.url} className="absolute inset-0" aria-label={p.title}></a>
-          <div className="aspect-[16/10] bg-slate-900/60 grid place-items-center">
-            <div className="size-24 rounded-xl bg-gradient-to-br from-brand-500 to-cyanx/70 blur-2xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
-          </div>
-          <div className="p-4">
-            <h3 className="font-semibold text-lg">{p.title}</h3>
-            <p className="prose-muted mt-1 text-sm">{p.desc}</p>
-            <div className="mt-3 flex flex-wrap gap-2">{p.tags.map((t,idx)=>(<Chip key={idx}>{t}</Chip>))}</div>
-          </div>
-          <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-brand-600/0 via-brand-600/70 to-cyanx/70 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        </article>
-      )
-    }
-
-    function BlogTeaser(){
-      return (
-        <div className="grid sm:grid-cols-3 gap-3">
-          {blogPreviews.map((b, i)=> (
-            <a key={i} href={b.url} className="group rounded-xl border border-white/10 bg-white/5 p-4 overflow-hidden shadow-soft transform transition-all hover:scale-[1.02]">
-              <div className="text-xs text-slate-300/80">{b.date}</div>
-              <div className="mt-1 font-semibold leading-snug">{b.title}</div>
-              <div className="mt-3 h-8 rounded-md bg-gradient-to-r from-brand-600/30 to-cyanx/30 blur group-hover:blur-[2px] transition-all"></div>
-            </a>
-          ))}
-        </div>
-      )
-    }
-
-    function App(){
-      const [year, setYear] = useState(new Date().getFullYear());
-      useEffect(()=>{ setYear(new Date().getFullYear()); },[]);
-
-      return (
-        <main>
-          {/* NAV */}
-          <nav className="sticky top-0 z-50 backdrop-blur border-b border-white/10 bg-black/30">
-            <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-              <div className="h-6 w-6 rounded-md bg-gradient-to-br from-brand-600 to-cyanx"></div>
-              <span className="font-bold tracking-wide">JEREMY ROBARDS</span>
-              <div className="ml-auto hidden sm:flex items-center gap-5 text-sm text-slate-300">
-                <a href="#projects" className="hover:text-white">Projects</a>
-                <a href="#skills" className="hover:text-white">Skills</a>
-                <a href="#blog" className="hover:text-white">Blog</a>
-                <a href="#contact" className="hover:text-white">Contact</a>
-              </div>
-            </div>
-          </nav>
-
-          {/* HERO */}
-          <header className="max-w-6xl mx-auto px-4 pt-12 pb-10">
-            <p className="uppercase tracking-[.2em] text-xs text-slate-300">Software Developer • Front‑End Engineer</p>
-            <div className="mt-3">
-              <AuraTitle>Design‑minded engineer crafting fast, resilient interfaces.</AuraTitle>
-            </div>
-            <p className="mt-4 max-w-3xl text-slate-200/90 text-lg md:text-xl animate-fadeUp">
-              I specialize in <span className="font-semibold text-white">Advanced Prompt Engineering</span>, modern web development, and human‑centered UI. I turn ambiguous goals into well‑shipped, production‑ready features.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#projects" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-brand-600 to-cyanx px-5 py-2.5 font-semibold text-black shadow-soft hover:brightness-110 transition">View Projects</a>
-              <a href="#contact" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 font-semibold hover:bg-white/10">Contact</a>
-            </div>
-          </header>
-
-          {/* PROJECTS */}
-          <section id="projects" className="max-w-6xl mx-auto px-4 pb-4">
-            <SectionTitle>Selected Work</SectionTitle>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {projects.map((p,i)=> <ProjectCard key={i} p={p} i={i} />)}
-            </div>
-          </section>
-
-          {/* SKILLS */}
-          <section id="skills" className="max-w-6xl mx-auto px-4 mt-10">
-            <SectionTitle>Core Skills</SectionTitle>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-soft">
-              <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-y-2 gap-x-6 text-sm">
-                {[
-                  'Advanced Prompt Engineering',
-                  'HTML / CSS (Semantic, Accessible, Performant)',
-                  'Tailwind CSS',
-                  'React + Vite',
-                  'TypeScript (in progress)',
-                  'Python (automation, scripting)',
-                  'Graphic Design (UI/UX systems)',
-                  'Video Editing',
-                  'Animation & Motion Graphics',
-                  'Git & GitHub (CI/CD with Pages)'
-                ].map((s,i)=> (
-                  <li key={i} className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-brand-600 to-cyanx animate-floaty"></span>
-                    <span className="prose-muted">{s}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-
-          {/* BLOG PREVIEW */}
-          <section id="blog" className="max-w-6xl mx-auto px-4 mt-10">
-            <SectionTitle>Latest Writing</SectionTitle>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-soft">
-              <BlogTeaser />
-              <div className="text-right mt-3"><a href="#" className="text-sm text-brand-300 hover:text-white">Open Blog →</a></div>
-            </div>
-          </section>
-
-          {/* CONTACT */}
-          <section id="contact" className="max-w-6xl mx-auto px-4 mt-12">
-            <SectionTitle>Contact</SectionTitle>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-soft grid sm:grid-cols-2 gap-4">
-              <div>
-                <p className="prose-muted">Available for front‑end engineering roles and selective freelance. I value clear scope, quick feedback loops, and shipping value early.</p>
-              </div>
-              <div className="grid gap-2 text-sm">
-                <div><span className="text-slate-300">Email:</span> <a className="hover:underline" href="mailto:contact@jeremyrobards.com">contact@jeremyrobards.com</a></div>
-                <div><span className="text-slate-300">GitHub:</span> <a className="hover:underline" href="https://github.com/TheSeeker713" target="_blank" rel="noopener">github.com/TheSeeker713</a></div>
-                <div><span className="text-slate-300">Website:</span> <a className="hover:underline" href="https://www.jeremyrobards.com" target="_blank" rel="noopener">www.JeremyRobards.com</a></div>
-              </div>
-            </div>
-          </section>
-
-          <footer className="max-w-6xl mx-auto px-4 text-center text-slate-400/80 py-10">© {year} Jeremy Robards</footer>
-        </main>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+    loadBlog();
   </script>
 </body>
 </html>

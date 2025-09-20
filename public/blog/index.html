@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en" class="h-full antialiased">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JeremyRobards • Blog</title>
+  <meta name="description" content="Minimalist, serene blog with local-first storage and power-user tools." />
+  <meta property="og:title" content="JeremyRobards • Blog" />
+  <meta property="og:description" content="Minimalist, serene blog with local-first storage and power-user tools." />
+  <meta property="og:type" content="website" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { fontFamily: { serif: ['Georgia','Cambria','Times New Roman','serif'], sans: ['Inter','system-ui','Segoe UI','Roboto','sans-serif'] }}}}
+  </script>
+
+  <!-- React CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel standalone (versioned) for in-browser JSX compilation in this demo -->
+  <script src="https://unpkg.com/@babel/standalone@7.26.0/babel.min.js"></script>
+
+  <!-- sql.js (SQLite in WASM) — no SRI to avoid mismatches in CDN demos -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+
+  <!-- idb-keyval (jsDelivr stable iife build) -->
+  <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/idb-keyval.iife.min.js"></script>
+
+  <!-- Minimal print CSS (PDF export) -->
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      .print-prose { color: #000 !important; }
+      body { background: #fff !important; }
+    }
+    /* Background SVG creek/meadow:
+       static by default; JS will update --bg-x/--bg-y on mousemove for parallax.
+       moved further back (z-index:-20) to ensure it's behind all content.
+    */
+    .bg-art {
+      position: fixed; inset: 0; pointer-events: none; z-index: -20; opacity: .7;
+      /* use CSS variables for position so JS can update smoothly */
+      /* simple inline SVG creek: meadow + two sinuous water bands */
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420'><rect width='100%25' height='100%25' fill='%23e6f4e9'/><path d='M0 260 C70 220 140 300 210 260 C280 220 350 300 420 260 L420 420 L0 420 Z' fill='%23006fbf' opacity='0.75'/><path d='M0 190 C70 150 140 230 210 190 C280 150 350 230 420 190 L420 260 L0 260 Z' fill='%23009fe6' opacity='0.6'/></svg>");
+      background-repeat: repeat; background-size: 420px 420px; filter: contrast(.9) saturate(.9);
+      background-position: var(--bg-x, 50%) var(--bg-y, 50%);
+      transition: background-position 400ms ease-out;
+    }
+
+    /* New button micro-animation */
+    .new-btn-anim { transition: transform 220ms cubic-bezier(.2,.9,.3,1), box-shadow 220ms; }
+    .new-btn-anim.animate { transform: translateY(-6px) scale(1.02); box-shadow: 0 10px 24px rgba(2,6,23,0.12); }
+
+    /* remove the CSS keyframe animation - we'll drive movement from JS on mouse */
+    @media (prefers-reduced-motion:no-preference) {
+      /* no automatic animation here; JS will animate only on mouse movement */
+    }
+  </style>
+</head>
+<body class="h-full bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors">
+<div class="bg-art"></div>
+
+<!-- Top Bar -->
+<header class="no-print sticky top-0 z-20 backdrop-blur bg-white/60 dark:bg-slate-950/50 border-b border-slate-200/60 dark:border-slate-800">
+  <div class="max-w-4xl mx-auto px-4 py-2 flex items-center justify-between">
+    <nav class="flex items-center gap-4 text-sm">
+      <a href="/" class="hover:underline">Home</a>
+      <button id="nav-tags" class="hover:underline">Tags</button>
+      <button id="nav-about" class="hover:underline">About</button>
+      <a id="nav-rss" class="hover:underline" href="#" title="TODO: wire RSS">RSS</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <button id="zenBtn" class="px-2 py-1 rounded-md border border-slate-300 dark:border-slate-700 text-xs">Zen</button>
+      <button id="themeBtn" class="px-2 py-1 rounded-md border border-slate-300 dark:border-slate-700 text-xs" title="Toggle theme">🌓</button>
+    </div>
+  </div>
+  <!-- Tiny Card Menu -->
+  <div class="max-w-4xl mx-auto px-4 pb-3 flex items-center gap-2">
+    <input id="searchInput" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900/70" placeholder="Search posts ( / to focus )" />
+    <select id="filterSelect" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900/70">
+      <option value="all">All</option>
+      <option value="draft">Draft</option>
+      <option value="review">Review</option>
+      <option value="publish">Publish</option>
+      <option value="trash">Trash</option>
+    </select>
+    <!-- call global handler exposed by React; safe if not yet set -->
+    <button id="newBtn" onclick="window.__jr_new && window.__jr_new()" class="px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900">New</button>
+  </div>
+  <!-- Progress bar -->
+  <div id="progress" class="h-0.5 bg-slate-900 dark:bg-white origin-left scale-x-0"></div>
+</header>
+
+<!-- App Container -->
+<main id="root" class="relative z-0 max-w-4xl mx-auto px-4 py-6"></main>
+
+<!-- Footer -->
+<footer class="no-print max-w-4xl mx-auto px-4 py-8 text-xs text-slate-500">
+  <p>Local-first demo • SQLite (sql.js) + IndexedDB • React + Tailwind via CDN.</p>
+</footer>
+
+<!-- Big app script — compile with Babel in-browser for this demo -->
+<script type="text/babel" data-presets="env,react">
+ (function() {
+   const { useState, useEffect, useMemo, useRef } = React;
+   const { set: idbSet, get: idbGet } = idbKeyval;
+ 
+   // --- Background parallax: static until mouse moves ---
+   (function setupBgParallax() {
+     const el = document.querySelector('.bg-art');
+     if (!el) return;
+     let targetX = 50, targetY = 50;
+     let curX = 50, curY = 50;
+     let lastMove = 0;
+     const maxPan = 8; // percent offset from center
+     let raf = null;
+ 
+     function onMove(e) {
+       const w = window.innerWidth, h = window.innerHeight;
+       const nx = (e.clientX / w - 0.5) * 2; // -1..1
+       const ny = (e.clientY / h - 0.5) * 2;
+       targetX = 50 + nx * maxPan;
+       targetY = 50 + ny * maxPan;
+       lastMove = Date.now();
+       // ensure loop running
+       if (!raf) raf = requestAnimationFrame(tick);
+     }
+ 
+     function tick() {
+       // smooth interpolate
+       curX += (targetX - curX) * 0.12;
+       curY += (targetY - curY) * 0.12;
+       el.style.setProperty('--bg-x', `${curX}%`);
+       el.style.setProperty('--bg-y', `${curY}%`);
+       // if idle for >750ms, recentre target
+       if (Date.now() - lastMove > 750) {
+         targetX += (50 - targetX) * 0.08;
+         targetY += (50 - targetY) * 0.08;
+         // stop when near center
+         if (Math.abs(targetX - 50) < 0.01 && Math.abs(targetY - 50) < 0.01 &&
+             Math.abs(curX - 50) < 0.01 && Math.abs(curY - 50) < 0.01) {
+           el.style.setProperty('--bg-x', `50%`);
+           el.style.setProperty('--bg-y', `50%`);
+           raf = null; return;
+         }
+       }
+       raf = requestAnimationFrame(tick);
+     }
+ 
+     // Only react to real pointer movement (ignore touch gestures that may spam events)
+     window.addEventListener('mousemove', onMove, { passive: true });
+     // also slightly nudge on touchmove
+     window.addEventListener('touchmove', (e) => {
+       const t = e.touches && e.touches[0];
+       if (t) onMove(t);
+     }, { passive:true });
+   })();
+ 
+   // --- Theme + Zen ---
+   const themeBtn = document.getElementById('themeBtn');
+   const zenBtn = document.getElementById('zenBtn');
+   function setTheme(mode) {
+     if (mode === 'dark') document.documentElement.classList.add('dark');
+     else document.documentElement.classList.remove('dark');
+     localStorage.setItem('theme', mode);
+   }
+   function toggleTheme() {
+     const cur = document.documentElement.classList.contains('dark') ? 'dark':'light';
+     setTheme(cur==='dark'?'light':'dark');
+   }
+   function toggleZen() {
+     document.body.classList.toggle('overflow-hidden');
+     document.querySelector('header').classList.toggle('hidden');
+     document.querySelector('footer').classList.toggle('hidden');
+   }
+   themeBtn.addEventListener('click', toggleTheme);
+   zenBtn.addEventListener('click', toggleZen);
+   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+   setTheme(localStorage.getItem('theme') || (prefersDark ? 'dark' : 'light'));
+ 
+   // --- Scroll progress ---
+   function updateProgress() {
+     const s = window.scrollY, h = document.body.scrollHeight - window.innerHeight;
+     const x = h>0 ? Math.min(1, s/h) : 0;
+     document.getElementById('progress').style.transform = `scaleX(${x})`;
+   }
+   window.addEventListener('scroll', updateProgress, { passive:true });
+   updateProgress();
+ 
+   // --- Keyboard shortcuts ---
+   const searchInput = document.getElementById('searchInput');
+   const filterSelect = document.getElementById('filterSelect');
+   const newBtn = document.getElementById('newBtn');
+   window.addEventListener('keydown', (e) => {
+     if (e.key === '/' && document.activeElement !== searchInput) {
+       e.preventDefault(); searchInput.focus();
+     }
+   });
+ 
+ 
+   // --- SQLite setup + persistence ---
+   const DBKEY = 'jr_blog_sqlite_v1';
+   let SQL, db;
+ 
+   async function loadDb() {
+     SQL = await initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/${f}` });
+     const saved = await idbGet(DBKEY);
+     db = saved ? new SQL.Database(new Uint8Array(saved)) : new SQL.Database();
+     // Init schema
+     db.run(`
+       CREATE TABLE IF NOT EXISTS posts (
+         id TEXT PRIMARY KEY,
+         title TEXT,
+         body TEXT,
+         tags TEXT,
+         status TEXT,            -- draft|review|publish|trash
+         created_at TEXT,
+         updated_at TEXT,
+         deleted_at TEXT
+       );
+       CREATE INDEX IF NOT EXISTS idx_posts_status ON posts(status);
+       CREATE INDEX IF NOT EXISTS idx_posts_created ON posts(created_at);
+     `);
+     // Auto-purge trash older than 30 days
+     const cutoff = new Date(Date.now() - 30*24*60*60*1000).toISOString();
+     db.run(`DELETE FROM posts WHERE status='trash' AND deleted_at < ?`, [cutoff]);
+     await persistDb();
+   }
+ 
+   async function persistDb() {
+     const data = db.export(); // Uint8Array
+     await idbSet(DBKEY, data);
+   }
+ 
+   function uuid() { return crypto.randomUUID ? crypto.randomUUID() : 'id-' + Math.random().toString(36).slice(2); }
+   function nowISO() { return new Date().toISOString(); }
+ 
+   // --- Data API ---
+   const Data = {
+     all({ q='', status='all' }={}) {
+       let sql = `SELECT * FROM posts`;
+       const params = [];
+       const where = [];
+       if (status && status!=='all') { where.push(`status = ?`); params.push(status); }
+       if (q) { where.push(`(LOWER(title) LIKE ? OR LOWER(body) LIKE ? OR LOWER(tags) LIKE ?)`); params.push('%'+q.toLowerCase()+'%','%'+q.toLowerCase()+'%','%'+q.toLowerCase()+'%'); }
+       if (where.length) sql += ' WHERE ' + where.join(' AND ');
+       sql += ' ORDER BY datetime(created_at) DESC';
+       const stmt = db.prepare(sql, params);
+       const rows = [];
+       while (stmt.step()) rows.push(stmt.getAsObject());
+       stmt.free();
+       return rows;
+     },
+     get(id) {
+       const stmt = db.prepare(`SELECT * FROM posts WHERE id=?`, [id]);
+       const row = stmt.step() ? stmt.getAsObject() : null;
+       stmt.free(); return row;
+     },
+     create({ title='', body='', tags='', status='draft' }) {
+       const id = uuid(), ts = nowISO();
+       db.run(`INSERT INTO posts (id,title,body,tags,status,created_at,updated_at,deleted_at) VALUES (?,?,?,?,?,?,?,NULL)`,
+         [id,title,body,tags,status,ts,ts]);
+       return id;
+     },
+     update(id, fields) {
+       const cur = Data.get(id); if (!cur) return;
+       const next = { ...cur, ...fields, updated_at: nowISO() };
+       db.run(`UPDATE posts SET title=?, body=?, tags=?, status=?, updated_at=?, deleted_at=? WHERE id=?`,
+         [next.title, next.body, next.tags, next.status, next.updated_at, next.deleted_at, id]);
+     },
+     trash(id) {
+       const ts = nowISO();
+       db.run(`UPDATE posts SET status='trash', deleted_at=? WHERE id=?`, [ts, id]);
+     },
+     purgeTrashOld() {
+       const cutoff = new Date(Date.now() - 30*24*60*60*1000).toISOString();
+       db.run(`DELETE FROM posts WHERE status='trash' AND deleted_at < ?`, [cutoff]);
+     }
+   };
+ 
+   // --- React Components ---
+   function Badge({ children }) {
+     return <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-xs border-slate-300 dark:border-slate-700">{children}</span>;
+   }
+ 
+   function Toolbar({ onEdit, onExport, onMove, onDelete, canEdit=true }) {
+     return (
+       <div className="no-print flex gap-2">
+         <button onClick={onEdit} disabled={!canEdit} className="px-3 py-1 rounded-lg border border-slate-300 dark:border-slate-700 disabled:opacity-40">Edit</button>
+         <button onClick={onExport} className="px-3 py-1 rounded-lg border border-slate-300 dark:border-slate-700">Export PDF</button>
+         <button onClick={onMove} className="px-3 py-1 rounded-lg border border-slate-300 dark:border-slate-700">Move</button>
+         <button onClick={onDelete} className="px-3 py-1 rounded-lg bg-red-600 text-white">Delete</button>
+       </div>
+     );
+   }
+ 
+   function Editor({ initial, onSave, onCancel, autoFocus=false }) {
+     const [title, setTitle] = useState(initial?.title || '');
+     const [body, setBody] = useState(initial?.body || '');
+     const [tags, setTags] = useState(initial?.tags || '');
+     const [status, setStatus] = useState(initial?.status || 'draft');
+     const [lastType, setLastType] = useState(Date.now());
+     const [showTimestampSuggest, setShowTimestampSuggest] = useState(false);
+     const titleRef = useRef(null);
+     const bodyRef = useRef(null);
+ 
+     useEffect(() => {
+       if (autoFocus) {
+         // focus title first; if empty, focus title, otherwise focus body
+         if (titleRef.current) {
+           titleRef.current.focus();
+           // place caret at end
+           const len = titleRef.current.value.length;
+           titleRef.current.setSelectionRange(len, len);
+         } else if (bodyRef.current) {
+           bodyRef.current.focus();
+         }
+       }
+     }, [autoFocus]);
+ 
+     // Idle >60s → suggest timestamp
+     useEffect(() => {
+       const t = setInterval(() => {
+         if (Date.now() - lastType > 60000) setShowTimestampSuggest(true);
+       }, 10000);
+       return () => clearInterval(t);
+     }, [lastType]);
+ 
+     function insertTimestamp() {
+       const stamp = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+       setBody(b => (b ? (b + `\n\n— ${stamp}`) : `— ${stamp}`));
+       setShowTimestampSuggest(false);
+     }
+ 
+     useEffect(() => {
+       function onKey(e) {
+         if (e.key === 'Tab' && showTimestampSuggest) {
+           e.preventDefault(); insertTimestamp();
+         }
+       }
+       window.addEventListener('keydown', onKey);
+       return () => window.removeEventListener('keydown', onKey);
+     }, [showTimestampSuggest]);
+ 
+     function save() { onSave({ title, body, tags, status }); }
+     return (
+       <div className="rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-4 space-y-3">
+         <div className="flex gap-2">
+           <input ref={titleRef} className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700" placeholder="Post title"
+                  value={title} onChange={e => { setTitle(e.target.value); setLastType(Date.now()); }}/>
+           <select className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700" value={status} onChange={e=>setStatus(e.target.value)}>
+             <option value="draft">Draft</option>
+             <option value="review">Review</option>
+             <option value="publish">Publish</option>
+           </select>
+         </div>
+         <textarea ref={bodyRef} className="w-full min-h-[260px] leading-7 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 font-sans"
+                   placeholder="Write in Markdown or plain text…" value={body}
+                   onChange={e => { setBody(e.target.value); setLastType(Date.now()); }}></textarea>
+         <input className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700" placeholder="tags (comma-separated)"
+                value={tags} onChange={e => setTags(e.target.value)} />
+         {showTimestampSuggest && (
+           <div className="text-xs text-slate-500">Idle detected — press <kbd className="border px-1 rounded">Tab</kbd> to insert timestamp.</div>
+         )}
+         <div className="flex gap-2 justify-end">
+           <button onClick={onCancel} className="px-3 py-1 rounded-lg border border-slate-300 dark:border-slate-700">Cancel</button>
+           <button onClick={() => onSave({ title, body, tags, status })} className="px-3 py-1 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900">Save</button>
+         </div>
+       </div>
+     );
+   }
+ 
+   function PostCard({ post, onEdit, onExport, onMove, onDelete }) {
+     const created = new Date(post.created_at);
+     const mins = Math.max(1, Math.round((post.body.split(/\s+/).length || 200)/200)); // ~200wpm
+     return (
+       <article className="print-prose rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-5 space-y-4">
+         <div className="flex items-start justify-between gap-3">
+           <div>
+             <h1 className="font-serif text-2xl">{post.title || '(Untitled)'}</h1>
+             <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
+               <span>{created.toLocaleDateString('en-US', { dateStyle:'medium'})}</span>
+               <span>•</span><span>{mins} min read</span>
+               {post.tags && post.tags.split(',').slice(0,3).map(t => <Badge key={t.trim()}>{t.trim()}</Badge>)}
+               <Badge>{post.status}</Badge>
+             </div>
+           </div>
+           <Toolbar onEdit={onEdit} onExport={onExport} onMove={onMove} onDelete={onDelete} />
+         </div>
+         <div className="prose dark:prose-invert max-w-none">
+           {post.body.split('\n').map((line,i)=> line.startsWith('> ') ? <blockquote key={i} className="border-l-4 pl-4 italic">{line.slice(2)}</blockquote>
+             : line.startsWith('# ') ? <h2 key={i} className="font-serif text-xl mt-4">{line.slice(2)}</h2>
+             : line.startsWith('## ') ? <h3 key={i} className="font-serif text-lg mt-3">{line.slice(3)}</h3>
+             : <p key={i}>{line}</p>)}
+         </div>
+       </article>
+     );
+   }
+ 
+   function App() {
+     const [ready, setReady] = useState(false);
+     const [list, setList] = useState([]);
+     const [status, setStatus] = useState('all');
+     const [q, setQ] = useState('');
+     const [selected, setSelected] = useState(null);
+     const [editing, setEditing] = useState(false);
+     const lastCreatedRef = useRef(null); // track freshly-created id to autofocus editor 
+ 
+     async function refresh() {
+       const rows = Data.all({ q, status });
+       setList(rows);
+       if (selected) {
+         const fresh = Data.get(selected.id);
+         setSelected(fresh);
+       }
+       await persistDb();
+     }
+ 
+     useEffect(() => { (async () => { await loadDb(); setReady(true); })(); }, []);
+     useEffect(() => { if (ready) refresh(); }, [ready, q, status]);
+ 
+     // Hook up top controls (search/filter stay same)
+     useEffect(() => {
+       const s = document.getElementById('searchInput');
+       const f = document.getElementById('filterSelect');
+       s.addEventListener('input', () => setQ(s.value));
+       f.addEventListener('change', () => setStatus(f.value));
+       // expose onNew as a global function so the header button (outside React) can call it reliably
+       window.__jr_new = () => { onNew(); };
+       return () => {
+         s.replaceWith(s.cloneNode(true));
+         f.replaceWith(f.cloneNode(true));
+         delete window.__jr_new;
+       };
+     }, []);
+ 
+     // Keyboard shortcuts
+     useEffect(() => {
+       function onKey(e){
+         if (e.key==='N' || e.key==='n') onNew();
+         if ((e.key==='E' || e.key==='e') && selected) setEditing(true);
+         if ((e.key==='P' || e.key==='p') && selected) { Data.update(selected.id,{ status:'publish' }); refresh(); }
+       }
+       window.addEventListener('keydown', onKey);
+       return () => window.removeEventListener('keydown', onKey);
+     }, [selected]);
+ 
+     async function onNew() {
+       // ensure DB loaded
+       if (!ready) {
+         try { await loadDb(); setReady(true); } catch (e) { console.error('DB load failed', e); }
+       }
+       // create post, persist, select and open editor
+       const id = Data.create({ title:'', body:'', tags:'', status:'draft' });
+       lastCreatedRef.current = id;
+       try {
+         await persistDb();
+       } catch (e) { console.error('persist failed', e); }
+       setSelected(Data.get(id));
+       setEditing(true);
+       refresh();
+     }
+ 
+     function onSave(fields) {
+       Data.update(selected.id, fields);
+       // created posts no longer considered "fresh"
+       if (lastCreatedRef.current === selected.id) lastCreatedRef.current = null;
+       setEditing(false);
+       refresh();
+     }
+ 
+     return (
+       <div className="space-y-6">
+         {/* List */}
+         <section className="no-print grid gap-2">
+           {list.length === 0 && (
+             <div className="text-center text-slate-500 py-8">No posts yet. Press <kbd className="border px-1 rounded">N</kbd> to create one.</div>
+           )}
+           {list.map(post => (
+             <button key={post.id}
+               onClick={()=>{ setSelected(post); setEditing(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+               className={"text-left px-3 py-2 rounded-xl border transition " + (selected?.id===post.id ? "border-slate-900 dark:border-white" : "border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600")}>
+               <div className="flex items-center justify-between">
+                 <h3 className="font-serif">{post.title || '(Untitled)'}</h3>
+                 <div className="flex items-center gap-2 text-xs text-slate-500">
+                   <span>{new Date(post.created_at).toLocaleDateString('en-US', { dateStyle:'medium'})}</span>
+                   <Badge>{post.status}</Badge>
+                 </div>
+               </div>
+               {post.tags && <div className="mt-1 text-xs text-slate-500">{post.tags}</div>}
+               <p className="line-clamp-2 text-sm mt-1 text-slate-600 dark:text-slate-300">{post.body.replace(/\n/g,' ').slice(0,220)}</p>
+             </button>
+           ))}
+         </section>
+ 
+         {/* Selected Post */}
+         {selected && !editing && (
+           <PostCard post={selected}
+             onEdit={()=>setEditing(true)}
+             onExport={() => window.print()}
+             onMove={() => {
+               const cur = selected.status || 'draft';
+               const next = prompt(`Move to which status? (draft, review, publish)`, cur);
+               if (next && ['draft','review','publish'].includes(next)) {
+                 Data.update(selected.id, { status: next, deleted_at: null });
+                 refresh();
+               }
+             }}
+             onDelete={()=>{
+               if (!confirm('Move this post to Trash? It will auto-purge after 30 days.')) return;
+               Data.trash(selected.id);
+               setEditing(false);
+               setSelected(null);
+               refresh();
+             }}/>
+         )}
+ 
+         {/* Editor */}
+         {selected && editing && (
+           <Editor initial={selected} onSave={onSave} onCancel={()=>setEditing(false)} autoFocus={selected?.id === lastCreatedRef.current} />
+         )}
+       </div>
+     );
+   }
+ 
+   // Mount
+   ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+ })();
+</script>
+</body>
+</html>
+</body>
+</html>

@@ -1,3 +1,6 @@
+import KAIAChat from '../../KAIAChat';
+
+
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -73,6 +76,7 @@ export default function Blog() {
           </article>
         ))}
       </div>
+       <KAIAChat />
     </main>
   );
 }
