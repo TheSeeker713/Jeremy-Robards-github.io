@@ -38,7 +38,7 @@
     */
     :root {
       /* Publicly available koi/lilypad image (Unsplash) */
-      --bg-url: url('https://images.unsplash.com/photo-1591123120675-8f3a7a457769?q=80&w=1920&auto=format&fit=crop');
+      --bg-url: url('/src/assets/koi.png');
       /* Similar options you can try:
       url('https://images.unsplash.com/photo-1530908295418-a12e326966ba?q=80&w=1920&auto=format&fit=crop');
       url('https://images.unsplash.com/photo-1591123120675-8f3a7a457769?q=80&w=1920&auto=format&fit=crop');
@@ -115,8 +115,14 @@
         </div>
       </div>
       <div class="relative">
-        <div class="aspect-[16/10] rounded-2xl border border-slate-200/70 dark:border-slate-800/70 bg-white/50 dark:bg-black/30 flex items-center justify-center backdrop-blur-sm">
-          <span class="text-slate-600 dark:text-slate-300 text-sm">Hero visual (optional)</span>
+        <!-- hero GIF: uses the gif at src/assets/dev1.gif (served as /src/assets/dev1.gif) -->
+        <div class="aspect-[16/10] rounded-2xl border border-slate-200/70 dark:border-slate-800/70 overflow-hidden bg-white/50 dark:bg-black/30 backdrop-blur-sm">
+          <img
+            src="/src/assets/dev1.gif"
+            alt="Development preview animation"
+            loading="lazy"
+            class="w-full h-full object-cover"
+          />
         </div>
       </div>
     </div>
