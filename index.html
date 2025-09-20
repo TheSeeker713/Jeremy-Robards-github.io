@@ -117,12 +117,13 @@
       </div>
       <div class="relative z-10">
         <div class="aspect-[16/10] rounded-2xl border border-slate-200/70 dark:border-slate-800/70 overflow-hidden bg-white/50 dark:bg-black/30 backdrop-blur-sm">
+          <!-- start with no src to avoid immediate 404s; JS will set the working URL -->
           <img
-            src="https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/src/assets/dev1.gif"
+            id="heroGif"
+            src=""
             alt="Development preview animation"
             loading="lazy"
             class="w-full h-full object-cover"
-            onerror="console.error('Failed to load GIF:', this.src)"
           />
         </div>
       </div>
@@ -364,36 +365,55 @@
     loadBlog();
   </script>
 
-  <!-- Replace the diagnostic script with an asset probe + loader -->
+  <!-- Replace the diagnostic script with an improved asset probe + loader -->
   <script>
   (function(){
-    // Candidates for koi.png (try relative paths first, then raw.githubusercontent main/master)
+    // Try relative / public / src/assets first (works with Vite / Pages),
+    // then fall back to raw.githubusercontent (main/master) with both possible paths and casings.
     const koiCandidates = [
+      // root /public (GitHub Pages serves public files at site root)
+      'koi.png',
+      '/koi.png',
+      'public/koi.png',
+      '/public/koi.png',
+      // source folder (in case you are serving raw files)
       'src/assets/koi.png',
       '/src/assets/koi.png',
+      // raw.githubusercontent (branch variants)
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/public/koi.png',
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/master/public/koi.png',
       'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/src/assets/koi.png',
       'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/master/src/assets/koi.png'
     ];
 
-    // Candidates for dev GIF — try both casings
     const gifCandidates = [
-      'src/assets/Dev1.gif',
-      'src/assets/dev1.gif',
-      '/src/assets/Dev1.gif',
-      '/src/assets/dev1.gif',
+      // root / public
+      'Dev1.gif', 'dev1.gif', '/Dev1.gif', '/dev1.gif',
+      'public/Dev1.gif', 'public/dev1.gif', '/public/Dev1.gif', '/public/dev1.gif',
+      // src assets
+      'src/assets/Dev1.gif', 'src/assets/dev1.gif', '/src/assets/Dev1.gif', '/src/assets/dev1.gif',
+      // raw GitHub (both branch names and both casings)
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/public/Dev1.gif',
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/public/dev1.gif',
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/master/public/Dev1.gif',
+      'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/master/public/dev1.gif',
       'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/src/assets/Dev1.gif',
       'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/src/assets/dev1.gif',
       'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/master/src/assets/Dev1.gif',
       'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/master/src/assets/dev1.gif'
     ];
 
-    function probe(url){
+    function probe(url, timeout = 5000){
       return new Promise(resolve => {
         const img = new Image();
-        img.onload = () => resolve({ ok: true, url });
-        img.onerror = () => resolve({ ok: false, url });
-        // small timeout to avoid hanging
-        const t = setTimeout(() => { img.src = ''; resolve({ ok:false, url }); }, 6000);
+        let done = false;
+        const onOk = () => { if (done) return; done = true; cleanup(); resolve({ ok: true, url }); };
+        const onErr = () => { if (done) return; done = true; cleanup(); resolve({ ok: false, url }); };
+        const cleanup = () => { img.onload = img.onerror = null; };
+        img.onload = onOk;
+        img.onerror = onErr;
+        // give up if it takes too long
+        const t = setTimeout(() => { if (done) return; done = true; cleanup(); resolve({ ok:false, url }); }, timeout);
         img.src = url;
       });
     }
@@ -409,28 +429,26 @@
     }
 
     async function initAssets(){
-      console.log('Probing assets for koi.png and Dev1.gif ...');
-
+      console.log('Asset probe: probing koi and hero gif candidates...');
       const bgUrl = await findFirst(koiCandidates);
       if (bgUrl) {
         document.querySelector('.bg-fixed-layer').style.backgroundImage = `url('${bgUrl}')`;
-        console.log('Using background:', bgUrl);
+        console.log('Asset probe: using background', bgUrl);
       } else {
-        console.warn('No background koi.png found from candidates. Check paths or branch.');
+        console.warn('Asset probe: koi.png not found. Check file presence and casing in repo/public/src.');
       }
 
       const gifUrl = await findFirst(gifCandidates);
-      const heroImg = document.querySelector('img[alt="Development preview animation"]');
+      const heroImg = document.getElementById('heroGif');
       if (gifUrl && heroImg) {
         heroImg.src = gifUrl;
-        console.log('Using hero GIF:', gifUrl);
+        console.log('Asset probe: using hero GIF', gifUrl);
       } else {
-        if (!gifUrl) console.warn('No hero GIF found from candidates. Check filename casing / branch.');
-        if (!heroImg) console.warn('Hero img element not found in DOM.');
+        if (!gifUrl) console.warn('Asset probe: Dev1.gif not found from candidates.');
+        if (!heroImg) console.warn('Asset probe: hero img element not found.');
       }
     }
 
-    // run after DOM ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initAssets);
     } else {
