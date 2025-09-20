@@ -88,7 +88,7 @@
         <a href="#links" class="hover:opacity-80">Links</a>
         <a href="#contact" class="hover:opacity-80">Contact</a>
       </nav>
-      <button id="themeToggle" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm card-hover bg-white/70 dark:bg-white/5">
+      <button id="themeToggle" type="button" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm card-hover bg-white/70 dark:bg-white/5">
         <span id="themeLabel">Dark</span>
         <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0-1.06-1.06M6.696 6.696l-1.06-1.06"/></svg>
       </button>
@@ -205,7 +205,7 @@
       <div class="md:col-span-2 space-y-3 bg-white/60 dark:bg-black/20 border border-slate-200/60 dark:border-slate-800/60 rounded-2xl p-5 backdrop-blur-sm">
         <p>
   Jeremy Robards is a <strong>Certified AI Engineer</strong> and <strong>Full-Stack Web Developer</strong>.  
-  he doesn't just write code he designs and deliver intelligent, scalable solutions that save time, cut costs, and create measurable impact.
+  He doesn't just write code he designs and deliver intelligent, scalable solutions that save time, cut costs, and create measurable impact.
 </p>
 
 <p>
@@ -461,6 +461,38 @@
       initAssets();
     }
   })();
+  </script>
+
+  <!-- debug button + tiny error logger -->
+  <div id="dbgBtn" style="position:fixed;right:14px;bottom:14px;z-index:9999;">
+    <button id="debugShow" type="button"
+      style="background:#111827;color:#fff;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.08);box-shadow:0 6px 18px rgba(2,6,23,.25);font-size:13px;">
+      Debug
+    </button>
+  </div>
+
+  <script>
+    // small runtime helpers for debugging visibility issues
+    window.addEventListener('error', function(evt){
+      console.error('Global error:', evt.message, evt.error);
+      // temporary user-visible notice so you know something failed
+      // eslint-disable-next-line no-alert
+      alert('JS error: '+evt.message);
+    });
+
+    document.getElementById('debugShow').addEventListener('click', () => {
+      // show a quick diagnostic overlay
+      const info = [
+        'Theme (html.classList): ' + document.documentElement.className,
+        'Theme label text: ' + (document.getElementById('themeLabel')?.textContent || 'n/a'),
+        'Header z-index: ' + getComputedStyle(document.querySelector('header')).zIndex,
+        'bg-fixed-layer z-index: ' + getComputedStyle(document.querySelector('.bg-fixed-layer')).zIndex,
+        'Hero GIF src: ' + (document.getElementById('heroGif')?.src || 'none')
+      ].join('\n');
+      // eslint-disable-next-line no-alert
+      alert(info);
+      console.log(info);
+    });
   </script>
 </body>
 </html>
