@@ -212,8 +212,8 @@
   His specialty is turning complex problems into elegant, high-performance applications that ship fast and scale with ease.  
   <p>
     From AI-powered automation and data workflows to full-stack web systems, his work is
-    <!-- use a relative path; JS will probe and navigate or fall back -->
-    <a id="secret713" href="713/index.html" class="inline-flex items-center rounded-xl bg-[var(--leaf)] text-white px-3 py-1.5 text-sm font-semibold card-hover" aria-label="Secret link 713">
+    <!-- use a site-root path; JS will probe and navigate or fall back -->
+    <a id="secret713" href="/713/" class="inline-flex items-center rounded-xl bg-[var(--leaf)] text-white px-3 py-1.5 text-sm font-semibold card-hover" aria-label="Secret link 713">
       secret link — 713
     </a>
     built to outperform competitors and stand up to real-world demands.
@@ -464,37 +464,7 @@
   })();
   </script>
 
-  <!-- debug button + tiny error logger -->
-  <div id="dbgBtn" style="position:fixed;right:14px;bottom:14px;z-index:9999;">
-    <button id="debugShow" type="button"
-      style="background:#111827;color:#fff;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.08);box-shadow:0 6px 18px rgba(2,6,23,.25);font-size:13px;">
-      Debug
-    </button>
-  </div>
-
-  <script>
-    // small runtime helpers for debugging visibility issues
-    window.addEventListener('error', function(evt){
-      console.error('Global error:', evt.message, evt.error);
-      // temporary user-visible notice so you know something failed
-      // eslint-disable-next-line no-alert
-      alert('JS error: '+evt.message);
-    });
-
-    document.getElementById('debugShow').addEventListener('click', () => {
-      // show a quick diagnostic overlay
-      const info = [
-        'Theme (html.classList): ' + document.documentElement.className,
-        'Theme label text: ' + (document.getElementById('themeLabel')?.textContent || 'n/a'),
-        'Header z-index: ' + getComputedStyle(document.querySelector('header')).zIndex,
-        'bg-fixed-layer z-index: ' + getComputedStyle(document.querySelector('.bg-fixed-layer')).zIndex,
-        'Hero GIF src: ' + (document.getElementById('heroGif')?.src || 'none')
-      ].join('\n');
-      // eslint-disable-next-line no-alert
-      alert(info);
-      console.log(info);
-    });
-  </script>
+  <!-- debug helpers removed for production -->
 
   <!-- Add this small probe-and-navigate helper near the end of the file (keep after other scripts) -->
   <script>
@@ -502,8 +472,8 @@
     const a = document.getElementById('secret713');
     if (!a) return;
 
-    // Fallback raw URL (update branch if necessary)
-    const rawFallback = 'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/public/713/';
+  // Fallback raw URL (update branch if necessary)
+  const rawFallback = 'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/public/713/index.html';
 
     async function exists(url){
       try {
