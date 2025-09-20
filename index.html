@@ -212,7 +212,8 @@
   His specialty is turning complex problems into elegant, high-performance applications that ship fast and scale with ease.  
   <p>
     From AI-powered automation and data workflows to full-stack web systems, his work is
-    <a href="https://www.jeremyrobards.com/713/713.html" class="inline-flex items-center rounded-xl bg-[var(--leaf)] text-white px-3 py-1.5 text-sm font-semibold card-hover" aria-label="Secret link 713">
+    <!-- use a relative path; JS will probe and navigate or fall back -->
+    <a id="secret713" href="713/713.html" class="inline-flex items-center rounded-xl bg-[var(--leaf)] text-white px-3 py-1.5 text-sm font-semibold card-hover" aria-label="Secret link 713">
       secret link — 713
     </a>
     built to outperform competitors and stand up to real-world demands.
@@ -493,6 +494,63 @@
       alert(info);
       console.log(info);
     });
+  </script>
+
+  <!-- Add this small probe-and-navigate helper near the end of the file (keep after other scripts) -->
+  <script>
+  (function(){
+    const a = document.getElementById('secret713');
+    if (!a) return;
+
+    // Fallback raw URL (update branch if necessary)
+    const rawFallback = 'https://raw.githubusercontent.com/TheSeeker713/www.jeremyrobards.com/main/public/713/713.html';
+
+    async function exists(url){
+      try {
+        // try a HEAD request first (faster/no body)
+        const res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+        return res.ok;
+      } catch (err) {
+        // some environments (file://) or CORS may block HEAD; try GET as fallback
+        try {
+          const r2 = await fetch(url, { method: 'GET', cache: 'no-store' });
+          return r2.ok;
+        } catch (e) {
+          return false;
+        }
+      }
+    }
+
+    a.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      const href = a.getAttribute('href');
+
+      // Try the relative href first
+      console.log('Secret link probe →', href);
+      const ok = await exists(href);
+      if (ok) {
+        // navigate in same tab
+        window.location.href = href;
+        return;
+      }
+
+      // Try site-root absolute variant (common when deployed)
+      const rootVariant = '/' + href.replace(/^\/+/,'')
+      console.log('Trying root variant →', rootVariant);
+      if (await exists(rootVariant)) { window.location.href = rootVariant; return; }
+
+      // Try raw.githubusercontent fallback (opens in new tab)
+      console.log('Trying raw fallback →', rawFallback);
+      if (await exists(rawFallback)) {
+        window.open(rawFallback, '_blank');
+        return;
+      }
+
+      // Nothing found: inform the user
+      // eslint-disable-next-line no-alert
+      alert('Sorry — the secret page is not available on the server yet (404).\n\nCheck that public/713/713.html is deployed to your Pages branch or try again after deployment.');
+    });
+  })();
   </script>
 </body>
 </html>
