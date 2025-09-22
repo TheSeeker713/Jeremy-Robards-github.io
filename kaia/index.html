@@ -94,12 +94,18 @@
       function show() {
         wrapper.setAttribute('aria-hidden','false');
         wrapper.classList.add('kaia-welcome-show');
+        // inline style fallback in case CSS failed to parse elsewhere
+        dialog.style.transform = 'translateY(0) scale(1)';
+        dialog.style.opacity = '1';
+        dialog.style.transition = 'transform 260ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease';
         setTimeout(()=>{ dialog.focus && dialog.setAttribute('tabindex','-1'); dialog.focus(); }, 260);
       }
 
       function hide() {
         wrapper.setAttribute('aria-hidden','true');
         wrapper.classList.remove('kaia-welcome-show');
+        dialog.style.opacity = '0';
+        dialog.style.transform = 'translateY(-10px) scale(0.98)';
       }
 
       // Close handlers: button, Escape, backdrop click

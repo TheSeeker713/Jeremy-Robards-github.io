@@ -6,18 +6,7 @@ body {
     color: #333;
     line-height: 1.6;
 }
-        background: linear-gradient(90deg, #10b981 0%, #06b6d4 60%) !important; /* emerald -> cyan */
-        color: #ffffff; /* white text on vivid gradient */
-    background-color: #222; /* Black background */
-    color: white; /* White text */
-    padding: 40px 20px;
-    text-align: center;
-    overflow: visible; /* allow CTA aura to be visible */
-}
-        box-shadow: 0 8px 26px rgba(16,185,129,0.16);
-        min-width: 64px; min-height: 40px; padding: 8px 16px;
-        font-size: 14px;
-        isolation: isolate; /* create stacking context so aura renders correctly */
+/* cleaned stray rules that were breaking CSS parsing */
 /* Adjust header text */
 header h1 {
     font-size: 2.5em;
