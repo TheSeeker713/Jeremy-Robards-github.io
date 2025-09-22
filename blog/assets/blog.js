@@ -1,5 +1,6 @@
 // blog.js — handles loading posts, rendering list, pagination, and post navigation
-import { getCurrentUser, onAuthChange, isAdmin } from './auth.js';
+import { hasDevAccess, onDevChange } from './auth.js';
+import db from './db.js';
 
 const POSTS_PATH = '/blog/posts.json';
 
@@ -24,8 +25,12 @@ function renderPostCard(post){
 
 export async function loadPosts(){
   const postsEl = document.getElementById('posts');
-  const posts = await fetchJSON(POSTS_PATH) || [];
-  // only published and not deleted
+  let posts = await db.getAllPosts();
+  if(!posts || posts.length===0){
+    posts = await fetchJSON(POSTS_PATH) || [];
+    // write to DB for local editing
+    for(const p of posts) await db.putPost(p);
+  }
   const visible = posts.filter(p => p.status === 'published' && !p.deleted).sort((a,b)=> new Date(b.date)-new Date(a.date));
   postsEl.innerHTML = '';
   visible.forEach(p => postsEl.appendChild(renderPostCard(p)));
@@ -45,8 +50,8 @@ export async function loadLocalPostsFallback(){
 // init
 document.addEventListener('DOMContentLoaded', async ()=>{
   const newBtn = document.getElementById('new-post-btn');
-  try{ if(isAdmin()) newBtn.classList.remove('hidden'); }catch(e){}
-  onAuthChange(()=>{ if(isAdmin()) newBtn.classList.remove('hidden'); else newBtn.classList.add('hidden'); });
+  try{ if(hasDevAccess()) newBtn.classList.remove('hidden'); }catch(e){}
+  onDevChange(a=>{ if(a) newBtn.classList.remove('hidden'); else newBtn.classList.add('hidden'); });
   await loadPosts();
 });
 

@@ -27,6 +27,7 @@
       <h2 class="text-xl font-semibold">Posts</h2>
       <div>
         <a id="new-post-btn" class="hidden inline-block bg-blue-600 text-white px-3 py-1 rounded" href="/blog/editor.html">New Post</a>
+        <button id="export-json" class="ml-2 inline-block bg-gray-200 text-gray-900 px-3 py-1 rounded hidden">Export JSON</button>
       </div>
     </div>
 
@@ -43,7 +44,15 @@
 
     <script type="module">
       import { enableThemeToggle } from './assets/blog-utils.js';
+      import { hasDevAccess, onDevChange } from './assets/auth.js';
+      import db from './assets/db.js';
       enableThemeToggle('theme-toggle');
+
+      async function exportJSON(){ const posts = await db.getAllPosts(); const blob = new Blob([JSON.stringify(posts, null, 2)],{type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'posts.json'; document.body.appendChild(a); a.click(); a.remove(); }
+      const expBtn = document.getElementById('export-json');
+      expBtn.addEventListener('click', exportJSON);
+      function updateDevUI(){ if(hasDevAccess()){ expBtn.classList.remove('hidden'); } else expBtn.classList.add('hidden'); }
+      onDevChange(updateDevUI); updateDevUI();
     </script>
 
 </body>

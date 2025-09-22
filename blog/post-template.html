@@ -26,9 +26,29 @@
     </article>
     <nav class="mt-6 flex justify-between" id="nav-links"></nav>
   </main>
-  <script>
-    // This template is intended to be copied and have the post content injected.
-    // For static sites, generate /blog/<slug>/index.html from your markdown/source.
+  <script type="module">
+    import db from './assets/db.js';
+    import { hasDevAccess } from './assets/auth.js';
+    const rootTitle = document.getElementById('post-title');
+    const rootMeta = document.getElementById('post-meta');
+    const rootContent = document.getElementById('post-content');
+    const nav = document.getElementById('nav-links');
+    (async function(){
+      // slug from URL (/blog/<slug>/)
+      const parts = location.pathname.split('/').filter(Boolean);
+      const slug = parts[parts.length-1];
+      const posts = await db.getAllPosts();
+      const post = (posts||[]).find(p=>p.slug===slug) || posts[0];
+      if(!post){ rootContent.innerHTML = '<p>Post not found.</p>'; return; }
+      document.title = post.title + ' — Jeremy Robards';
+      rootTitle.textContent = post.title; rootMeta.textContent = `${new Date(post.date).toLocaleDateString()} — ${post.author}`;
+      rootContent.innerHTML = post.content;
+      // admin controls
+      if(hasDevAccess()){
+        nav.innerHTML = `<div><a href="/blog/editor.html?id=${post.id}" class="text-blue-600">Edit</a> <a href="#" id="delete-post" class="text-red-600 ml-3">Delete</a></div>`;
+        document.getElementById('delete-post').addEventListener('click', async (e)=>{ e.preventDefault(); if(!confirm('Delete this post?')) return; post.deleted = true; post.deletedAt = new Date().toISOString(); await db.putPost(post); alert('Moved to recycle (local DB)'); location.href='/blog/'; });
+      }
+    })();
   </script>
 </body>
 </html>

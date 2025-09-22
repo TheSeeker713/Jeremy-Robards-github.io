@@ -1,3 +1,46 @@
+// auth.js — developer-only access via padlock prompt
+// This file implements a small dev-access flow used to enable editing tools.
+
+const DEV_KEY = 'blog_dev_access_v1';
+const SECRET_ANSWER = '713';
+
+export function hasDevAccess(){ try{ return localStorage.getItem(DEV_KEY) === '1'; }catch(e){return false;} }
+
+export function grantDevAccess(){ try{ localStorage.setItem(DEV_KEY,'1'); dispatchChange(); }catch(e){} }
+
+export function revokeDevAccess(){ try{ localStorage.removeItem(DEV_KEY); dispatchChange(); }catch(e){} }
+
+export function requestDevAccess(promptFn = window.prompt){
+  const ans = promptFn('who has NiN like no other?');
+  if(ans === SECRET_ANSWER){ grantDevAccess(); return true; }
+  return false;
+}
+
+const listeners = new Set();
+function dispatchChange(){ listeners.forEach(cb=>{ try{ cb(hasDevAccess()); }catch(e){} }); }
+export function onDevChange(cb){ listeners.add(cb); return ()=>listeners.delete(cb); }
+
+// Auto-dispatch current state to DOM elements that expect `auth-ui` (padlock image)
+document.addEventListener('DOMContentLoaded', ()=>{
+  const authUi = document.getElementById('auth-ui');
+  if(!authUi) return;
+  function render(){
+    authUi.innerHTML = '';
+    const lock = document.createElement('img');
+    lock.src = '/blog/assets/padlock.svg';
+    lock.alt = hasDevAccess() ? 'Developer access unlocked' : 'Developer access locked';
+    lock.style.width = '28px'; lock.style.cursor = 'pointer';
+    lock.addEventListener('click', ()=>{
+      if(hasDevAccess()){ if(confirm('Revoke developer access?')){ revokeDevAccess(); render(); } return; }
+      const ok = requestDevAccess(); if(ok) { alert('Developer access granted'); render(); } else alert('Incorrect');
+    });
+    authUi.appendChild(lock);
+  }
+  render();
+  onDevChange(()=>render());
+});
+
+export default { hasDevAccess, requestDevAccess, grantDevAccess, revokeDevAccess, onDevChange };
 // auth.js — simple auth management using users.json and localStorage
 // Passwords are hashed client-side (SHA-256) before storing in users.json (simulated)
 

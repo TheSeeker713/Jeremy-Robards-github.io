@@ -14,24 +14,24 @@
   <header class="max-w-4xl mx-auto p-6 flex justify-between items-center"><h1 class="text-2xl font-bold">Recycle Bin</h1><div id="auth-ui"></div></header>
   <main class="max-w-4xl mx-auto p-6" id="recycle-root"></main>
   <script type="module">
-    import blog from '/blog/assets/blog.js';
-    import { getCurrentUser, isAdmin } from '/blog/assets/auth.js';
+    import db from '/blog/assets/db.js';
+    import { hasDevAccess } from '/blog/assets/auth.js';
     const root = document.getElementById('recycle-root');
     async function render(){
-      const posts = await blog.fetchJSON('/blog/posts.json') || blog.loadLocalPostsFallback() || [];
-      if(!isAdmin()){ root.innerHTML = '<p>Access denied. Recycle bin is admin-only.</p>'; return; }
+      if(!hasDevAccess()){ root.innerHTML = '<p>Access denied. Recycle bin is developer-only.</p>'; return; }
+      const posts = await db.getAllPosts() || [];
       const deleted = posts.filter(p=>p.deleted);
       root.innerHTML = '';
       deleted.forEach(d=>{
         const el = document.createElement('div'); el.className='p-3 bg-gray-50 dark:bg-gray-800 rounded mb-2';
         el.innerHTML = `<strong>${d.title}</strong> — ${d.date} <div class="mt-2"><a href="#" class="restore text-blue-600 mr-2">Restore</a></div>`;
-        el.querySelector('.restore').addEventListener('click', async (e)=>{ e.preventDefault(); if(!isAdmin()){ alert('Admin only'); return; } d.deleted = false; d.deletedAt = null; const all = (await blog.fetchJSON('/blog/posts.json')||blog.loadLocalPostsFallback()||[]); const idx = all.findIndex(p=>p.id===d.id); if(idx>-1) all[idx]=d; await blog.savePosts(all); alert('Restored (local only)'); render(); });
+        el.querySelector('.restore').addEventListener('click', async (e)=>{ e.preventDefault(); d.deleted = false; d.deletedAt = null; await db.putPost(d); alert('Restored (local DB)'); render(); });
         root.appendChild(el);
       });
     }
     render();
     // auto-clean older than 30 days (from deletedAt)
-    (async function clean(){ const posts = await blog.fetchJSON('/blog/posts.json')||blog.loadLocalPostsFallback()||[]; const now = Date.now(); const threshold = 30*24*60*60*1000; const pruned = posts.filter(p=>!(p.deleted && p.deletedAt && (now - new Date(p.deletedAt).getTime() > threshold))); if(pruned.length !== posts.length){ await blog.savePosts(pruned); } })();
+    (async function clean(){ const posts = await db.getAllPosts()||[]; const now = Date.now(); const threshold = 30*24*60*60*1000; const pruned = posts.filter(p=>!(p.deleted && p.deletedAt && (now - new Date(p.deletedAt).getTime() > threshold))); if(pruned.length !== posts.length){ for(const p of posts) if(p.deleted && p.deletedAt && (now - new Date(p.deletedAt).getTime() > threshold)) await db.deletePost(p.id); } })();
   </script>
 </body>
 </html>
