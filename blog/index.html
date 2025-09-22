@@ -28,7 +28,7 @@
       <h2 class="text-xl font-semibold">Posts</h2>
       <div>
         <a id="new-post-btn" class="hidden inline-block bg-blue-600 text-white px-3 py-1 rounded" href="/blog/editor.html">New Post</a>
-        <button id="write-post-btn" class="inline-block bg-green-600 text-white px-3 py-1 rounded ml-2">Write a post</button>
+  <button id="write-post-btn" class="inline-block bg-green-600 text-white px-3 py-1 rounded ml-2">View/Edit Drafts</button>
         <button id="export-json" class="ml-2 inline-block bg-gray-200 text-gray-900 px-3 py-1 rounded hidden">Export JSON</button>
       </div>
     </div>
@@ -63,10 +63,10 @@
       // Write button triggers developer unlock prompt
       const writeBtn = document.getElementById('write-post-btn');
       writeBtn.addEventListener('click', async ()=>{
-        if(hasDevAccess()){ location.href = '/blog/editor.html'; return; }
+        if(hasDevAccess()){ location.href = '/blog/drafts/'; return; }
         const m = await import('./assets/auth.js');
         const ok = await m.requestDevAccess();
-        if(ok){ alert('Developer access granted'); location.href = '/blog/editor.html'; }
+        if(ok){ alert('Developer access granted'); location.href = '/blog/drafts/'; }
         else alert('Access denied');
       });
     </script>
