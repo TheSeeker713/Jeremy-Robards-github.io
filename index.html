@@ -70,6 +70,7 @@
     .prose :where(a){ color: var(--leaf); }
     .prose :where(a):hover{ color: var(--leaf-600); }
   </style>
+  <link rel="stylesheet" href="/src/Styles.css" />
 </head>
 <body class="bg-white text-[var(--ink)] dark:bg-[var(--pond)] dark:text-slate-100 antialiased">
   <!-- Background (static, 50% opacity) -->
@@ -88,7 +89,11 @@
         <a href="#links" class="hover:opacity-80">Links</a>
         <a href="#contact" class="hover:opacity-80">Contact</a>
       </nav>
-      <button id="themeToggle" type="button" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm card-hover bg-white/70 dark:bg-white/5">
+        <a href="/kaia/" class="kaia-cta" aria-label="KAIA">
+          <span class="kaia-aura" aria-hidden="true"></span>
+          <span class="kaia-label">KAIA</span>
+        </a>
+        <button id="theme-toggle" type="button" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm card-hover bg-white/70 dark:bg-white/5">
         <span id="themeLabel">Dark</span>
         <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0-1.06-1.06M6.696 6.696l-1.06-1.06"/></svg>
       </button>
@@ -140,8 +145,8 @@
       <a href="https://www.chronicleos.com" class="block rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden card-hover bg-white/70 dark:bg-black/30 backdrop-blur-sm" target="_blank" rel="noopener">
         <div class="aspect-[16/10]">
           <!-- DEV NOTE: Replace with a short animated loop when ready -->
-          <img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=1200&auto=format&fit=crop"
-               alt="ChronicleOS preview" class="w-full h-full object-cover">
+    <img src="/chronicleos.png"
+      alt="ChronicleOS preview" class="w-full h-full object-cover">
         </div>
         <div class="p-4">
           <h3 class="font-semibold">ChronicleOS</h3>
