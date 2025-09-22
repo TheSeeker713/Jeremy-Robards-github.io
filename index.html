@@ -82,7 +82,7 @@
       <a href="#" class="font-semibold tracking-tight text-lg">Jeremy Robards</a>
       <nav class="hidden sm:flex items-center gap-6 text-sm">
         <a href="#proof" class="hover:opacity-80">Projects</a>
-        <a href="#blog" class="hover:opacity-80">Blog</a>
+    <a href="/blog/" class="hover:opacity-80">Blog</a>
         <a href="#about" class="hover:opacity-80">About</a>
         <a href="#roadmap" class="hover:opacity-80">Roadmap</a>
         <a href="#links" class="hover:opacity-80">Links</a>
@@ -183,7 +183,7 @@
   <section id="blog" class="max-w-6xl mx-auto px-4 py-10">
     <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Latest Posts</h2>
     <p class="mt-2 text-slate-700 dark:text-slate-300">Three posts load from <code>/blog.json</code>. Click to read in-page.</p>
-    <div id="blogGrid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  <div id="blogGrid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
     <!-- Modal -->
     <div id="blogModal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
@@ -316,54 +316,42 @@
     document.getElementById('blogBackdrop').addEventListener('click', closeModal);
     window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    async function loadBlog() {
-      try {
-        const res = await fetch('/blog.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error('no blog.json');
-        const data = await res.json();
-        renderBlogCards((data.posts || []).slice(0,3));
-      } catch {
-        renderBlogCards([
-          {
-            id: 'cert',
-            title: 'Certified Prompt Engineer — What That Actually Means',
-            subtitle: 'Tactics I use in real projects (ChronicleOS, KAIA).',
-            date: new Date().toISOString(),
-            contentHtml: `<p>I completed a comprehensive Prompt Engineering bootcamp and apply structured prompting, system persona design, and JSON-first outputs in production work. This post breaks down patterns I ship and why they work.</p>`
-          },
-          {
-            id: 'build-fast',
-            title: 'Shipping Fast with Tailwind + Vanilla JS',
-            subtitle: 'Sane defaults, zero fluff.',
-            date: new Date().toISOString(),
-            contentHtml: `<p>My stack for simple sites: Tailwind CDN, semantic HTML, tiny JS modules, and progressive enhancement. It’s fast, portable, and maintainable.</p>`
-          },
-          {
-            id: 'chronicles',
-            title: 'ChronicleOS: Design Notes',
-            subtitle: 'Cartridge data model & reader flow.',
-            date: new Date().toISOString(),
-            contentHtml: `<p>Cartridges are JSON + media. The reader resolves scenes, choices, and assets at runtime. Future: store, trading, creator tools.</p>`
-          }
-        ]);
-      }
+    async function loadBlog(){
+      // Prefer the in-browser DB; fall back to /blog/posts.json seed
+      try{
+        const dbModule = await import('/blog/assets/db.js');
+        const posts = await dbModule.getAllPosts();
+        if(posts && posts.length>0){
+          const visible = posts.filter(p=>p.status==='published' && !p.deleted).sort((a,b)=>new Date(b.date)-new Date(a.date));
+          renderBlogCards(visible.slice(0,3));
+          return;
+        }
+      }catch(e){ /* ignore */ }
+      try{
+        const res = await fetch('/blog/posts.json',{cache:'no-store'}); if(res.ok){ const seed = await res.json(); renderBlogCards((seed||[]).slice(0,3)); return; }
+      }catch(e){}
+      // placeholder when no posts
+      renderBlogCards([]);
     }
 
-    function renderBlogCards(posts) {
+    function renderBlogCards(posts){
       blogGrid.innerHTML = '';
-      posts.forEach(p => {
+      if(!posts || posts.length===0){
+        const empty = document.createElement('div'); empty.className='rounded-2xl border border-dashed p-6 text-center text-sm bg-white/60 dark:bg-black/20';
+        empty.innerHTML = `<p class="font-semibold">No posts yet</p><p class="mt-2 text-sm">Check back later or unlock developer tools to add the first post.</p>`;
+        blogGrid.appendChild(empty); return;
+      }
+      posts.forEach(p=>{
         const card = document.createElement('article');
         card.className = 'rounded-2xl border border-slate-200 dark:border-slate-800 p-4 card-hover cursor-pointer bg-white/60 dark:bg-black/20 backdrop-blur-sm';
         card.innerHTML = `
           <div class="text-xs text-slate-600 dark:text-slate-400">${new Date(p.date).toLocaleString()}</div>
           <h3 class="mt-1 font-semibold">${p.title}</h3>
-          <p class="mt-1 text-sm text-slate-700 dark:text-slate-300">${p.subtitle || ''}</p>
+          <p class="mt-1 text-sm text-slate-700 dark:text-slate-300">${p.excerpt || (p.subtitle||'')}</p>
         `;
-        card.addEventListener('click', () => {
-          modalTitle.textContent = p.title;
-          modalBody.innerHTML = p.contentHtml || '<p>No content.</p>';
-          modal.classList.remove('hidden');
-          modal.setAttribute('aria-hidden','false');
+        card.addEventListener('click', async ()=>{
+          // load full content from DB if available
+          try{ const db = await import('/blog/assets/db.js'); const full = await db.getPost(p.id); modalTitle.textContent = full.title; modalBody.innerHTML = full.content || full.contentHtml || '<p>No content.</p>'; modal.classList.remove('hidden'); modal.setAttribute('aria-hidden','false'); }catch(e){ modalTitle.textContent = p.title; modalBody.innerHTML = p.contentHtml || '<p>No content.</p>'; modal.classList.remove('hidden'); modal.setAttribute('aria-hidden','false'); }
         });
         blogGrid.appendChild(card);
       });
