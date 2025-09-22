@@ -99,3 +99,28 @@ section h2 {
     transform: translateX(-50%) translateY(-5px);
 }
 
+/* High-contrast form inputs (used by blog editor and site-wide as a fallback) */
+input, textarea, select {
+    color: #0f172a; /* very dark text for readability */
+    background: #ffffff; /* light background */
+    border: 1px solid rgba(15,23,42,0.12);
+}
+
+::placeholder { color: rgba(15,23,42,0.45); }
+
+/* When the site uses dark backgrounds (Tailwind dark class), make inputs still readable */
+.dark input, .dark textarea, .dark select {
+    color: #e6eef8; /* light text */
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.dark ::placeholder { color: rgba(230,238,248,0.5); }
+
+/* Use utility classes for stronger contrast in the blog editor */
+.high-contrast { color: #0f172a !important; background: #ffffff !important; }
+.content-input { background: #ffffff !important; color: #0f172a !important; font-family: inherit; font-size: 15px; }
+
+.dark .high-contrast { background: rgba(255,255,255,0.06) !important; color: #e6eef8 !important; }
+.dark .content-input { background: rgba(255,255,255,0.06) !important; color: #e6eef8 !important; }
+

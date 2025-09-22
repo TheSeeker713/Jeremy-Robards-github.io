@@ -18,13 +18,13 @@
   <main class="max-w-4xl mx-auto p-6" id="editor-root">
     <form id="post-form" class="space-y-4">
       <input type="hidden" name="id">
-      <div><label class="block">Title<input name="title" class="w-full p-2 border rounded" required></label></div>
-      <div><label class="block">Slug (optional)<input name="slug" class="w-full p-2 border rounded"></label></div>
-      <div><label class="block">Tags (comma separated)<input name="tags" class="w-full p-2 border rounded"></label></div>
-      <div><label class="block">Date<input name="date" type="datetime-local" class="w-full p-2 border rounded"></label></div>
-      <div><label class="block">Status<select name="status" class="w-full p-2 border rounded"><option value="draft">Draft</option><option value="published">Published</option></select></label></div>
-      <div><label class="block">Excerpt<textarea name="excerpt" class="w-full p-2 border rounded" rows="3"></textarea></label></div>
-      <div><label class="block">Content<textarea name="content" class="w-full p-2 border rounded" rows="12" required></textarea></label></div>
+  <div><label class="block">Title<input name="title" class="w-full p-2 border rounded high-contrast" required></label></div>
+  <div><label class="block">Slug (optional)<input name="slug" class="w-full p-2 border rounded high-contrast"></label></div>
+  <div><label class="block">Tags (comma separated)<input name="tags" class="w-full p-2 border rounded high-contrast"></label></div>
+  <div><label class="block">Date<input name="date" type="datetime-local" class="w-full p-2 border rounded high-contrast"></label></div>
+  <div><label class="block">Status<select name="status" class="w-full p-2 border rounded high-contrast"><option value="draft">Draft</option><option value="published">Published</option></select></label></div>
+  <div><label class="block">Excerpt<textarea name="excerpt" class="w-full p-2 border rounded high-contrast" rows="3"></textarea></label></div>
+  <div><label class="block">Content<textarea name="content" class="w-full p-2 border rounded high-contrast content-input" rows="12" required></textarea></label></div>
       <div class="flex gap-2"><button class="px-3 py-1 bg-blue-600 text-white rounded">Save</button>
       <a href="/blog/" class="px-3 py-1 bg-gray-200 rounded">Cancel</a></div>
     </form>

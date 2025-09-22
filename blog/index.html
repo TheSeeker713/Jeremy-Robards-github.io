@@ -13,7 +13,7 @@
   <script type="module" src="/blog/assets/auth.js" defer></script>
   <script type="module" src="/blog/assets/blog.js" defer></script>
 </head>
-<body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+<body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100" style="background-image: url('/koi.png'); background-size: cover; background-position: center; background-attachment: fixed;">
   <header class="max-w-4xl mx-auto p-6 flex justify-between items-center">
     <h1 class="text-2xl font-bold"><a href="/">Jeremy Robards</a> — Blog</h1>
     <div class="flex items-center gap-4">
@@ -28,6 +28,7 @@
       <h2 class="text-xl font-semibold">Posts</h2>
       <div>
         <a id="new-post-btn" class="hidden inline-block bg-blue-600 text-white px-3 py-1 rounded" href="/blog/editor.html">New Post</a>
+        <button id="write-post-btn" class="inline-block bg-green-600 text-white px-3 py-1 rounded ml-2">Write a post</button>
         <button id="export-json" class="ml-2 inline-block bg-gray-200 text-gray-900 px-3 py-1 rounded hidden">Export JSON</button>
       </div>
     </div>
@@ -52,8 +53,22 @@
       async function exportJSON(){ const posts = await db.getAllPosts(); const blob = new Blob([JSON.stringify(posts, null, 2)],{type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'posts.json'; document.body.appendChild(a); a.click(); a.remove(); }
       const expBtn = document.getElementById('export-json');
       expBtn.addEventListener('click', exportJSON);
-      function updateDevUI(){ if(hasDevAccess()){ expBtn.classList.remove('hidden'); } else expBtn.classList.add('hidden'); }
+      function updateDevUI(){
+        const newBtn = document.getElementById('new-post-btn');
+        if(hasDevAccess()){ expBtn.classList.remove('hidden'); if(newBtn) newBtn.classList.remove('hidden'); }
+        else { expBtn.classList.add('hidden'); if(newBtn) newBtn.classList.add('hidden'); }
+      }
       onDevChange(updateDevUI); updateDevUI();
+
+      // Write button triggers developer unlock prompt
+      const writeBtn = document.getElementById('write-post-btn');
+      writeBtn.addEventListener('click', async ()=>{
+        if(hasDevAccess()){ location.href = '/blog/editor.html'; return; }
+        const m = await import('./assets/auth.js');
+        const ok = await m.requestDevAccess();
+        if(ok){ alert('Developer access granted'); location.href = '/blog/editor.html'; }
+        else alert('Access denied');
+      });
     </script>
 
 </body>

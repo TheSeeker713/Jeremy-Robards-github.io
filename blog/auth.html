@@ -11,25 +11,9 @@
 </head>
 <body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
   <main class="max-w-md mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-4">Sign In (Admin Only)</h1>
-      <form id="signin-form" class="space-y-3">
-        <div><label class="block text-sm">Username<input name="username" class="w-full p-2 border rounded" required></label></div>
-        <div><label class="block text-sm">Password<input type="password" name="password" class="w-full p-2 border rounded" required></label></div>
-        <div><button class="px-3 py-1 bg-blue-600 text-white rounded">Sign In</button></div>
-      </form>
-
-      <p class="mt-6 text-sm text-gray-600">Sign-up is disabled on this demo. If no users exist a default admin account will be created locally with username <code>admin</code> and password <code>admin123</code>. Change the password by editing your `users.json` before publishing.</p>
+    <h1 class="text-2xl font-bold mb-4">Developer Access</h1>
+    <p class="mb-4">This blog is managed by the site developer only. To unlock editing tools, open the blog index and click the padlock icon in the header or use the <strong>Write a post</strong> button. When prompted, answer the secret question to gain access.</p>
+    <p class="text-sm text-gray-600">The developer secret phrase is a small demo value. For this local demo the correct answer is the number <code>713</code>.</p>
   </main>
-
-  <script type="module">
-    import { signIn } from './assets/auth.js';
-    const signin = document.getElementById('signin-form');
-    signin.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(signin));
-      try{ await signIn(data.username, data.password); alert('Signed in'); window.location.href='/blog/'; }
-      catch(err){ alert(err.message); }
-    });
-  </script>
 </body>
 </html>
