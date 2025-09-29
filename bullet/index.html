@@ -7,34 +7,139 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Performance optimizations */
+        * {
+            box-sizing: border-box;
+        }
+        
+        /* Hardware acceleration for animations */
+        .card, .card-hover, .transition-all {
+            will-change: transform;
+            transform: translateZ(0);
+        }
+        
+        /* Touch-friendly button sizing */
+        @media (max-width: 640px) {
+            button, input, select {
+                min-height: 44px !important;
+                touch-action: manipulation;
+            }
+        }
+        
+        /* Optimize scrolling */
+        .content-scrollable {
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+        
+        /* Reduce layout thrashing */
+        .list-container {
+            contain: layout style paint;
+        }
+        
+        /* Optimize font rendering */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+    </style>
+    <style>
+        /* Performance optimizations */
+        * {
+            box-sizing: border-box;
+        }
+        
+        /* Hardware acceleration for animations */
+        .card, .card-hover, .transition-all {
+            will-change: transform;
+            transform: translateZ(0);
+        }
+        
+        /* Mobile-first responsive styles */
+        @media (max-width: 640px) {
+            .mobile-stack {
+                flex-direction: column !important;
+                gap: 0.75rem !important;
+            }
+            
+            .mobile-full-width {
+                width: 100% !important;
+            }
+            
+            .mobile-compact {
+                padding: 0.5rem !important;
+            }
+            
+            .mobile-text-sm {
+                font-size: 0.875rem !important;
+            }
+            
+            .mobile-hidden {
+                display: none !important;
+            }
+            
+            .mobile-nav-vertical {
+                flex-direction: column !important;
+                gap: 0.25rem !important;
+            }
+        }
+        
+        /* Touch-friendly button sizing */
+        @media (max-width: 640px) {
+            button, input, select {
+                min-height: 44px !important;
+                touch-action: manipulation;
+            }
+        }
+        
+        /* Optimize scrolling */
+        .content-scrollable {
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+        
+        /* Reduce layout thrashing */
+        .list-container {
+            contain: layout style paint;
+        }
+        
+        /* Optimize font rendering */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+    </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<body class="flex items-center justify-center min-h-screen p-2 sm:p-4">
 
     <!-- Loading Screen -->
     <div id="loadingScreen" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
-        <div class="text-center">
-            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p class="text-white text-lg">Loading Bullet Note Taker...</p>
-            <p id="loadingProgress" class="text-gray-400 text-sm mt-2">Initializing...</p>
+        <div class="text-center px-4">
+            <div class="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p class="text-white text-base sm:text-lg">Loading Bullet Note Taker...</p>
+            <p id="loadingProgress" class="text-gray-400 text-xs sm:text-sm mt-2">Initializing...</p>
         </div>
     </div>
 
     <!-- Error Display -->
-    <div id="errorDisplay" class="hidden fixed inset-0 bg-red-900/50 flex items-center justify-center z-50">
-        <div class="bg-red-800 p-8 rounded-2xl border border-red-600 max-w-md w-full mx-4">
-            <h2 class="text-2xl font-bold text-white mb-4">⚠️ Error</h2>
-            <p id="errorMessage" class="text-red-200 mb-4">Something went wrong...</p>
-            <button id="reloadBtn" class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg transition duration-200">
+    <div id="errorDisplay" class="hidden fixed inset-0 bg-red-900/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-red-800 p-6 sm:p-8 rounded-2xl border border-red-600 max-w-md w-full">
+            <h2 class="text-xl sm:text-2xl font-bold text-white mb-4">⚠️ Error</h2>
+            <p id="errorMessage" class="text-red-200 mb-4 text-sm sm:text-base">Something went wrong...</p>
+            <button id="reloadBtn" class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-3 rounded-lg transition duration-200 w-full sm:w-auto min-h-[44px]">
                 Reload App
             </button>
         </div>
     </div>
 
     <!-- Debug Panel (Temporary) -->
-    <div id="debugPanel" class="hidden fixed top-4 right-4 bg-black/80 text-green-400 p-4 rounded-lg border border-green-500 z-40 max-w-sm">
+    <div id="debugPanel" class="hidden fixed top-2 right-2 sm:top-4 sm:right-4 bg-black/80 text-green-400 p-3 sm:p-4 rounded-lg border border-green-500 z-40 max-w-xs sm:max-w-sm">
         <div class="flex justify-between items-center mb-2">
-            <h3 class="font-bold">Debug Panel</h3>
-            <button id="closeDebug" class="text-green-400 hover:text-green-300">✕</button>
+            <h3 class="font-bold text-sm sm:text-base">Debug Panel</h3>
+            <button id="closeDebug" class="text-green-400 hover:text-green-300 text-lg min-h-[44px] min-w-[44px]">✕</button>
         </div>
         <div id="debugLog" class="text-xs space-y-1 max-h-32 overflow-y-auto">
             <div>App initialized</div>
@@ -42,58 +147,59 @@
     </div>
 
     <!-- Main App Container -->
-    <div id="appContainer" class="w-full max-w-2xl mx-auto p-4 md:p-8 wooden-background text-gray-100 rounded-2xl shadow-2xl border border-gray-600/50 hidden">
+    <div id="appContainer" class="w-full max-w-2xl mx-auto p-2 sm:p-4 md:p-8 wooden-background text-gray-100 rounded-lg sm:rounded-2xl shadow-2xl border border-gray-600/50 hidden">
         
         <!-- Top Card: fixed visual container that stays visible while notes scroll -->
-        <div id="topCard" class="mb-6 w-full">
-            <div class="bg-black/30 p-4 rounded-xl border border-gray-600/50 shadow-xl top-card-inner">
+        <div id="topCard" class="mb-4 sm:mb-6 w-full">
+            <div class="bg-black/30 p-3 sm:p-4 rounded-lg sm:rounded-xl border border-gray-600/50 shadow-xl top-card-inner">
                 <header class="text-center mb-4">
-                    <h1 class="text-3xl md:text-4xl font-bold text-white" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Bullet Note Taker</h1>
-                    <p class="text-gray-300 mt-2">Use the flip icon to cycle through up to 20 cards per note.</p>
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Bullet Note Taker</h1>
+                    <p class="text-gray-300 mt-2 text-sm sm:text-base px-2">Use the flip icon to cycle through up to 20 cards per note.</p>
                 </header>
 
                 <!-- Top Menu -->
                 <div class="mb-4 flex justify-center">
-                    <nav class="bg-black/20 rounded-lg p-2">
-                        <div class="flex space-x-2">
-                            <button id="notesViewBtn" class="px-4 py-2 rounded-md bg-blue-600 text-white font-medium transition duration-200">Notes</button>
-                            <button id="podsViewBtn" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700/50 font-medium transition duration-200">
+                    <nav class="bg-black/20 rounded-lg p-2 w-full sm:w-auto">
+                        <div class="flex flex-wrap gap-1 sm:gap-2 justify-center">
+                            <button id="notesViewBtn" class="flex-1 sm:flex-none px-2 sm:px-4 py-2 rounded-md bg-blue-600 text-white font-medium transition duration-200 text-sm sm:text-base min-h-[44px] touch-manipulation">Notes</button>
+                            <button id="podsViewBtn" class="flex-1 sm:flex-none px-2 sm:px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700/50 font-medium transition duration-200 text-sm sm:text-base min-h-[44px] touch-manipulation">
                                 Pods <span id="podsCount" class="ml-1 text-xs bg-green-500 text-white px-1.5 py-0.5 rounded-full hidden">0</span>
                             </button>
-                            <button id="trashViewBtn" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700/50 font-medium transition duration-200">
+                            <button id="trashViewBtn" class="flex-1 sm:flex-none px-2 sm:px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700/50 font-medium transition duration-200 text-sm sm:text-base min-h-[44px] touch-manipulation">
                                 Trash <span id="trashCount" class="ml-1 text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full hidden">0</span>
                             </button>
-                            <button id="helpViewBtn" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700/50 font-medium transition duration-200">Help</button>
+                            <button id="helpViewBtn" class="flex-1 sm:flex-none px-2 sm:px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700/50 font-medium transition duration-200 text-sm sm:text-base min-h-[44px] touch-manipulation">Help</button>
                         </div>
                     </nav>
                 </div>
-
                 <!-- Note name + action buttons row -->
-                <div class="mb-4 flex flex-col md:flex-row items-center gap-3">
-                    <div class="flex-1 w-full md:w-auto">
-                        <label class="text-sm text-gray-200 mb-2 block">Note Name (optional)</label>
-                        <input id="noteNameInput" placeholder="e.g., my-meeting-notes" class="w-full md:w-96 px-4 py-3 rounded-full bg-slate-800 border border-slate-700 text-gray-200" />
+                <div class="mb-4 space-y-3">
+                    <!-- Note name input - full width on mobile -->
+                    <div class="w-full">
+                        <label for="noteNameInput" class="text-sm text-gray-200 mb-2 block">Note Name (optional)</label>
+                        <input id="noteNameInput" placeholder="e.g., my-meeting-notes" class="w-full px-4 py-3 rounded-lg sm:rounded-full bg-slate-800 border border-slate-700 text-gray-200 text-sm sm:text-base min-h-[44px] focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors" />
                     </div>
 
-                    <div class="flex items-center gap-3">
-                        <button id="archiveToPodBtn" class="px-4 py-3 rounded-lg bg-green-600 text-white">📦 Archive All to Pod</button>
-                        <button id="exportBtn" class="px-4 py-3 rounded-lg bg-slate-700 text-white">Export</button>
-                        <button id="clearAllBtn" class="px-4 py-3 rounded-lg bg-slate-700 text-white">Clear All</button>
+                    <!-- Action buttons - stack on mobile -->
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <button id="archiveToPodBtn" class="flex-1 px-3 sm:px-4 py-3 rounded-lg bg-green-600 text-white text-sm sm:text-base font-medium hover:bg-green-700 transition duration-200 min-h-[44px] touch-manipulation">📦 Archive All to Pod</button>
+                        <button id="exportBtn" class="flex-1 px-3 sm:px-4 py-3 rounded-lg bg-slate-700 text-white text-sm sm:text-base font-medium hover:bg-slate-600 transition duration-200 min-h-[44px] touch-manipulation">Export</button>
+                        <button id="clearAllBtn" class="flex-1 px-3 sm:px-4 py-3 rounded-lg bg-slate-700 text-white text-sm sm:text-base font-medium hover:bg-slate-600 transition duration-200 min-h-[44px] touch-manipulation">Clear All</button>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between gap-3">
-                    <div>
-                        <div class="inline-block rounded-lg footer-inner p-2">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                    <div class="order-2 sm:order-1">
+                        <div class="inline-block rounded-lg footer-inner p-2 w-full sm:w-auto">
                             <div class="flex items-center gap-2">
-                                <button id="addNoteBtn" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg">Add Note</button>
+                                <button id="addNoteBtn" class="w-full sm:w-auto px-4 sm:px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg text-sm sm:text-base min-h-[44px] touch-manipulation">Add Note</button>
                             </div>
                         </div>
                     </div>
 
-                    <div>
+                    <div class="order-1 sm:order-2">
                         <label class="sr-only" for="sortNotesBy">Sort notes</label>
-                        <select id="sortNotesBy" class="px-3 py-2 rounded-lg bg-slate-700 text-white border border-slate-600 focus:border-cyan-400 transition-colors">
+                        <select id="sortNotesBy" class="w-full sm:w-auto px-3 py-2 rounded-lg bg-slate-700 text-white border border-slate-600 focus:border-cyan-400 focus:outline-none transition-colors text-sm sm:text-base min-h-[44px]">
                             <option value="newest">Newest First</option>
                             <option value="oldest">Oldest First</option>
                             <option value="alphabetical">A-Z</option>
@@ -104,34 +210,33 @@
             </div>
         </div>
 
-        <div id="mainContent" class="bg-black/20 p-4 rounded-lg min-h-[250px] border border-gray-700/50 content-scrollable">
+        <div id="mainContent" class="bg-black/20 p-3 sm:p-4 rounded-lg min-h-[200px] sm:min-h-[250px] border border-gray-700/50 content-scrollable">
             <!-- Notes View -->
-            <div id="notesView">
-                <ul id="notesList" class="space-y-4">
-                     <li class="text-gray-400 italic">Your notes will appear here...</li>
+            <div id="notesView" class="list-container">
+                <ul id="notesList" class="space-y-3 sm:space-y-4">
+                     <li class="text-gray-400 italic text-center py-4">Your notes will appear here...</li>
                 </ul>
-                
             </div>
 
             <!-- Pods View -->
-            <div id="podsView" class="hidden">
-                <div class="mb-4 flex justify-between items-center">
-                    <h3 class="text-lg font-semibold text-gray-300">Note Pods - Organized Collections</h3>
-                    <button id="newPodBtn" class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition duration-200">+ New Pod</button>
+            <div id="podsView" class="hidden list-container">
+                <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-300">Note Pods - Organized Collections</h3>
+                    <button id="newPodBtn" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-3 py-2 rounded-lg transition duration-200 min-h-[44px] touch-manipulation">+ New Pod</button>
                 </div>
-                <div id="podsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div id="podsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     <div class="text-gray-400 italic col-span-full text-center py-8">No pods created yet...</div>
                 </div>
             </div>
             
             <!-- Trash View -->
-            <div id="trashView" class="hidden">
-                <div class="mb-4 flex justify-between items-center">
-                    <h3 class="text-lg font-semibold text-gray-300">Deleted Notes (Auto-delete after 30 days)</h3>
-                    <button id="emptyTrashBtn" class="text-red-400 hover:text-red-300 text-sm font-medium disabled:text-gray-500 disabled:cursor-not-allowed" disabled>Empty Trash</button>
+            <div id="trashView" class="hidden list-container">
+                <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-300">Deleted Notes (Auto-delete after 30 days)</h3>
+                    <button id="emptyTrashBtn" class="w-full sm:w-auto text-red-400 hover:text-red-300 text-sm font-medium disabled:text-gray-500 disabled:cursor-not-allowed px-3 py-2 border border-red-400 rounded-lg min-h-[44px] touch-manipulation" disabled>Empty Trash</button>
                 </div>
-                <ul id="trashList" class="space-y-4">
-                    <li class="text-gray-400 italic">No deleted notes...</li>
+                <ul id="trashList" class="space-y-3 sm:space-y-4">
+                    <li class="text-gray-400 italic text-center py-4">No deleted notes...</li>
                 </ul>
             </div>
 
@@ -179,7 +284,7 @@
         </div>
         
         <!-- Debug Toggle (Temporary) -->
-        <button id="debugToggle" class="fixed bottom-4 right-4 bg-green-600/20 text-green-400 text-xs px-2 py-1 rounded border border-green-500/50 hover:bg-green-600/40 transition duration-200">
+        <button id="debugToggle" class="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 bg-green-600/20 text-green-400 text-xs px-2 py-1 rounded border border-green-500/50 hover:bg-green-600/40 transition duration-200 min-h-[36px] touch-manipulation">
             Debug
         </button>
     </div>
@@ -188,6 +293,7 @@
     <div id="modalsContainer"></div>
 
     <!-- Core Scripts -->
+    <script src="js/performance.js"></script> <!-- Load performance optimizations first -->
     <script src="js/utils.js"></script>
     <script src="js/database.js"></script>
     <script src="js/notes.js"></script>

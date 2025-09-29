@@ -477,7 +477,7 @@ window.AboutModal = {
                 </div>
                 
                 <div class="pt-4 border-t border-gray-700 text-center text-sm text-gray-400">
-                    <p>© 2024 Bullet Note App • Built with ❤️ for productivity</p>
+                    <p>© 2025 Bullet Note App • Built with ❤️ for productivity</p>
                     <p class="mt-2">
                         <a href="#" onclick="window.AboutModal.showLicense()" class="text-blue-400 hover:text-blue-300">
                             View License
@@ -502,7 +502,7 @@ window.AboutModal = {
             <div class="space-y-4 text-gray-300">
                 <h3 class="text-lg font-semibold text-white">MIT License</h3>
                 <div class="bg-gray-700 p-4 rounded-lg text-xs font-mono leading-relaxed">
-                    <p>Copyright (c) 2024 Bullet Note App</p><br>
+                    <p>Copyright (c) 2025 Bullet Note App</p><br>
                     <p>Permission is hereby granted, free of charge, to any person obtaining a copy
                     of this software and associated documentation files (the "Software"), to deal
                     in the Software without restriction, including without limitation the rights
