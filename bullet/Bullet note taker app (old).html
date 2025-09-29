@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bullet Note Taker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            background-color: #1a202c; /* Fallback color */
+        }
+        /* Use a pseudo-element for the background to control opacity */
+        body::before {
+            content: '';
+            position: fixed; /* Stays in place, covering the screen */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('asset/tropfish.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            opacity: 0.5; /* Set opacity to 50% */
+            z-index: -1; /* Place it behind the content */
+        }
+        .note-item-container {
+            perspective: 2000px;
+            min-height: 50px; /* Give space for the card to exist */
+        }
+        .note-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.5, 0, 0.5, 1);
+        }
+        .note-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* Safari */
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+        .note-face.active {
+            opacity: 1;
+        }
+        /* Hide scrollbar for textarea */
+        .note-textarea::-webkit-scrollbar {
+            display: none;
+        }
+        .note-textarea {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .wooden-background {
+            background-image: url('asset/shipwoodtile.png');
+        }
+        .card-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-2xl mx-auto p-4 md:p-8 wooden-background text-gray-100 rounded-2xl shadow-2xl border border-gray-600/50">
+        
+        <header class="mb-6 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-white" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Bullet Note Taker</h1>
+            <p class="text-gray-300 mt-2">Use the flip icon to cycle through up to 20 cards per note.</p>
+        </header>
+
+        <!-- Top Menu -->
+        <div class="mb-6 flex justify-center">
+            <nav class="bg-black/30 rounded-lg border border-gray-600/50 p-2">
+                <div class="flex space-x-1">
+                    <button id="notesViewBtn" class="px-4 py-2 rounded-md bg-blue-600 text-white font-medium transition duration-200">Notes</button>
+                    <button id="podsViewBtn" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700/50 font-medium transition duration-200">
+                        Pods <span id="podsCount" class="ml-1 text-xs bg-green-500 text-white px-1.5 py-0.5 rounded-full hidden">0</span>
+                    </button>
+                    <button id="trashViewBtn" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700/50 font-medium transition duration-200">
+                        Trash <span id="trashCount" class="ml-1 text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full hidden">0</span>
+                    </button>
+                    <button id="helpViewBtn" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700/50 font-medium transition duration-200">Help</button>
+                </div>
+            </nav>
+        </div>
+
+        <div class="flex gap-3 mb-6">
+            <input type="text" id="noteInput" class="flex-grow bg-gray-700/80 text-white placeholder-gray-400 border border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200" placeholder="Enter a new main note...">
+            <button id="addNoteBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg transition duration-200 shadow-md">Add</button>
+        </div>
+
+        <div class="bg-black/20 p-4 rounded-lg min-h-[250px] border border-gray-700/50">
+            <!-- Notes View -->
+            <div id="notesView">
+                <ul id="notesList" class="space-y-4">
+                     <li class="text-gray-400 italic">Your notes will appear here...</li>
+                </ul>
+                <div class="mt-4 pt-4 border-t border-gray-600/30">
+                    <button id="archiveToPodBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-3 rounded-lg transition duration-200 shadow-md disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>
+                        📦 Archive All Notes to Pod
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pods View -->
+            <div id="podsView" class="hidden">
+                <div class="mb-4 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-300">Note Pods - Organized Collections</h3>
+                    <button id="newPodBtn" class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition duration-200">+ New Pod</button>
+                </div>
+                <div id="podsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="text-gray-400 italic col-span-full text-center py-8">No pods created yet...</div>
+                </div>
+            </div>
+            
+            <!-- Trash View -->
+            <div id="trashView" class="hidden">
+                <div class="mb-4 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-300">Deleted Notes (Auto-delete after 30 days)</h3>
+                    <button id="emptyTrashBtn" class="text-red-400 hover:text-red-300 text-sm font-medium disabled:text-gray-500 disabled:cursor-not-allowed" disabled>Empty Trash</button>
+                </div>
+                <ul id="trashList" class="space-y-4">
+                    <li class="text-gray-400 italic">No deleted notes...</li>
+                </ul>
+            </div>
+
+            <!-- Help View -->
+            <div id="helpView" class="hidden">
+                <div class="text-center space-y-6">
+                    <h3 class="text-xl font-semibold text-gray-300 mb-4">Help & Support</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Quick Start Guide -->
+                        <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-600/30">
+                            <h4 class="font-semibold text-gray-200 mb-3">🚀 Quick Start</h4>
+                            <ul class="text-sm text-gray-400 space-y-2 text-left">
+                                <li>• Type your main note and click "Add"</li>
+                                <li>• Click the flip icon to add sub-cards (up to 20)</li>
+                                <li>• Use the back arrow to return to main card</li>
+                                <li>• Deleted notes go to Trash for 30 days</li>
+                                <li>• Export your notes as Markdown</li>
+                            </ul>
+                        </div>
+
+                        <!-- Features -->
+                        <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-600/30">
+                            <h4 class="font-semibold text-gray-200 mb-3">✨ Features</h4>
+                            <ul class="text-sm text-gray-400 space-y-2 text-left">
+                                <li>• 20 cards per note with smooth transitions</li>
+                                <li>• Local storage - your data stays private</li>
+                                <li>• Auto-save functionality</li>
+                                <li>• Trash with 30-day retention</li>
+                                <li>• Import/Export capabilities</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex gap-4 justify-center">
+                        <button id="aboutBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-md">
+                            About Bullet Note Taker
+                        </button>
+                        <button id="supportDevBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-md">
+                            💛 Support Developer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Modal -->
+        <div id="aboutModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div class="bg-gray-800 p-8 rounded-2xl border border-gray-600 max-w-md w-full mx-4 wooden-background">
+                <div class="text-center space-y-4">
+                    <h2 class="text-2xl font-bold text-white">About</h2>
+                    <div class="space-y-3 text-gray-300">
+                        <h3 class="text-xl font-semibold text-blue-400">Bullet Note Taker</h3>
+                        <p class="text-sm">Version 1.0.0</p>
+                        <div class="border-t border-gray-600 pt-4 space-y-2">
+                            <p><strong>Developer:</strong> Jeremy Robards</p>
+                            <p><strong>Company:</strong> DigiArtifact</p>
+                            <p class="text-xs text-gray-400 mt-4">© 2025 DigiArtifact. All rights reserved.</p>
+                        </div>
+                    </div>
+                    <button id="closeAboutBtn" class="mt-6 bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-lg transition duration-200">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pod Creation Modal -->
+        <div id="podModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div class="bg-gray-800 p-8 rounded-2xl border border-gray-600 max-w-md w-full mx-4 wooden-background">
+                <div class="space-y-4">
+                    <h2 class="text-2xl font-bold text-white text-center">Create New Pod</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Pod Name</label>
+                            <input type="text" id="podNameInput" class="w-full bg-gray-700/80 text-white placeholder-gray-400 border border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g., Work Projects, Meeting Notes...">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Category (optional)</label>
+                            <input type="text" id="podCategoryInput" class="w-full bg-gray-700/80 text-white placeholder-gray-400 border border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g., Work, Personal, Study...">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Color</label>
+                            <div class="grid grid-cols-6 gap-2">
+                                <button class="pod-color-btn w-8 h-8 rounded-full bg-blue-500 border-2 border-transparent hover:border-white transition duration-200" data-color="blue"></button>
+                                <button class="pod-color-btn w-8 h-8 rounded-full bg-green-500 border-2 border-transparent hover:border-white transition duration-200" data-color="green"></button>
+                                <button class="pod-color-btn w-8 h-8 rounded-full bg-purple-500 border-2 border-transparent hover:border-white transition duration-200" data-color="purple"></button>
+                                <button class="pod-color-btn w-8 h-8 rounded-full bg-red-500 border-2 border-transparent hover:border-white transition duration-200" data-color="red"></button>
+                                <button class="pod-color-btn w-8 h-8 rounded-full bg-yellow-500 border-2 border-transparent hover:border-white transition duration-200" data-color="yellow"></button>
+                                <button class="pod-color-btn w-8 h-8 rounded-full bg-pink-500 border-2 border-transparent hover:border-white transition duration-200" data-color="pink"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3 mt-6">
+                        <button id="cancelPodBtn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-lg transition duration-200">Cancel</button>
+                        <button id="createPodBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg transition duration-200">Create Pod</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pod Details Modal -->
+        <div id="podDetailsModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div class="bg-gray-800 p-8 rounded-2xl border border-gray-600 max-w-2xl w-full mx-4 wooden-background max-h-[80vh] overflow-y-auto">
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h2 id="podDetailsTitle" class="text-2xl font-bold text-white">Pod Details</h2>
+                        <button id="closePodDetailsBtn" class="text-gray-400 hover:text-white text-xl">✕</button>
+                    </div>
+                    <div id="podDetailsContent" class="space-y-4">
+                        <!-- Content will be dynamically populated -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Support Modal -->
+        <div id="donationModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+            <div class="bg-gray-800 p-8 rounded-2xl border border-yellow-500/50 max-w-lg w-full mx-4 wooden-background">
+                <div class="text-center space-y-4">
+                    <h2 class="text-2xl font-bold text-yellow-400">💛 Support Development</h2>
+                    <div id="donationMessage" class="space-y-4 text-gray-300">
+                        <!-- Message will be dynamically populated -->
+                    </div>
+                    <div class="flex space-x-3 mt-6">
+                        <button id="closeDonationBtn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-2 rounded-lg transition duration-200">
+                            Not Now
+                        </button>
+                        <button id="donateBtn" class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-medium px-4 py-2 rounded-lg transition duration-200">
+                            💛 Support
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-6">
+            <label for="noteNameInput" class="block text-sm font-medium text-gray-300 mb-2">Note Name (optional)</label>
+            <input type="text" id="noteNameInput" class="w-full bg-gray-700/80 text-white placeholder-gray-400 border border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200" placeholder="e.g., my-meeting-notes">
+        </div>
+
+        <div class="mt-4 flex flex-wrap justify-end gap-3">
+            <input type="file" id="fileInput" accept=".txt,.md" class="hidden">
+            <button id="importBtn" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-5 py-2 rounded-lg transition duration-200 shadow-md">Import</button>
+            <button id="clearAllBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2 rounded-lg transition duration-200 shadow-md disabled:bg-gray-600" disabled>Clear All</button>
+            <button id="saveMdBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2 rounded-lg transition duration-200 shadow-md disabled:bg-gray-600" disabled>Save as .md</button>
+        </div>
+
+    </div>
+
+    <script>
+        const noteInput = document.getElementById('noteInput');
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        const notesList = document.getElementById('notesList');
+        const saveMdBtn = document.getElementById('saveMdBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const noteNameInput = document.getElementById('noteNameInput');
+        const importBtn = document.getElementById('importBtn');
+        const fileInput = document.getElementById('fileInput');
+        
+        // Menu and view elements
+        const notesViewBtn = document.getElementById('notesViewBtn');
+        const trashViewBtn = document.getElementById('trashViewBtn');
+        const helpViewBtn = document.getElementById('helpViewBtn');
+        const podsViewBtn = document.getElementById('podsViewBtn');
+        const notesView = document.getElementById('notesView');
+        const trashView = document.getElementById('trashView');
+        const helpView = document.getElementById('helpView');
+        const podsView = document.getElementById('podsView');
+        const trashList = document.getElementById('trashList');
+        const trashCount = document.getElementById('trashCount');
+        const podsCount = document.getElementById('podsCount');
+        const emptyTrashBtn = document.getElementById('emptyTrashBtn');
+        const aboutBtn = document.getElementById('aboutBtn');
+        const aboutModal = document.getElementById('aboutModal');
+        const closeAboutBtn = document.getElementById('closeAboutBtn');
+        const supportDevBtn = document.getElementById('supportDevBtn');
+        const donationModal = document.getElementById('donationModal');
+        const donationMessage = document.getElementById('donationMessage');
+        const closeDonationBtn = document.getElementById('closeDonationBtn');
+        const donateBtn = document.getElementById('donateBtn');
+
+        // Pods elements
+        const archiveToPodBtn = document.getElementById('archiveToPodBtn');
+        const newPodBtn = document.getElementById('newPodBtn');
+        const podsGrid = document.getElementById('podsGrid');
+        const podModal = document.getElementById('podModal');
+        const podNameInput = document.getElementById('podNameInput');
+        const podCategoryInput = document.getElementById('podCategoryInput');
+        const cancelPodBtn = document.getElementById('cancelPodBtn');
+        const createPodBtn = document.getElementById('createPodBtn');
+        const podDetailsModal = document.getElementById('podDetailsModal');
+        const podDetailsTitle = document.getElementById('podDetailsTitle');
+        const podDetailsContent = document.getElementById('podDetailsContent');
+        const closePodDetailsBtn = document.getElementById('closePodDetailsBtn');
+
+        const MAX_CARDS = 20;
+        const TRASH_RETENTION_DAYS = 30;
+        let notes = [];
+        let trashedNotes = [];
+        let pods = [];
+        let currentView = 'notes';
+        let selectedPodColor = 'blue';
+
+        // Donation system tracking
+        let notesCreatedCount = 0;
+        let donationPhase = 0; // 0 = first popup (10 notes), 1 = second (30 notes), 2 = final (130 notes), 3 = done
+
+        // Database functions using localStorage
+        const DB_KEY = 'bulletNotes';
+        const TRASH_DB_KEY = 'bulletNotesTrash';
+        const PODS_DB_KEY = 'bulletNotesPods';
+        const DONATION_DB_KEY = 'bulletNotesDonation';
+        
+        const saveToDatabase = () => {
+            try {
+                localStorage.setItem(DB_KEY, JSON.stringify(notes));
+                localStorage.setItem(TRASH_DB_KEY, JSON.stringify(trashedNotes));
+                localStorage.setItem(PODS_DB_KEY, JSON.stringify(pods));
+                localStorage.setItem(DONATION_DB_KEY, JSON.stringify({
+                    notesCreatedCount: notesCreatedCount,
+                    donationPhase: donationPhase
+                }));
+            } catch (error) {
+                console.error('Failed to save to database:', error);
+            }
+        };
+
+        const loadFromDatabase = () => {
+            try {
+                // Load active notes
+                const saved = localStorage.getItem(DB_KEY);
+                if (saved) {
+                    notes = JSON.parse(saved);
+                    // Ensure each note has proper structure
+                    notes.forEach(note => {
+                        if (!note.contents) note.contents = [];
+                        if (!note.rotation) note.rotation = 0;
+                        if (!note.currentCard) note.currentCard = 0;
+                        if (!note.createdAt) note.createdAt = note.id || Date.now(); // Use existing ID as fallback
+                        // Ensure we have at least one content slot
+                        while (note.contents.length < MAX_CARDS) {
+                            note.contents.push('');
+                        }
+                    });
+                }
+                
+                // Load trashed notes
+                const savedTrash = localStorage.getItem(TRASH_DB_KEY);
+                if (savedTrash) {
+                    trashedNotes = JSON.parse(savedTrash);
+                    // Clean up expired notes (older than 30 days)
+                    const now = Date.now();
+                    trashedNotes = trashedNotes.filter(note => {
+                        const daysSinceDeleted = (now - note.deletedAt) / (1000 * 60 * 60 * 24);
+                        return daysSinceDeleted < TRASH_RETENTION_DAYS;
+                    });
+                }
+
+                // Load pods
+                const savedPods = localStorage.getItem(PODS_DB_KEY);
+                if (savedPods) {
+                    pods = JSON.parse(savedPods);
+                }
+
+                // Load donation tracking
+                const savedDonation = localStorage.getItem(DONATION_DB_KEY);
+                if (savedDonation) {
+                    const donationData = JSON.parse(savedDonation);
+                    notesCreatedCount = donationData.notesCreatedCount || 0;
+                    donationPhase = donationData.donationPhase || 0;
+                }
+            } catch (error) {
+                console.error('Failed to load from database:', error);
+                notes = [];
+                trashedNotes = [];
+                pods = [];
+                notesCreatedCount = 0;
+                donationPhase = 0;
+            }
+        };
+
+        const renderNotes = () => {
+            notesList.innerHTML = '';
+            const hasNotes = notes.length > 0;
+            if (!hasNotes) {
+                notesList.innerHTML = '<li class="text-gray-400 italic">Your notes will appear here...</li>';
+            } else {
+                notes.forEach(note => {
+                    const li = createNoteElement(note);
+                    notesList.appendChild(li);
+                });
+            }
+            saveMdBtn.disabled = !hasNotes;
+            clearAllBtn.disabled = !hasNotes;
+            archiveToPodBtn.disabled = !hasNotes;
+            saveToDatabase();
+        };
+
+        const renderTrash = () => {
+            trashList.innerHTML = '';
+            const hasTrash = trashedNotes.length > 0;
+            if (!hasTrash) {
+                trashList.innerHTML = '<li class="text-gray-400 italic">No deleted notes...</li>';
+            } else {
+                trashedNotes.forEach(note => {
+                    const li = createTrashElement(note);
+                    trashList.appendChild(li);
+                });
+            }
+            emptyTrashBtn.disabled = !hasTrash;
+            updateTrashCount();
+        };
+
+        const renderPods = () => {
+            podsGrid.innerHTML = '';
+            const hasPods = pods.length > 0;
+            if (!hasPods) {
+                podsGrid.innerHTML = '<div class="text-gray-400 italic col-span-full text-center py-8">No pods created yet...</div>';
+            } else {
+                pods.forEach(pod => {
+                    const podElement = createPodElement(pod);
+                    podsGrid.appendChild(podElement);
+                });
+            }
+            updatePodsCount();
+        };
+
+        const createPodElement = (pod) => {
+            const podDiv = document.createElement('div');
+            podDiv.className = `bg-${pod.color}-600/20 border border-${pod.color}-500/50 rounded-xl p-4 hover:bg-${pod.color}-600/30 transition duration-200 cursor-pointer`;
+            
+            podDiv.innerHTML = `
+                <div class="flex items-center justify-between mb-3">
+                    <div class="w-4 h-4 bg-${pod.color}-500 rounded-full"></div>
+                    <div class="text-xs text-gray-400">${pod.notes.length} notes</div>
+                </div>
+                <h4 class="font-semibold text-gray-200 mb-1 truncate">${pod.name}</h4>
+                ${pod.category ? `<p class="text-xs text-gray-400 mb-2">${pod.category}</p>` : ''}
+                <p class="text-xs text-gray-500">Created: ${formatTimestamp(pod.createdAt)}</p>
+                <div class="mt-3 flex justify-between items-center">
+                    <button class="text-xs text-${pod.color}-400 hover:text-${pod.color}-300" onclick="event.stopPropagation(); viewPod('${pod.id}')">View</button>
+                    <div class="flex space-x-2">
+                        <button class="text-xs text-gray-400 hover:text-gray-300" onclick="event.stopPropagation(); exportPod('${pod.id}')" title="Export">📤</button>
+                        <button class="text-xs text-red-400 hover:text-red-300" onclick="event.stopPropagation(); deletePod('${pod.id}')" title="Delete">🗑️</button>
+                    </div>
+                </div>
+            `;
+
+            podDiv.onclick = () => viewPod(pod.id);
+            return podDiv;
+        };
+
+        const updatePodsCount = () => {
+            if (pods.length > 0) {
+                podsCount.textContent = pods.length;
+                podsCount.classList.remove('hidden');
+            } else {
+                podsCount.classList.add('hidden');
+            }
+        };
+
+        const updateTrashCount = () => {
+            if (trashedNotes.length > 0) {
+                trashCount.textContent = trashedNotes.length;
+                trashCount.classList.remove('hidden');
+            } else {
+                trashCount.classList.add('hidden');
+            }
+        };
+
+        const switchView = (view) => {
+            currentView = view;
+            
+            // Hide all views
+            notesView.classList.add('hidden');
+            trashView.classList.add('hidden');
+            helpView.classList.add('hidden');
+            podsView.classList.add('hidden');
+            
+            // Reset all button styles
+            notesViewBtn.classList.remove('bg-blue-600', 'text-white');
+            notesViewBtn.classList.add('text-gray-300', 'hover:bg-gray-700/50');
+            trashViewBtn.classList.remove('bg-blue-600', 'text-white');
+            trashViewBtn.classList.add('text-gray-300', 'hover:bg-gray-700/50');
+            helpViewBtn.classList.remove('bg-blue-600', 'text-white');
+            helpViewBtn.classList.add('text-gray-300', 'hover:bg-gray-700/50');
+            podsViewBtn.classList.remove('bg-blue-600', 'text-white');
+            podsViewBtn.classList.add('text-gray-300', 'hover:bg-gray-700/50');
+            
+            // Show selected view and update button
+            if (view === 'notes') {
+                notesView.classList.remove('hidden');
+                notesViewBtn.classList.add('bg-blue-600', 'text-white');
+                notesViewBtn.classList.remove('text-gray-300', 'hover:bg-gray-700/50');
+            } else if (view === 'pods') {
+                podsView.classList.remove('hidden');
+                podsViewBtn.classList.add('bg-blue-600', 'text-white');
+                podsViewBtn.classList.remove('text-gray-300', 'hover:bg-gray-700/50');
+                renderPods();
+            } else if (view === 'trash') {
+                trashView.classList.remove('hidden');
+                trashViewBtn.classList.add('bg-blue-600', 'text-white');
+                trashViewBtn.classList.remove('text-gray-300', 'hover:bg-gray-700/50');
+                renderTrash();
+            } else if (view === 'help') {
+                helpView.classList.remove('hidden');
+                helpViewBtn.classList.add('bg-blue-600', 'text-white');
+                helpViewBtn.classList.remove('text-gray-300', 'hover:bg-gray-700/50');
+            }
+        };
+
+        const formatTimestamp = (timestamp) => {
+            const date = new Date(timestamp);
+            const hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            const month = (date.getMonth() + 1);
+            const day = date.getDate();
+            const year = date.getFullYear();
+            return `${displayHours}:${minutes}${ampm} ${month}-${day}-${year}`;
+        };
+
+        // Pod management functions
+        const showPodModal = () => {
+            podNameInput.value = '';
+            podCategoryInput.value = '';
+            selectedPodColor = 'blue';
+            updatePodColorSelection();
+            podModal.classList.remove('hidden');
+            podNameInput.focus();
+        };
+
+        const hidePodModal = () => {
+            podModal.classList.add('hidden');
+        };
+
+        const updatePodColorSelection = () => {
+            document.querySelectorAll('.pod-color-btn').forEach(btn => {
+                btn.classList.remove('border-white');
+                btn.classList.add('border-transparent');
+            });
+            document.querySelector(`[data-color="${selectedPodColor}"]`).classList.add('border-white');
+        };
+
+        const createPod = () => {
+            const name = podNameInput.value.trim();
+            if (!name) {
+                alert('Please enter a pod name');
+                return;
+            }
+
+            const newPod = {
+                id: Date.now(),
+                name: name,
+                category: podCategoryInput.value.trim() || null,
+                color: selectedPodColor,
+                notes: [],
+                createdAt: Date.now()
+            };
+
+            pods.push(newPod);
+            saveToDatabase();
+            updatePodsCount();
+            hidePodModal();
+            if (currentView === 'pods') {
+                renderPods();
+            }
+        };
+
+        const archiveNotesToPod = () => {
+            if (notes.length === 0) return;
+
+            const podName = `Notes Archive ${new Date().toLocaleDateString()}`;
+            const newPod = {
+                id: Date.now(),
+                name: podName,
+                category: 'Archive',
+                color: 'blue',
+                notes: [...notes],
+                createdAt: Date.now()
+            };
+
+            pods.push(newPod);
+            notes = [];
+            renderNotes();
+            saveToDatabase();
+            updatePodsCount();
+            
+            // Show success message and switch to pods view
+            setTimeout(() => {
+                if (confirm(`Successfully archived ${newPod.notes.length} notes to "${podName}". View pods now?`)) {
+                    switchView('pods');
+                }
+            }, 100);
+        };
+
+        const viewPod = (podId) => {
+            const pod = pods.find(p => p.id == podId);
+            if (!pod) return;
+
+            podDetailsTitle.textContent = pod.name;
+            podDetailsContent.innerHTML = `
+                <div class="mb-4 p-4 bg-${pod.color}-600/20 border border-${pod.color}-500/50 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-6 h-6 bg-${pod.color}-500 rounded-full"></div>
+                            <h3 class="text-lg font-semibold text-gray-200">${pod.name}</h3>
+                        </div>
+                        <div class="text-sm text-gray-400">${pod.notes.length} notes</div>
+                    </div>
+                    ${pod.category ? `<p class="text-sm text-gray-400 mb-2">Category: ${pod.category}</p>` : ''}
+                    <p class="text-sm text-gray-500">Created: ${formatTimestamp(pod.createdAt)}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="text-md font-semibold text-gray-300 mb-3">Notes in this Pod:</h4>
+                    <div class="space-y-3 max-h-60 overflow-y-auto">
+                        ${pod.notes.map(note => `
+                            <div class="bg-gray-800/50 border border-gray-600/30 rounded-lg p-3">
+                                <div class="font-medium text-gray-300">${note.contents[0] || 'Untitled'}</div>
+                                <div class="text-xs text-gray-500 mt-1">${formatTimestamp(note.createdAt)}</div>
+                                ${note.contents.slice(1).filter(c => c.trim()).length > 0 ? 
+                                    `<div class="text-xs text-gray-400 mt-1">${note.contents.slice(1).filter(c => c.trim()).length} additional cards</div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="flex space-x-3">
+                    <button onclick="exportPod('${pod.id}')" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg transition duration-200">
+                        📤 Export Pod
+                    </button>
+                    <button onclick="deletePod('${pod.id}')" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg transition duration-200">
+                        🗑️ Delete Pod
+                    </button>
+                </div>
+            `;
+
+            podDetailsModal.classList.remove('hidden');
+        };
+
+        const exportPod = (podId) => {
+            const pod = pods.find(p => p.id == podId);
+            if (!pod) return;
+
+            const markdownContent = `# ${pod.name}\n\n${pod.category ? `**Category:** ${pod.category}\n` : ''}**Created:** ${formatTimestamp(pod.createdAt)}\n**Notes:** ${pod.notes.length}\n\n---\n\n${pod.notes.map(note => {
+                let content = `## ${note.contents[0] || 'Untitled'}\n*Created: ${formatTimestamp(note.createdAt)}*\n\n`;
+                const subNotes = note.contents.slice(1).filter(text => text && text.trim());
+                if(subNotes.length > 0) {
+                    content += subNotes.map((line, index) => `### Card ${index + 2}\n${line}\n`).join('\n');
+                }
+                return content;
+            }).join('\n---\n\n')}`;
+
+            const blob = new Blob([markdownContent], { type: 'text/markdown' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${pod.name.replace(/\s+/g, '-')}-pod.md`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        };
+
+        const deletePod = (podId) => {
+            const pod = pods.find(p => p.id == podId);
+            if (!pod) return;
+
+            if (confirm(`Are you sure you want to permanently delete the pod "${pod.name}"? This will delete all ${pod.notes.length} notes in this pod and cannot be undone.`)) {
+                pods = pods.filter(p => p.id != podId);
+                saveToDatabase();
+                updatePodsCount();
+                podDetailsModal.classList.add('hidden');
+                if (currentView === 'pods') {
+                    renderPods();
+                }
+            }
+        };
+
+        // Donation system functions
+        const checkDonationPopup = () => {
+            if (donationPhase >= 3) return; // Already shown all popups
+            
+            let shouldShow = false;
+            
+            if (donationPhase === 0 && notesCreatedCount >= 10) {
+                shouldShow = true;
+                donationPhase = 1;
+            } else if (donationPhase === 1 && notesCreatedCount >= 30) {
+                shouldShow = true;
+                donationPhase = 2;
+            } else if (donationPhase === 2 && notesCreatedCount >= 130) {
+                shouldShow = true;
+                donationPhase = 3;
+            }
+            
+            if (shouldShow) {
+                showDonationModal();
+                saveToDatabase();
+            }
+        };
+
+        const showDonationModal = () => {
+            let message = '';
+            
+            if (donationPhase === 1) {
+                message = `
+                    <div class="text-center">
+                        <p class="text-lg mb-2">Hi there! 👋</p>
+                        <p class="text-sm mb-4">I see you've created <strong>${notesCreatedCount}</strong> notes with Bullet Note Taker! That's awesome!</p>
+                        <p class="text-sm mb-4">I'm Jeremy, the developer behind this app. I put a lot of love and time into creating this tool to help people organize their thoughts.</p>
+                        <p class="text-sm mb-4">If you're finding it useful, would you consider supporting its development? Even a small donation helps me keep improving it!</p>
+                        <p class="text-xs text-gray-400">This message will auto-close in 30 seconds</p>
+                    </div>
+                `;
+            } else if (donationPhase === 2) {
+                message = `
+                    <div class="text-center">
+                        <p class="text-lg mb-2">You're really using this app! 🎉</p>
+                        <p class="text-sm mb-4"><strong>${notesCreatedCount}</strong> notes created! You're definitely getting value from Bullet Note Taker.</p>
+                        <p class="text-sm mb-4">Hi again! If you've been enjoying the app and finding it helpful for organizing your notes, I'd be incredibly grateful for your support.</p>
+                        <p class="text-sm mb-4">Your contribution helps me dedicate more time to adding new features and keeping the app running smoothly.</p>
+                        <p class="text-xs text-gray-400">This message will auto-close in 30 seconds</p>
+                    </div>
+                `;
+            } else if (donationPhase === 3) {
+                message = `
+                    <div class="text-center">
+                        <p class="text-lg mb-2">Wow, <strong>${notesCreatedCount}</strong> notes! 🚀</p>
+                        <p class="text-sm mb-4">You're clearly a power user of Bullet Note Taker!</p>
+                        <p class="text-sm mb-4">Hey, sorry to bother you one last time. I promise this is the final donation request you'll see.</p>
+                        <p class="text-sm mb-4">If this app has helped you stay organized and productive, please consider supporting its continued development. It means the world to independent developers like me.</p>
+                        <p class="text-sm font-semibold text-yellow-300 mb-4">I won't bother you about this again. Thanks for being such a dedicated user! 💛</p>
+                        <p class="text-xs text-gray-400">This message will auto-close in 30 seconds</p>
+                    </div>
+                `;
+            }
+            
+            donationMessage.innerHTML = message;
+            donationModal.classList.remove('hidden');
+            
+            // Auto-close after 30 seconds
+            setTimeout(() => {
+                donationModal.classList.add('hidden');
+            }, 30000);
+        };
+
+        const handleDonation = () => {
+            // This would typically open a payment page or donation link
+            alert('Thank you for your interest in supporting development! 💛\n\nIn a real implementation, this would open a donation page (PayPal, Stripe, etc.).\n\nFor now, please know that your support is greatly appreciated!');
+            donationModal.classList.add('hidden');
+        };
+
+        const createNoteElement = (note) => {
+            const li = document.createElement('li');
+            li.className = 'note-item-container relative';
+
+            // Card indicator
+            const indicator = document.createElement('div');
+            indicator.className = 'card-indicator';
+            indicator.textContent = `${note.currentCard + 1}/${MAX_CARDS}`;
+            li.appendChild(indicator);
+
+            // Timestamp
+            const timestamp = document.createElement('div');
+            timestamp.className = 'absolute top-8 right-8 text-xs text-gray-500/70 z-10';
+            timestamp.textContent = formatTimestamp(note.createdAt);
+            li.appendChild(timestamp);
+
+            const card = document.createElement('div');
+            card.className = 'note-card';
+            card.style.transform = `rotateY(${note.rotation}deg)`;
+
+            const flipNote = () => {
+                // Hide current card
+                const currentFace = card.querySelector(`.note-face:nth-child(${note.currentCard + 1})`);
+                if (currentFace) currentFace.classList.remove('active');
+                
+                // Move to next card
+                note.currentCard = (note.currentCard + 1) % MAX_CARDS;
+                
+                // Show new card with rotation animation
+                note.rotation = -note.currentCard * 18;
+                card.style.transform = `rotateY(${note.rotation}deg)`;
+                
+                setTimeout(() => {
+                    const newFace = card.querySelector(`.note-face:nth-child(${note.currentCard + 1})`);
+                    if (newFace) newFace.classList.add('active');
+                }, 200); // Half of the rotation animation duration
+                
+                indicator.textContent = `${note.currentCard + 1}/${MAX_CARDS}`;
+                saveToDatabase();
+            };
+
+            const flipNoteToFront = () => {
+                // Hide current card
+                const currentFace = card.querySelector(`.note-face:nth-child(${note.currentCard + 1})`);
+                if (currentFace) currentFace.classList.remove('active');
+                
+                note.currentCard = 0;
+                note.rotation = 0;
+                card.style.transform = `rotateY(${note.rotation}deg)`;
+                
+                setTimeout(() => {
+                    const frontFace = card.querySelector('.note-face:first-child');
+                    if (frontFace) frontFace.classList.add('active');
+                }, 200);
+                
+                indicator.textContent = `1/${MAX_CARDS}`;
+                saveToDatabase();
+            };
+            
+            const translateZ = 150; 
+
+            for (let i = 0; i < MAX_CARDS; i++) {
+                const face = document.createElement('div');
+                face.className = 'note-face';
+                const angle = i * 18; // 18 degrees per card (360/20)
+                face.style.transform = `rotateY(${angle}deg) translateZ(${translateZ}px)`;
+
+                // Only show the current card
+                if (i === note.currentCard) {
+                    face.classList.add('active');
+                }
+
+                const isFirstCard = i === 0;
+                const contentWrapper = document.createElement('div');
+                
+                // Added drop shadow and bevel effect via borders
+                let cardStyles = 'flex items-center justify-between p-3 rounded-lg group shadow-xl border-2 ';
+                if (isFirstCard) {
+                    // Darker card with a light source from top-left
+                    cardStyles += 'bg-gray-800/90 border-t-gray-700/70 border-l-gray-700/70 border-b-black/60 border-r-black/60';
+                } else {
+                    // Lighter sub-card with the same effect
+                    cardStyles += 'bg-gray-700/90 border-t-gray-600/70 border-l-gray-600/70 border-b-black/50 border-r-black/50';
+                }
+                contentWrapper.className = cardStyles;
+                
+                let contentElement;
+                if (isFirstCard) {
+                    contentElement = document.createElement('input');
+                    contentElement.type = 'text';
+                    contentElement.className = 'flex-grow bg-transparent focus:outline-none focus:bg-gray-700/50 rounded px-3 py-2 min-h-[40px]';
+                } else {
+                    contentElement = document.createElement('textarea');
+                    contentElement.rows = 2;
+                    contentElement.className = 'note-textarea flex-grow bg-transparent focus:outline-none focus:bg-gray-600/50 rounded px-3 py-2 resize-none min-h-[50px] cursor-text';
+                    contentElement.placeholder = `Card ${i + 1}...`;
+                    contentElement.addEventListener('input', () => { 
+                        contentElement.style.height = 'auto';
+                        contentElement.style.height = Math.max(contentElement.scrollHeight, 50) + 'px';
+                    });
+                    contentElement.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            contentElement.blur(); 
+                            flipNoteToFront();
+                        }
+                    });
+                }
+                
+                contentElement.value = note.contents[i] || '';
+                contentElement.onchange = () => updateNote(note.id, i, contentElement.value);
+
+                // Create a content area wrapper for better click targeting
+                const contentArea = document.createElement('div');
+                contentArea.className = 'flex-grow flex items-center cursor-text';
+                contentArea.title = isFirstCard ? 'Click to edit main note' : 'Click to edit card text';
+                contentArea.onclick = () => contentElement.focus();
+                contentArea.appendChild(contentElement);
+
+                const controls = document.createElement('div');
+                controls.className = 'flex items-center ml-6 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0';
+                
+                const flipBtn = document.createElement('button');
+                flipBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>`;
+                flipBtn.title = 'Cycle through cards';
+                flipBtn.className = 'text-gray-400 hover:text-blue-400';
+                flipBtn.onclick = flipNote;
+                controls.appendChild(flipBtn);
+
+                // Add back to main button only for subcards (not the first card)
+                if (!isFirstCard) {
+                    const backBtn = document.createElement('button');
+                    backBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>`;
+                    backBtn.title = 'Back to main card';
+                    backBtn.className = 'text-gray-400 hover:text-green-400';
+                    backBtn.onclick = flipNoteToFront;
+                    controls.appendChild(backBtn);
+                }
+
+                if (isFirstCard) {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = '✕';
+                    deleteBtn.title = 'Delete note';
+                    deleteBtn.className = 'text-gray-500 hover:text-red-400 font-bold';
+                    deleteBtn.onclick = () => deleteNote(note.id);
+                    controls.appendChild(deleteBtn);
+                }
+                
+                contentWrapper.appendChild(contentArea);
+                contentWrapper.appendChild(controls);
+                face.appendChild(contentWrapper);
+                card.appendChild(face);
+            }
+            li.appendChild(card);
+            return li;
+        };
+
+        const createTrashElement = (note) => {
+            const li = document.createElement('li');
+            li.className = 'bg-gray-800/50 border border-gray-600/30 rounded-lg p-3 opacity-75';
+
+            const deletedDate = new Date(note.deletedAt).toLocaleDateString();
+            const daysLeft = Math.ceil(TRASH_RETENTION_DAYS - (Date.now() - note.deletedAt) / (1000 * 60 * 60 * 24));
+
+            const content = document.createElement('div');
+            content.className = 'flex items-center justify-between';
+            
+            const textContent = document.createElement('div');
+            textContent.className = 'flex-grow';
+            textContent.innerHTML = `
+                <div class="text-gray-300 font-medium line-through">${note.contents[0] || 'Untitled'}</div>
+                <div class="text-xs text-gray-500 mt-1">Deleted: ${deletedDate} • Auto-delete in ${daysLeft} days</div>
+            `;
+
+            const controls = document.createElement('div');
+            controls.className = 'flex space-x-2 ml-4';
+
+            const restoreBtn = document.createElement('button');
+            restoreBtn.innerHTML = '↶';
+            restoreBtn.title = 'Restore note';
+            restoreBtn.className = 'text-green-400 hover:text-green-300 font-bold text-lg';
+            restoreBtn.onclick = () => restoreNote(note.id);
+
+            const permanentDeleteBtn = document.createElement('button');
+            permanentDeleteBtn.innerHTML = '✕';
+            permanentDeleteBtn.title = 'Delete permanently';
+            permanentDeleteBtn.className = 'text-red-400 hover:text-red-300 font-bold';
+            permanentDeleteBtn.onclick = () => permanentDeleteNote(note.id);
+
+            controls.appendChild(restoreBtn);
+            controls.appendChild(permanentDeleteBtn);
+            content.appendChild(textContent);
+            content.appendChild(controls);
+            li.appendChild(content);
+
+            return li;
+        };
+        
+        const addNote = () => {
+            const noteText = noteInput.value.trim();
+            if (noteText) {
+                const newContents = new Array(MAX_CARDS).fill('');
+                newContents[0] = noteText;
+                notes.push({ 
+                    id: Date.now(), 
+                    contents: newContents, 
+                    rotation: 0,
+                    currentCard: 0,
+                    createdAt: Date.now()
+                });
+                
+                // Track note creation for donation system
+                notesCreatedCount++;
+                checkDonationPopup();
+                
+                noteInput.value = '';
+                renderNotes();
+            }
+            noteInput.focus();
+        };
+
+        const updateNote = (id, contentIndex, newText) => {
+            notes = notes.map(note => {
+                if (note.id === id) {
+                    const newContents = [...note.contents];
+                    newContents[contentIndex] = newText;
+                    return { ...note, contents: newContents };
+                }
+                return note;
+            });
+            saveToDatabase();
+        };
+
+        const deleteNote = (id) => {
+            const noteToDelete = notes.find(note => note.id === id);
+            if (noteToDelete) {
+                // Add deletion timestamp and move to trash
+                noteToDelete.deletedAt = Date.now();
+                trashedNotes.push(noteToDelete);
+                notes = notes.filter(note => note.id !== id);
+                renderNotes();
+                updateTrashCount();
+            }
+        };
+
+        const restoreNote = (id) => {
+            const noteToRestore = trashedNotes.find(note => note.id === id);
+            if (noteToRestore) {
+                // Remove deletion timestamp and move back to active notes
+                delete noteToRestore.deletedAt;
+                notes.push(noteToRestore);
+                trashedNotes = trashedNotes.filter(note => note.id !== id);
+                renderTrash();
+                updateTrashCount();
+                saveToDatabase(); // Added missing save call
+                if (currentView === 'notes') {
+                    renderNotes();
+                }
+            }
+        };
+
+        const permanentDeleteNote = (id) => {
+            if (confirm('Are you sure you want to permanently delete this note? This action cannot be undone.')) {
+                trashedNotes = trashedNotes.filter(note => note.id !== id);
+                renderTrash();
+                updateTrashCount();
+                saveToDatabase();
+            }
+        };
+
+        const emptyTrash = () => {
+            if (confirm('Are you sure you want to permanently delete all notes in trash? This action cannot be undone.')) {
+                trashedNotes = [];
+                renderTrash();
+                updateTrashCount();
+                saveToDatabase();
+            }
+        };
+
+        const clearAllNotes = () => {
+            if (confirm('Are you sure you want to clear all notes? This action cannot be undone.')) {
+                notes = [];
+                renderNotes();
+            }
+        };
+
+        const saveAsMarkdown = () => {
+            const markdownContent = notes.map(note => {
+                let content = `- **${note.contents[0]}**`;
+                content += `\n  *Created: ${formatTimestamp(note.createdAt)}*`;
+                const subNotes = note.contents.slice(1).filter(text => text && text.trim());
+                if(subNotes.length > 0) {
+                    content += '\n' + subNotes.map((line, index) => `  - Card ${index + 2}: ${line}`).join('\n');
+                }
+                return content;
+            }).join('\n\n');
+
+            const blob = new Blob([markdownContent], { type: 'text/markdown' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            const customName = noteNameInput.value.trim().replace(/\s+/g, '-');
+            a.download = customName ? `${customName}.md` : `notes-${new Date().toISOString().slice(0,10)}.md`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        };
+        
+        const handleFileImport = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const lines = e.target.result.split('\n');
+                let importedNotes = [];
+                let currentNote = null;
+
+                lines.forEach(line => {
+                    const trimmedLine = line.trim();
+                    const isSubNote = line.startsWith('  ') || line.startsWith('\t');
+                    
+                    if (!trimmedLine) return;
+                    
+                    const content = trimmedLine.replace(/^[-*]\s*/, '');
+
+                    if (isSubNote && currentNote) {
+                        const emptyIndex = currentNote.contents.slice(1).findIndex(c => !c);
+                        if(emptyIndex !== -1) { 
+                            currentNote.contents[emptyIndex + 1] = content;
+                        }
+                    } else {
+                        if (currentNote) importedNotes.push(currentNote);
+                        const newContents = new Array(MAX_CARDS).fill('');
+                        newContents[0] = content;
+                        currentNote = { 
+                            id: Date.now() + Math.random(), 
+                            contents: newContents, 
+                            rotation: 0,
+                            currentCard: 0
+                        };
+                    }
+                });
+                if (currentNote) importedNotes.push(currentNote);
+                notes = [...notes, ...importedNotes];
+                renderNotes();
+            };
+            reader.readAsText(file);
+            fileInput.value = '';
+        };
+
+        // Event listeners
+        addNoteBtn.addEventListener('click', addNote);
+        noteInput.addEventListener('keypress', (e) => e.key === 'Enter' && addNote());
+        noteInput.addEventListener('keyup', (e) => e.key === 'Escape' && (noteInput.value = ''));
+        saveMdBtn.addEventListener('click', saveAsMarkdown);
+        clearAllBtn.addEventListener('click', clearAllNotes);
+        importBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileImport);
+        
+        // Menu event listeners
+        notesViewBtn.addEventListener('click', () => switchView('notes'));
+        trashViewBtn.addEventListener('click', () => switchView('trash'));
+        helpViewBtn.addEventListener('click', () => switchView('help'));
+        podsViewBtn.addEventListener('click', () => switchView('pods'));
+        emptyTrashBtn.addEventListener('click', emptyTrash);
+        
+        // Pods event listeners
+        archiveToPodBtn.addEventListener('click', archiveNotesToPod);
+        newPodBtn.addEventListener('click', showPodModal);
+        cancelPodBtn.addEventListener('click', hidePodModal);
+        createPodBtn.addEventListener('click', createPod);
+        closePodDetailsBtn.addEventListener('click', () => podDetailsModal.classList.add('hidden'));
+        
+        // Pod color selection
+        document.querySelectorAll('.pod-color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                selectedPodColor = btn.getAttribute('data-color');
+                updatePodColorSelection();
+            });
+        });
+
+        // Modal click outside to close
+        podModal.addEventListener('click', (e) => {
+            if (e.target === podModal) hidePodModal();
+        });
+        podDetailsModal.addEventListener('click', (e) => {
+            if (e.target === podDetailsModal) podDetailsModal.classList.add('hidden');
+        });
+        
+        // Help and About event listeners
+        aboutBtn.addEventListener('click', () => aboutModal.classList.remove('hidden'));
+        closeAboutBtn.addEventListener('click', () => aboutModal.classList.add('hidden'));
+        aboutModal.addEventListener('click', (e) => {
+            if (e.target === aboutModal) aboutModal.classList.add('hidden');
+        });
+
+        // Donation system event listeners
+        supportDevBtn.addEventListener('click', () => showDonationModal());
+        closeDonationBtn.addEventListener('click', () => donationModal.classList.add('hidden'));
+        donateBtn.addEventListener('click', handleDonation);
+        donationModal.addEventListener('click', (e) => {
+            if (e.target === donationModal) donationModal.classList.add('hidden');
+        });
+
+        // Initialize app
+        loadFromDatabase();
+        updateTrashCount();
+        updatePodsCount();
+        renderNotes();
+    </script>
+
+</body>
+</html>
+

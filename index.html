@@ -65,10 +65,6 @@
       background: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,.25), rgba(0,0,0,.45));
       pointer-events: none;
     }
-
-    /* Typography helpers for in-page blog modal */
-    .prose :where(a){ color: var(--leaf); }
-    .prose :where(a):hover{ color: var(--leaf-600); }
   </style>
 </head>
 <body class="bg-white text-[var(--ink)] dark:bg-[var(--pond)] dark:text-slate-100 antialiased">
@@ -82,7 +78,7 @@
       <a href="#" class="font-semibold tracking-tight text-lg">Jeremy Robards</a>
       <nav class="hidden sm:flex items-center gap-6 text-sm">
         <a href="#proof" class="hover:opacity-80">Projects</a>
-    <a href="/blog/" class="hover:opacity-80">Blog</a>
+    <a href="/bullet/" class="hover:opacity-80">Bullet Note Taker App</a>
         <a href="#about" class="hover:opacity-80">About</a>
         <a href="#roadmap" class="hover:opacity-80">Roadmap</a>
         <a href="#links" class="hover:opacity-80">Links</a>
@@ -181,24 +177,7 @@
     </div>
   </section>
 
-  <!-- Blog (JSON-fed, modal reader) -->
-  <section id="blog" class="max-w-6xl mx-auto px-4 py-10">
-    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Latest Posts</h2>
-    <p class="mt-2 text-slate-700 dark:text-slate-300">Three posts load from <code>/blog.json</code>. Click to read in-page.</p>
-  <div id="blogGrid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-    <!-- Modal -->
-    <div id="blogModal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
-      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="blogBackdrop"></div>
-      <div class="relative max-w-3xl mx-auto mt-16 bg-white/95 dark:bg-[color:rgba(6,42,42,0.95)] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl">
-        <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
-          <h3 id="modalTitle" class="font-semibold"></h3>
-          <button id="modalClose" class="rounded-lg px-2 py-1 text-slate-500 hover:text-slate-900 dark:hover:text-white" aria-label="Close">✕</button>
-        </div>
-        <div id="modalBody" class="prose prose-slate dark:prose-invert max-w-none p-4"></div>
-      </div>
-    </div>
-  </section>
 
   <!-- About -->
   <section id="about" class="max-w-6xl mx-auto px-4 py-10">
@@ -244,7 +223,7 @@
         <ul class="mt-3 list-disc pl-5 space-y-2 text-sm">
           <li>ChronicleOS: playable cartridge demo + docs</li>
           <li>KAIA: daily routine flows + landing page</li>
-          <li>Blog: hook up JSON → SQLite backed posts</li>
+          <li>Bullet Note Taker: enhanced features + sync capabilities</li>
         </ul>
       </div>
       <div class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 bg-white/60 dark:bg-black/20 backdrop-blur-sm">
@@ -308,58 +287,7 @@
     document.getElementById('themeLabel').textContent =
       document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
 
-    // Blog loader
-    const blogGrid = document.getElementById('blogGrid');
-    const modal = document.getElementById('blogModal');
-    const modalBody = document.getElementById('modalBody');
-    const modalTitle = document.getElementById('modalTitle');
-    const closeModal = () => { modal.classList.add('hidden'); modal.setAttribute('aria-hidden','true'); };
-    document.getElementById('modalClose').addEventListener('click', closeModal);
-    document.getElementById('blogBackdrop').addEventListener('click', closeModal);
-    window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    async function loadBlog(){
-      // Prefer the in-browser DB; fall back to /blog/posts.json seed
-      try{
-        const dbModule = await import('/blog/assets/db.js');
-        const posts = await dbModule.getAllPosts();
-        if(posts && posts.length>0){
-          const visible = posts.filter(p=>p.status==='published' && !p.deleted).sort((a,b)=>new Date(b.date)-new Date(a.date));
-          renderBlogCards(visible.slice(0,3));
-          return;
-        }
-      }catch(e){ /* ignore */ }
-      try{
-        const res = await fetch('/blog/posts.json',{cache:'no-store'}); if(res.ok){ const seed = await res.json(); renderBlogCards((seed||[]).slice(0,3)); return; }
-      }catch(e){}
-      // placeholder when no posts
-      renderBlogCards([]);
-    }
-
-    function renderBlogCards(posts){
-      blogGrid.innerHTML = '';
-      if(!posts || posts.length===0){
-        const empty = document.createElement('div'); empty.className='rounded-2xl border border-dashed p-6 text-center text-sm bg-white/60 dark:bg-black/20';
-        empty.innerHTML = `<p class="font-semibold">No posts yet</p><p class="mt-2 text-sm">Check back later or unlock developer tools to add the first post.</p>`;
-        blogGrid.appendChild(empty); return;
-      }
-      posts.forEach(p=>{
-        const card = document.createElement('article');
-        card.className = 'rounded-2xl border border-slate-200 dark:border-slate-800 p-4 card-hover cursor-pointer bg-white/60 dark:bg-black/20 backdrop-blur-sm';
-        card.innerHTML = `
-          <div class="text-xs text-slate-600 dark:text-slate-400">${new Date(p.date).toLocaleString()}</div>
-          <h3 class="mt-1 font-semibold">${p.title}</h3>
-          <p class="mt-1 text-sm text-slate-700 dark:text-slate-300">${p.excerpt || (p.subtitle||'')}</p>
-        `;
-        card.addEventListener('click', async ()=>{
-          // load full content from DB if available
-          try{ const db = await import('/blog/assets/db.js'); const full = await db.getPost(p.id); modalTitle.textContent = full.title; modalBody.innerHTML = full.content || full.contentHtml || '<p>No content.</p>'; modal.classList.remove('hidden'); modal.setAttribute('aria-hidden','false'); }catch(e){ modalTitle.textContent = p.title; modalBody.innerHTML = p.contentHtml || '<p>No content.</p>'; modal.classList.remove('hidden'); modal.setAttribute('aria-hidden','false'); }
-        });
-        blogGrid.appendChild(card);
-      });
-    }
-
-    loadBlog();
   </script>
 
   <!-- Replace the diagnostic script with an improved asset probe + loader -->
