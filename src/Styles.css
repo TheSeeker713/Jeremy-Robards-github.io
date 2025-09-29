@@ -6,7 +6,14 @@ body {
     color: #333;
     line-height: 1.6;
 }
-/* cleaned stray rules that were breaking CSS parsing */
+/* Style the header */
+header {
+    background-color: #222; /* Black background */
+    color: white; /* White text */
+    padding: 40px 20px;
+    text-align: center;
+}
+
 /* Adjust header text */
 header h1 {
     font-size: 2.5em;
@@ -16,13 +23,12 @@ header h1 {
 header p {
     font-size: 1.2em;
     opacity: 0.8;
-        background: radial-gradient(circle at 30% 30%, rgba(16,185,129,0.55), rgba(6,182,212,0.45) 36%, rgba(99,102,241,0.12) 60%);
-        filter: blur(36px) saturate(1.15);
-        opacity: 1;
-        z-index: -1; /* place behind the button but above header background */
+}
+
+/* style sections as cards */
+section {
     padding: 40px 20px;
     max-width: 800px;
-        mix-blend-mode: screen;
     margin: 20px auto;
     background: whitesmoke;
     border-radius: 10px;
@@ -117,86 +123,4 @@ input, textarea, select {
 
 .dark .high-contrast { background: rgba(255,255,255,0.06) !important; color: #e6eef8 !important; }
 .dark .content-input { background: rgba(255,255,255,0.06) !important; color: #e6eef8 !important; }
-
-/* KAIA prototype helpers */
-.kaia-panel { background: linear-gradient(#fff,#f6fbfd); border-radius:12px; box-shadow:0 8px 18px rgba(2,6,23,0.06); }
-.kaia-nav-btn { display:block; padding:12px 14px; margin-bottom:8px; border-radius:10px; background:#f7efe2; color:#2e1f14; font-weight:700; }
-
-@media (max-width: 800px) {
-    .kaia-panel { padding:12px; }
-    .kaia-nav-btn { padding:10px 12px; }
-}
-
-/* KAIA CTA with animated glowing aura */
-.kaia-cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 14px;
-    border-radius: 12px;
-    background: linear-gradient(90deg, #10b981 0%, #06b6d4 60%); /* emerald -> cyan */
-    color: #ffffff; /* white text on vivid gradient */
-    text-shadow: 0 1px 0 rgba(0,0,0,0.2);
-    text-decoration: none;
-    font-weight: 600;
-    position: relative;
-    z-index: 9999 !important; /* bring above siblings to ensure clickability */
-    border: none;
-    box-shadow: 0 6px 18px rgba(16,185,129,0.12);
-    cursor: pointer;
-    overflow: visible; /* allow aura to be visible outside the element */
-    transition: transform 220ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms ease, filter 220ms ease;
-    will-change: transform;
-    display: inline-flex !important;
-    flex: 0 0 auto !important;
-}
-
-/* Welcome modal styles for KAIA */
-#kaia-welcome { background: rgba(3,7,18,0.45); }
-#kaia-welcome .panel { transform-origin: center; }
-.kaia-welcome-show { pointer-events: auto; }
-.kaia-welcome-show .panel { transform: translateY(0) scale(1); opacity: 1; }
-
-/* Initial hidden state applied inline in HTML via utility classes */
-#kaia-welcome > div { transform: translateY(-10px) scale(0.98); opacity: 0; }
-
-/* Simple reduced-motion-friendly animation */
-@media (prefers-reduced-motion: no-preference) {
-    #kaia-welcome > div { transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease; }
-}
-
-.kaia-cta::before { display: none !important; }
-
-.kaia-cta:hover { transform: translateY(-6px) scale(1.08) !important; box-shadow: 0 18px 40px rgba(16,185,129,0.32) !important; }
-.kaia-cta:hover::before { display: none !important; }
-
-/* Inner aura element for better control (styles applied to the added span) */
-.kaia-aura {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: calc(100% + 60px);
-    height: calc(100% + 60px);
-    transform: translate(-50%,-50%);
-    border-radius: 22px;
-    background: radial-gradient(circle at 30% 30%, rgba(16,185,129,0.45), rgba(6,182,212,0.30) 36%, rgba(99,102,241,0.08) 60%);
-    filter: blur(28px) saturate(1.1);
-    opacity: 1;
-    z-index: 9998 !important;
-    pointer-events: none;
-    animation: kaia-orbit 2.2s ease-in-out infinite;
-}
-
-.kaia-cta:focus, .kaia-cta:focus-visible { outline: 2px solid rgba(16,185,129,0.25); outline-offset: 4px; }
-
-@keyframes kaia-orbit {
-    0% { transform: translate(-50%,-50%) scale(0.96); opacity: 0.65; }
-    50% { transform: translate(-50%,-53%) scale(1.08); opacity: 1; }
-    100% { transform: translate(-50%,-50%) scale(0.96); opacity: 0.65; }
-}
-
-@keyframes kaia-pulse {
-    0% { transform: scale(0.98); opacity: 0.65; }
-    50% { transform: scale(1.06); opacity: 1; }
-    100% { transform: scale(0.98); opacity: 0.65; }
-}
 
