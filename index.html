@@ -27,86 +27,81 @@
       --leaf: #10b981;       /* emerald for accents */
       --leaf-600: #059669;
       --koi: #f59e0b;        /* amber accent (koi) */
-      <script>
-        try {
-          // Year
-          const yearEl = document.getElementById('year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
+      --koi-700: #b45309;
+    }
+    .card-hover { transition: transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease; }
+    .card-hover:hover { transform: translateY(-2px); opacity: 0.98; }
 
-          // Theme toggle
-          const toggle = document.getElementById('theme-toggle');
-          if (toggle) {
-            toggle.addEventListener('click', () => {
-              const html = document.documentElement;
-              const dark = !html.classList.contains('dark');
-              html.classList.toggle('dark', dark);
-              localStorage.setItem('theme', dark ? 'dark' : 'light');
-              const label = document.getElementById('themeLabel');
-              if (label) label.textContent = dark ? 'Light' : 'Dark';
-            });
-          } else {
-            console.warn('Theme toggle button not found (expected id="theme-toggle").');
-          }
+    /* === BACKGROUND LAYER ===
+       Fixed, static, 50% opacity behind all content.
+       DEV NOTE: To use your own file, replace the --bg-url value.
+    */
+    :root {
+      /* Publicly available koi/lilypad image (Unsplash).
+         Use explicit URL on the background below to avoid accidental reuse of other assets. */
+      --bg-url: url('/src/assets/koi.png');
+     /* Similar options you can try:
+     url('https://images.unsplash.com/photo-1530908295418-a12e326966ba?q=80&w=1920&auto=format&fit=crop');
+     url('https://images.unsplash.com/photo-1591123120675-8f3a7a457769?q=80&w=1920&auto=format&fit=crop');
+     */
+     }
+    .bg-fixed-layer {
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+      /* background-image set by loader JS at runtime (avoids path/case/branch issues) */
+      background-image: none;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      filter: saturate(0.9);
+      opacity: .5;
+      pointer-events: none;
+    }
+    /* Subtle readable overlay for dark mode only */
+    .bg-overlay-dark{
+      position: fixed; inset: 0; z-index: -1;
+      background: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,.25), rgba(0,0,0,.45));
+      pointer-events: none;
+    }
 
-          const themeLabelEl = document.getElementById('themeLabel');
-          if (themeLabelEl) themeLabelEl.textContent = document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
+    /* Typography helpers for in-page blog modal */
+    .prose :where(a){ color: var(--leaf); }
+    .prose :where(a):hover{ color: var(--leaf-600); }
+  </style>
+  <link rel="stylesheet" href="/src/Styles.css" />
+</head>
+<body class="bg-white text-[var(--ink)] dark:bg-[var(--pond)] dark:text-slate-100 antialiased">
+  <!-- Background (static, 50% opacity) -->
+  <div class="bg-fixed-layer"></div>
+  <div class="bg-overlay-dark hidden dark:block"></div>
 
-          // Blog loader
-          const blogGrid = document.getElementById('blogGrid');
-          const modal = document.getElementById('blogModal');
-          const modalBody = document.getElementById('modalBody');
-          const modalTitle = document.getElementById('modalTitle');
-          const closeModal = () => { if (modal) { modal.classList.add('hidden'); modal.setAttribute('aria-hidden','true'); } };
-          const modalCloseEl = document.getElementById('modalClose'); if (modalCloseEl) modalCloseEl.addEventListener('click', closeModal);
-          const blogBackdropEl = document.getElementById('blogBackdrop'); if (blogBackdropEl) blogBackdropEl.addEventListener('click', closeModal);
-          window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  <!-- Header -->
+  <header class="sticky top-0 z-50 border-b border-slate-200/60 dark:border-slate-800/80 backdrop-blur bg-white/70 dark:bg-[color:rgba(6,42,42,0.7)]">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="#" class="font-semibold tracking-tight text-lg">Jeremy Robards</a>
+      <nav class="hidden sm:flex items-center gap-6 text-sm">
+        <a href="#proof" class="hover:opacity-80">Projects</a>
+    <a href="/blog/" class="hover:opacity-80">Blog</a>
+        <a href="#about" class="hover:opacity-80">About</a>
+        <a href="#roadmap" class="hover:opacity-80">Roadmap</a>
+        <a href="#links" class="hover:opacity-80">Links</a>
+        <a href="#contact" class="hover:opacity-80">Contact</a>
+      </nav>
+        <a href="/kaia/" class="kaia-cta" aria-label="KAIA">
+          <span class="kaia-aura" aria-hidden="true"></span>
+          <span class="kaia-label">KAIA</span>
+        </a>
+        <button id="theme-toggle" type="button" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm card-hover bg-white/70 dark:bg-white/5">
+        <span id="themeLabel">Dark</span>
+        <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0-1.06-1.06M6.696 6.696l-1.06-1.06"/></svg>
+      </button>
+    </div>
+  </header>
 
-          async function loadBlog(){
-            // Prefer the in-browser DB; fall back to /blog/posts.json seed
-            try{
-              const dbModule = await import('/blog/assets/db.js');
-              const posts = await dbModule.getAllPosts();
-              if(posts && posts.length>0){
-                const visible = posts.filter(p=>p.status==='published' && !p.deleted).sort((a,b)=>new Date(b.date)-new Date(a.date));
-                renderBlogCards(visible.slice(0,3));
-                return;
-              }
-            }catch(e){ console.warn('Blog DB load failed', e); }
-            try{
-              const res = await fetch('/blog/posts.json',{cache:'no-store'}); if(res.ok){ const seed = await res.json(); renderBlogCards((seed||[]).slice(0,3)); return; }
-            }catch(e){ console.warn('Fetching blog/posts.json failed', e); }
-            // placeholder when no posts
-            renderBlogCards([]);
-          }
-
-          function renderBlogCards(posts){
-            if(!blogGrid) return;
-            blogGrid.innerHTML = '';
-            if(!posts || posts.length===0){
-              const empty = document.createElement('div'); empty.className='rounded-2xl border border-dashed p-6 text-center text-sm bg-white/60 dark:bg-black/20';
-              empty.innerHTML = `<p class="font-semibold">No posts yet</p><p class="mt-2 text-sm">Check back later or unlock developer tools to add the first post.</p>`;
-              blogGrid.appendChild(empty); return;
-            }
-            posts.forEach(p=>{
-              const card = document.createElement('article');
-              card.className = 'rounded-2xl border border-slate-200 dark:border-slate-800 p-4 card-hover cursor-pointer bg-white/60 dark:bg-black/20 backdrop-blur-sm';
-              card.innerHTML = `
-                <div class="text-xs text-slate-600 dark:text-slate-400">${new Date(p.date).toLocaleString()}</div>
-                <h3 class="mt-1 font-semibold">${p.title}</h3>
-                <p class="mt-1 text-sm text-slate-700 dark:text-slate-300">${p.excerpt || (p.subtitle||'')}</p>
-              `;
-              card.addEventListener('click', async ()=>{
-                // load full content from DB if available
-                try{ const db = await import('/blog/assets/db.js'); const full = await db.getPost(p.id); if(modalTitle) modalTitle.textContent = full.title; if(modalBody) modalBody.innerHTML = full.content || full.contentHtml || '<p>No content.</p>'; if(modal) { modal.classList.remove('hidden'); modal.setAttribute('aria-hidden','false'); } }catch(e){ if(modalTitle) modalTitle.textContent = p.title; if(modalBody) modalBody.innerHTML = p.contentHtml || '<p>No content.</p>'; if(modal) { modal.classList.remove('hidden'); modal.setAttribute('aria-hidden','false'); } }
-              });
-              blogGrid.appendChild(card);
-            });
-          }
-
-          loadBlog();
-        } catch (err) {
-          console.error('Main page script error', err);
-        }
-      </script>
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-4 py-12 sm:py-16">
     <div class="grid md:grid-cols-2 gap-8 items-center">
       <div>
         <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight">
@@ -305,21 +300,16 @@
     document.getElementById('year').textContent = new Date().getFullYear();
 
     // Theme toggle
-    const toggle = document.getElementById('theme-toggle');
-    if (toggle) {
-      toggle.addEventListener('click', () => {
-        const html = document.documentElement;
-        const dark = !html.classList.contains('dark');
-        html.classList.toggle('dark', dark);
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
-        const label = document.getElementById('themeLabel');
-        if (label) label.textContent = dark ? 'Light' : 'Dark';
-      });
-    } else {
-      console.warn('Theme toggle button not found (expected id="theme-toggle").');
-    }
-    const themeLabelEl = document.getElementById('themeLabel');
-    if (themeLabelEl) themeLabelEl.textContent = document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
+    const toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const dark = !html.classList.contains('dark');
+      html.classList.toggle('dark', dark);
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+      document.getElementById('themeLabel').textContent = dark ? 'Light' : 'Dark';
+    });
+    document.getElementById('themeLabel').textContent =
+      document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
 
     // Blog loader
     const blogGrid = document.getElementById('blogGrid');
@@ -445,9 +435,7 @@
         document.querySelector('.bg-fixed-layer').style.backgroundImage = `url('${bgUrl}')`;
         console.log('Asset probe: using background', bgUrl);
       } else {
-        console.warn('Asset probe: koi.png not found. Check file presence and casing in repo/public/src. Falling back to /koi.png');
-        const bgEl = document.querySelector('.bg-fixed-layer');
-        if (bgEl) bgEl.style.backgroundImage = "url('/koi.png')";
+        console.warn('Asset probe: koi.png not found. Check file presence and casing in repo/public/src.');
       }
 
       const gifUrl = await findFirst(gifCandidates);
@@ -456,9 +444,8 @@
         heroImg.src = gifUrl;
         console.log('Asset probe: using hero GIF', gifUrl);
       } else {
-        if (!gifUrl) console.warn('Asset probe: Dev1.gif not found from candidates. Falling back to /Dev1.gif');
+        if (!gifUrl) console.warn('Asset probe: Dev1.gif not found from candidates.');
         if (!heroImg) console.warn('Asset probe: hero img element not found.');
-        if (heroImg && !gifUrl) heroImg.src = '/Dev1.gif';
       }
     }
 
@@ -547,27 +534,6 @@
       })("Sorry — the secret page is not available on the server yet. Check that your Pages deployment includes /713/ and try again.");
     });
   })();
-  </script>
-  <script>
-    // Diagnostic helpers: confirm key elements exist and report/fix missing assets
-    (function(){
-      function log(...args){ try{ console.log('[diag]',...args); }catch(e){} }
-      document.addEventListener('DOMContentLoaded', ()=>{
-        const toggle = document.getElementById('theme-toggle');
-        const label = document.getElementById('themeLabel');
-        const hero = document.getElementById('heroGif');
-        const bg = document.querySelector('.bg-fixed-layer');
-        log('theme-toggle found?', !!toggle, 'themeLabel found?', !!label);
-        log('document has .dark?', document.documentElement.classList.contains('dark'));
-        if(label) log('themeLabel text:', label.textContent);
-        log('heroImg element?', !!hero, 'hero src:', hero && hero.src);
-        log('bg element?', !!bg, 'bgImage:', bg && bg.style && bg.style.backgroundImage);
-
-        // If images still blank, set conservative fallbacks (makes visible quickly)
-        if(hero && (!hero.src || hero.src.trim()==='')){ hero.src = '/Dev1.gif'; log('Applied fallback hero /Dev1.gif'); }
-        if(bg && (!bg.style.backgroundImage || bg.style.backgroundImage.trim()==='none')){ bg.style.backgroundImage = "url('/koi.png')"; log('Applied fallback bg /koi.png'); }
-      });
-    })();
   </script>
 </body>
 </html>
