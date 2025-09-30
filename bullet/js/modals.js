@@ -114,6 +114,13 @@ window.ModalSystem = {
 // Note editing modal
 window.NoteModal = {
     show(note) {
+        // Ensure markdown state exists
+        if (!note.markdownEnabled) {
+            note.markdownEnabled = new Array(note.contents.length).fill(false);
+        }
+        
+        const isMarkdownEnabled = note.markdownEnabled[note.currentCard] || false;
+        
         const content = `
             <div class="space-y-6">
                 <!-- Ocean-themed curved card design -->
@@ -122,8 +129,21 @@ window.NoteModal = {
                         <div class="flex items-center gap-3">
                             <div class="w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 shadow-md ring-2 ring-cyan-300/20"></div>
                             <span class="text-slate-300 font-medium">Editing Note</span>
+                            ${isMarkdownEnabled ? '<span class="text-xs text-purple-400 bg-purple-500/20 px-2 py-1 rounded-full"><i class="fas fa-code text-xs"></i> Markdown</span>' : ''}
                         </div>
                         <div class="flex items-center gap-3 text-slate-400">
+                            <button onclick="window.NoteModal.toggleMarkdown()" 
+                                    class="p-2 hover:text-cyan-300 hover:bg-slate-700/50 rounded-xl transition-all duration-200 ${isMarkdownEnabled ? 'text-purple-400' : ''}" 
+                                    title="Toggle Markdown">
+                                <i class="fas fa-code"></i>
+                            </button>
+                            <button onclick="window.NoteModal.togglePreview()" 
+                                    class="p-2 hover:text-cyan-300 hover:bg-slate-700/50 rounded-xl transition-all duration-200" 
+                                    title="Toggle Preview" 
+                                    id="previewToggleBtn"
+                                    style="display: ${isMarkdownEnabled ? 'block' : 'none'}">
+                                <i class="fas fa-eye"></i>
+                            </button>
                             <button onclick="window.NoteModal.previousCard()" class="p-2 hover:text-cyan-300 hover:bg-slate-700/50 rounded-xl transition-all duration-200">
                                 <i class="fas fa-chevron-left"></i>
                             </button>
@@ -136,11 +156,26 @@ window.NoteModal = {
                         </div>
                     </div>
                     
-                    <!-- Ocean-themed curved textarea -->
-                    <textarea id="noteContentInput" 
-                              class="w-full h-48 p-6 bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/50 rounded-2xl text-white placeholder-slate-400 resize-none focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 backdrop-blur-sm shadow-inner transition-all duration-200 font-medium leading-relaxed"
-                              placeholder="Enter your note content... (Shift+Enter to save and close)"
-                              spellcheck="false">${note.contents[note.currentCard] || ''}</textarea>
+                    <!-- Ocean-themed curved textarea and preview -->
+                    <div class="relative">
+                        <textarea id="noteContentInput" 
+                                  class="w-full h-48 p-6 bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/50 rounded-2xl text-white placeholder-slate-400 resize-none focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 backdrop-blur-sm shadow-inner transition-all duration-200 font-medium leading-relaxed"
+                                  placeholder="Enter your note content... ${isMarkdownEnabled ? '(Markdown enabled) ' : ''}(Shift+Enter to save and close)"
+                                  spellcheck="false">${note.contents[note.currentCard] || ''}</textarea>
+                        
+                        <!-- Markdown Preview Panel -->
+                        <div id="markdownPreview" 
+                             class="absolute inset-0 p-6 bg-gradient-to-br from-slate-700/50 to-slate-800/50 border border-slate-600/50 rounded-2xl text-white backdrop-blur-sm shadow-inner overflow-y-auto hidden">
+                            <div class="prose prose-invert prose-sm max-w-none">
+                                <div id="previewContent">${isMarkdownEnabled ? window.MarkdownParser.parse(note.contents[note.currentCard] || '') : ''}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Markdown Help (shown when markdown is enabled) -->
+                    <div id="markdownHelp" class="text-xs text-slate-400 bg-slate-800/50 p-3 rounded-xl" style="display: ${isMarkdownEnabled ? 'block' : 'none'}">
+                        <strong>Markdown:</strong> **bold** *italic* \`code\` ~~strike~~ # Header - List [link](url)
+                    </div>
                     
                     <!-- Card navigation dots with ocean theme -->
                     <div class="flex justify-center items-center gap-2 mt-6 p-4 bg-slate-700/30 rounded-2xl">
@@ -175,8 +210,14 @@ window.NoteModal = {
         // Focus the textarea
         textarea.focus();
         
-        // Only save on card switching or modal closing - no auto-save while typing
-        // Removed auto-save on input for better performance
+        // Setup real-time preview updates for markdown
+        textarea.addEventListener('input', () => {
+            // Update preview if it's visible and markdown is enabled
+            const preview = document.getElementById('markdownPreview');
+            if (preview && !preview.classList.contains('hidden')) {
+                this.updatePreview();
+            }
+        });
         
         // Keyboard shortcuts
         textarea.addEventListener('keydown', (e) => {
@@ -197,11 +238,29 @@ window.NoteModal = {
                 this.nextCard();
             }
             
+            // Ctrl/Cmd + M to toggle markdown
+            if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
+                e.preventDefault();
+                this.toggleMarkdown();
+            }
+            
+            // Ctrl/Cmd + P to toggle preview (when markdown is enabled)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                const isMarkdownEnabled = this.currentNote && this.currentNote.markdownEnabled && this.currentNote.markdownEnabled[this.currentCardIndex];
+                if (isMarkdownEnabled) {
+                    e.preventDefault();
+                    this.togglePreview();
+                }
+            }
+            
             // Escape to close without saving current changes
             if (e.key === 'Escape') {
                 this.cancel();
             }
         });
+        
+        // Initialize markdown UI state
+        this.updateMarkdownUI();
     },
     
     handleOutsideClick(e) {
@@ -306,6 +365,15 @@ window.NoteModal = {
             dotsContainer.innerHTML = newDots;
         }
         
+        // Update markdown UI for new card
+        this.updateMarkdownUI();
+        
+        // Reset preview mode when switching cards
+        const preview = document.getElementById('markdownPreview');
+        if (preview && !preview.classList.contains('hidden')) {
+            this.togglePreview(); // Switch back to editor view
+        }
+        
         // Auto-save the change
         this.autoSave();
     },
@@ -330,6 +398,96 @@ window.NoteModal = {
         window.ModalSystem.hide();
         
         AppUtils.log('Modal cancelled, changes discarded');
+    },
+    
+    toggleMarkdown() {
+        if (!this.currentNote) return;
+        
+        // Ensure markdown state exists
+        if (!this.currentNote.markdownEnabled) {
+            this.currentNote.markdownEnabled = new Array(this.currentNote.contents.length).fill(false);
+        }
+        
+        // Toggle markdown for current card
+        this.currentNote.markdownEnabled[this.currentCardIndex] = !this.currentNote.markdownEnabled[this.currentCardIndex];
+        
+        // Update UI
+        this.updateMarkdownUI();
+        
+        // Save the change
+        window.BulletNoteApp.saveData();
+        
+        AppUtils.log(`Markdown ${this.currentNote.markdownEnabled[this.currentCardIndex] ? 'enabled' : 'disabled'} for card ${this.currentCardIndex}`);
+    },
+    
+    togglePreview() {
+        const textarea = document.getElementById('noteContentInput');
+        const preview = document.getElementById('markdownPreview');
+        const previewBtn = document.getElementById('previewToggleBtn');
+        
+        if (!textarea || !preview) return;
+        
+        const isPreviewVisible = !preview.classList.contains('hidden');
+        
+        if (isPreviewVisible) {
+            // Show textarea, hide preview
+            preview.classList.add('hidden');
+            textarea.classList.remove('hidden');
+            previewBtn.innerHTML = '<i class="fas fa-eye"></i>';
+            previewBtn.title = 'Show Preview';
+        } else {
+            // Show preview, hide textarea
+            this.updatePreview();
+            preview.classList.remove('hidden');
+            textarea.classList.add('hidden');
+            previewBtn.innerHTML = '<i class="fas fa-edit"></i>';
+            previewBtn.title = 'Show Editor';
+        }
+    },
+    
+    updatePreview() {
+        const textarea = document.getElementById('noteContentInput');
+        const previewContent = document.getElementById('previewContent');
+        
+        if (!textarea || !previewContent) return;
+        
+        if (this.currentNote && this.currentNote.markdownEnabled && this.currentNote.markdownEnabled[this.currentCardIndex]) {
+            previewContent.innerHTML = window.MarkdownParser.parse(textarea.value);
+        } else {
+            previewContent.textContent = textarea.value;
+        }
+    },
+    
+    updateMarkdownUI() {
+        if (!this.currentNote) return;
+        
+        const isMarkdownEnabled = this.currentNote.markdownEnabled && this.currentNote.markdownEnabled[this.currentCardIndex];
+        const textarea = document.getElementById('noteContentInput');
+        const markdownHelp = document.getElementById('markdownHelp');
+        const previewBtn = document.getElementById('previewToggleBtn');
+        
+        // Update textarea placeholder
+        if (textarea) {
+            textarea.placeholder = `Enter your note content... ${isMarkdownEnabled ? '(Markdown enabled) ' : ''}(Shift+Enter to save and close)`;
+        }
+        
+        // Show/hide markdown help
+        if (markdownHelp) {
+            markdownHelp.style.display = isMarkdownEnabled ? 'block' : 'none';
+        }
+        
+        // Show/hide preview button
+        if (previewBtn) {
+            previewBtn.style.display = isMarkdownEnabled ? 'block' : 'none';
+        }
+        
+        // Update preview if it's visible
+        this.updatePreview();
+        
+        // Re-render the main notes view to show markdown badge
+        setTimeout(() => {
+            window.BulletNoteApp.render();
+        }, 100);
     }
 };
 

@@ -418,6 +418,7 @@ class BulletNoteApp {
             const newNote = {
                 id: Date.now(),
                 contents: ['', '', '', '', ''], // 5 cards instead of 20
+                markdownEnabled: [false, false, false, false, false], // Markdown state per card
                 rotation: 0,
                 currentCard: 0,
                 createdAt: Date.now()
