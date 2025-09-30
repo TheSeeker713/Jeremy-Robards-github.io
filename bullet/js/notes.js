@@ -139,32 +139,36 @@ window.NotesRenderer = {
                     // Format timestamp safely
                     const timestamp = window.AppUtils ? window.AppUtils.formatTimestamp(note.createdAt) : new Date(note.createdAt).toLocaleDateString();
                         
-                    // Mobile-optimized card design with ocean-themed gradient background
+                    // Mobile-optimized card design with dark theme like in the image
                     html += `
-                        <div class="note-card bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-300/50 rounded-xl p-5 mb-4 shadow-lg hover:shadow-xl transform-gpu will-change-transform touch-action-manipulation cursor-pointer hover:from-slate-100 hover:to-slate-200 transition-all duration-300" 
+                        <div class="note-card rounded-xl p-5 mb-4 shadow-lg hover:shadow-xl transform-gpu will-change-transform touch-action-manipulation cursor-pointer transition-all duration-300" 
+                             style="background: linear-gradient(135deg, #334155 0%, #1e293b 100%); border: 1px solid rgba(71, 85, 105, 0.5);"
                              data-note-id="${note.id}" onclick="window.NotesRenderer.editNote('${note.id}')">
                             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
                                 <div class="flex items-center gap-2 flex-shrink-0">
-                                    <span class="text-xs text-slate-600 font-medium">${timestamp}</span>
-                                    <span class="text-xs text-blue-700 bg-blue-100 px-2 py-1 rounded-full font-medium">Card ${note.currentCard + 1}/${note.contents.length}</span>
-                                    ${hasAnyMarkdown ? '<span class="text-xs text-purple-700 bg-purple-200 px-2 py-1 rounded-full font-medium"><i class="fas fa-code text-xs"></i> MD</span>' : ''}
+                                    <span class="text-xs font-medium" style="color: #cbd5e1;">${timestamp}</span>
+                                    <span class="text-xs font-medium px-2 py-1 rounded-full" style="color: #3b82f6; background-color: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">Card ${note.currentCard + 1}/${note.contents.length}</span>
+                                    ${hasAnyMarkdown ? '<span class="text-xs font-medium px-2 py-1 rounded-full" style="color: #a855f7; background-color: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2);"><i class="fas fa-code text-xs"></i> MD</span>' : ''}
                                 </div>
                             </div>
                             
-                            <div class="text-slate-800 mb-4 break-words ${currentCardHasMarkdown ? '' : 'whitespace-pre-wrap'} leading-relaxed font-medium">${renderedContent}</div>
+                            <div class="mb-4 break-words ${currentCardHasMarkdown ? '' : 'whitespace-pre-wrap'} leading-relaxed font-medium" style="color: #f1f5f9;">${renderedContent}</div>
                             
                             <div class="flex flex-wrap gap-3 justify-end">
-                                <button class="markdown-btn ${currentCardHasMarkdown ? 'bg-purple-600 hover:bg-purple-700 shadow-md' : 'bg-slate-400 hover:bg-slate-500'} text-white px-4 py-2 rounded-lg text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-all duration-200 font-medium shadow-sm hover:shadow-md" 
+                                <button class="markdown-btn text-white px-4 py-2 rounded-lg text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-all duration-200 font-medium shadow-sm hover:shadow-md" 
+                                        style="background-color: ${currentCardHasMarkdown ? '#7c3aed' : '#94a3b8'}; border: none;"
                                         onclick="event.stopPropagation(); window.NotesRenderer.toggleMarkdown('${note.id}')"
                                         title="${currentCardHasMarkdown ? 'Disable' : 'Enable'} Markdown for current card">
                                     <i class="fas fa-code mr-1"></i>MD
                                 </button>
-                                <button class="edit-btn bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-all duration-200 font-medium shadow-sm hover:shadow-md" 
+                                <button class="edit-btn text-white px-4 py-2 rounded-lg text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-all duration-200 font-medium shadow-sm hover:shadow-md" 
+                                        style="background-color: #2563eb; border: none;"
                                         onclick="event.stopPropagation(); window.NotesRenderer.editNote('${note.id}')"
                                         title="Edit note">
                                     <i class="fas fa-edit mr-1"></i>Edit
                                 </button>
-                                <button class="delete-btn bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-all duration-200 font-medium shadow-sm hover:shadow-md" 
+                                <button class="delete-btn text-white px-4 py-2 rounded-lg text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-all duration-200 font-medium shadow-sm hover:shadow-md" 
+                                        style="background-color: #dc2626; border: none;"
                                         onclick="event.stopPropagation(); window.NotesRenderer.deleteNote('${note.id}')"
                                         title="Delete note">
                                     <i class="fas fa-trash mr-1"></i>Delete
