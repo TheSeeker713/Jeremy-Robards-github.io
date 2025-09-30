@@ -139,32 +139,32 @@ window.NotesRenderer = {
                     // Format timestamp safely
                     const timestamp = window.AppUtils ? window.AppUtils.formatTimestamp(note.createdAt) : new Date(note.createdAt).toLocaleDateString();
                         
-                    // Mobile-optimized card design matching the app structure
+                    // Mobile-optimized card design with ocean-themed gradient background
                     html += `
-                        <div class="note-card bg-white border border-gray-200 rounded-lg p-4 mb-4 shadow-sm transform-gpu will-change-transform touch-action-manipulation cursor-pointer hover:shadow-md transition-all duration-200" 
+                        <div class="note-card bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-300/50 rounded-xl p-5 mb-4 shadow-lg hover:shadow-xl transform-gpu will-change-transform touch-action-manipulation cursor-pointer hover:from-slate-100 hover:to-slate-200 transition-all duration-300" 
                              data-note-id="${note.id}" onclick="window.NotesRenderer.editNote('${note.id}')">
                             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
                                 <div class="flex items-center gap-2 flex-shrink-0">
-                                    <span class="text-xs text-gray-500">${timestamp}</span>
-                                    <span class="text-xs text-blue-600">Card ${note.currentCard + 1}/${note.contents.length}</span>
-                                    ${hasAnyMarkdown ? '<span class="text-xs text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full"><i class="fas fa-code text-xs"></i> MD</span>' : ''}
+                                    <span class="text-xs text-slate-600 font-medium">${timestamp}</span>
+                                    <span class="text-xs text-blue-700 bg-blue-100 px-2 py-1 rounded-full font-medium">Card ${note.currentCard + 1}/${note.contents.length}</span>
+                                    ${hasAnyMarkdown ? '<span class="text-xs text-purple-700 bg-purple-200 px-2 py-1 rounded-full font-medium"><i class="fas fa-code text-xs"></i> MD</span>' : ''}
                                 </div>
                             </div>
                             
-                            <div class="text-gray-700 mb-3 break-words ${currentCardHasMarkdown ? '' : 'whitespace-pre-wrap'} leading-relaxed">${renderedContent}</div>
+                            <div class="text-slate-800 mb-4 break-words ${currentCardHasMarkdown ? '' : 'whitespace-pre-wrap'} leading-relaxed font-medium">${renderedContent}</div>
                             
-                            <div class="flex flex-wrap gap-2 justify-end">
-                                <button class="markdown-btn ${currentCardHasMarkdown ? 'bg-purple-500 hover:bg-purple-600' : 'bg-gray-400 hover:bg-gray-500'} text-white px-3 py-2 rounded text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-colors" 
+                            <div class="flex flex-wrap gap-3 justify-end">
+                                <button class="markdown-btn ${currentCardHasMarkdown ? 'bg-purple-600 hover:bg-purple-700 shadow-md' : 'bg-slate-400 hover:bg-slate-500'} text-white px-4 py-2 rounded-lg text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-all duration-200 font-medium shadow-sm hover:shadow-md" 
                                         onclick="event.stopPropagation(); window.NotesRenderer.toggleMarkdown('${note.id}')"
                                         title="${currentCardHasMarkdown ? 'Disable' : 'Enable'} Markdown for current card">
                                     <i class="fas fa-code mr-1"></i>MD
                                 </button>
-                                <button class="edit-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-colors" 
+                                <button class="edit-btn bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-all duration-200 font-medium shadow-sm hover:shadow-md" 
                                         onclick="event.stopPropagation(); window.NotesRenderer.editNote('${note.id}')"
                                         title="Edit note">
                                     <i class="fas fa-edit mr-1"></i>Edit
                                 </button>
-                                <button class="delete-btn bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-colors" 
+                                <button class="delete-btn bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm min-h-[44px] touch-action-manipulation transform-gpu transition-all duration-200 font-medium shadow-sm hover:shadow-md" 
                                         onclick="event.stopPropagation(); window.NotesRenderer.deleteNote('${note.id}')"
                                         title="Delete note">
                                     <i class="fas fa-trash mr-1"></i>Delete
