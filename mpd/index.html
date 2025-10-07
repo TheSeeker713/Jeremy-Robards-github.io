@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Motion Picture and Design — Jeremy Robards Portfolio</title>
+  <meta name="description" content="Motion Picture and Design portfolio of Jeremy Robards" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+    (function () {
+      const stored = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = stored ? stored === 'dark' : prefersDark;
+      document.documentElement.classList.toggle('dark', isDark);
+    })();
+  </script>
+  <style>
+    :root{
+      --ink: #0b1320;
+      --paper: #ffffff;
+      --pond: #062a2a;
+      --leaf: #10b981;
+      --leaf-600: #059669;
+      --koi: #f59e0b;
+      --koi-700: #b45309;
+      --bg-url: url('/src/assets/koi.png');
+    }
+    .card-hover { transition: transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease; }
+    .card-hover:hover { transform: translateY(-2px); opacity: 0.98; }
+    .bg-fixed-layer {
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+      background-image: none;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      filter: saturate(0.9);
+      opacity: .5;
+      pointer-events: none;
+    }
+    .bg-overlay-dark{
+      position: fixed; inset: 0; z-index: -1;
+      background: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,.25), rgba(0,0,0,.45));
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="bg-white text-[var(--ink)] dark:bg-[var(--pond)] dark:text-slate-100 antialiased">
+  <!-- Background -->
+  <div class="bg-fixed-layer"></div>
+  <div class="bg-overlay-dark hidden dark:block"></div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 border-b border-slate-200/60 dark:border-slate-800/80 backdrop-blur bg-white/70 dark:bg-[color:rgba(6,42,42,0.7)]">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="/" class="font-semibold tracking-tight text-lg">Jeremy Robards</a>
+      <nav class="hidden sm:flex items-center gap-6 text-sm">
+        <a href="/" class="hover:opacity-80">Home</a>
+        <a href="/dev1/" class="hover:opacity-80">AI Development</a>
+        <a href="/mpd/" class="hover:opacity-80">Motion Picture & Design</a>
+      </nav>
+      <button id="themeToggle" type="button" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm card-hover bg-white/70 dark:bg-white/5">
+        <span id="themeLabel">Dark</span>
+        <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0-1.06-1.06M6.696 6.696l-1.06-1.06"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 py-16">
+    <div class="text-center">
+      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-8">
+        Motion Picture & Design
+      </h1>
+      <p class="text-xl text-slate-700 dark:text-slate-300 mb-12 max-w-3xl mx-auto">
+        Creative visual storytelling, motion graphics, and design solutions that captivate and inspire.
+      </p>
+      
+      <div class="bg-white/70 dark:bg-black/30 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-2xl p-12">
+        <h2 class="text-2xl font-bold mb-4">Coming Soon</h2>
+        <p class="text-slate-600 dark:text-slate-400">
+          This section is currently under development. Check back soon for motion picture projects, design portfolios, and creative showcases.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-black/20 backdrop-blur-sm">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-700 dark:text-slate-300">
+      © <span id="year"></span> Jeremy Robards. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      document.getElementById('themeLabel').textContent = isDark ? 'Light' : 'Dark';
+    });
+
+    // Set initial theme label
+    const isDark = document.documentElement.classList.contains('dark');
+    document.getElementById('themeLabel').textContent = isDark ? 'Light' : 'Dark';
+
+    // Asset loading for background
+    (function() {
+      const koiCandidates = [
+        'koi.png', '/koi.png', 'public/koi.png', '/public/koi.png',
+        'src/assets/koi.png', '/src/assets/koi.png',
+        '../koi.png', '../public/koi.png', '../src/assets/koi.png'
+      ];
+
+      function probe(url, timeout = 5000){
+        return new Promise(resolve => {
+          const img = new Image();
+          let done = false;
+          const onOk = () => { if (done) return; done = true; cleanup(); resolve({ ok: true, url }); };
+          const onErr = () => { if (done) return; done = true; cleanup(); resolve({ ok: false, url }); };
+          const cleanup = () => { img.onload = img.onerror = null; };
+          img.onload = onOk;
+          img.onerror = onErr;
+          const t = setTimeout(() => { if (done) return; done = true; cleanup(); resolve({ ok:false, url }); }, timeout);
+          img.src = url;
+        });
+      }
+
+      async function findFirst(candidates){
+        for (const c of candidates){
+          try {
+            const r = await probe(c);
+            if (r.ok) return c;
+          } catch (e) { /* ignore */ }
+        }
+        return null;
+      }
+
+      async function initAssets(){
+        const bgUrl = await findFirst(koiCandidates);
+        if (bgUrl) {
+          document.querySelector('.bg-fixed-layer').style.backgroundImage = `url('${bgUrl}')`;
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAssets);
+      } else {
+        initAssets();
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -2,11 +2,9 @@
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="utf-8" />
-  <meta name="vi        <p class="text-xl sm:text-2xl text-slate-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
-          Explore my work across AI development, motion picture design, and innovative digital solutions.
-        </p>content="width=device-width,initial-scale=1" />
-  <title>Jeremy Robards — Portfolio</title>
-  <meta name="description" content="Welcome to Jeremy Robards Portfolio - AI Development, Motion Picture & Design, and more." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jeremy Robards — Full-Stack Web Developer & Certified AI Engineer</title>
+  <meta name="description" content="Portfolio of Jeremy Robards — Certified Prompt Engineer & Full-Stack Web Developer. Projects: ChronicleOS, KAIA, more." />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     // Tailwind dark mode via class
@@ -31,8 +29,8 @@
       --koi: #f59e0b;        /* amber accent (koi) */
       --koi-700: #b45309;
     }
-    .card-hover { transition: all 300ms ease; transform: scale(1); }
-    .card-hover:hover { transform: scale(1.05) translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    .card-hover { transition: transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease; }
+    .card-hover:hover { transform: translateY(-2px); opacity: 0.98; }
 
     /* === BACKGROUND LAYER ===
        Fixed, static, 50% opacity behind all content.
@@ -67,18 +65,9 @@
       background: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,.25), rgba(0,0,0,.45));
       pointer-events: none;
     }
-    .hero-card {
-      background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.6) 100%);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.3);
-    }
-    .dark .hero-card {
-      background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
   </style>
 </head>
-<body class="bg-white text-[var(--ink)] dark:bg-[var(--pond)] dark:text-slate-100 antialiased min-h-screen">
+<body class="bg-white text-[var(--ink)] dark:bg-[var(--pond)] dark:text-slate-100 antialiased">
   <!-- Background (static, 50% opacity) -->
   <div class="bg-fixed-layer"></div>
   <div class="bg-overlay-dark hidden dark:block"></div>
@@ -86,12 +75,14 @@
   <!-- Header -->
   <header class="sticky top-0 z-50 border-b border-slate-200/60 dark:border-slate-800/80 backdrop-blur bg-white/70 dark:bg-[color:rgba(6,42,42,0.7)]">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="/" class="font-semibold tracking-tight text-lg">Jeremy Robards</a>
+      <a href="#" class="font-semibold tracking-tight text-lg">Jeremy Robards</a>
       <nav class="hidden sm:flex items-center gap-6 text-sm">
-        <a href="/dev1/" class="hover:opacity-80">AI Development</a>
-        <a href="/mpd/" class="hover:opacity-80">Motion Picture & Design</a>
-        <a href="/bullet/" class="hover:opacity-80">Bullet Notes</a>
-        <a href="mailto:jeremy@jeremyrobards.com" class="hover:opacity-80">Contact</a>
+        <a href="#proof" class="hover:opacity-80">Projects</a>
+    <a href="/bullet/" class="hover:opacity-80">Bullet Note Taker App</a>
+        <a href="#about" class="hover:opacity-80">About</a>
+        <a href="#roadmap" class="hover:opacity-80">Roadmap</a>
+        <a href="#links" class="hover:opacity-80">Links</a>
+        <a href="#contact" class="hover:opacity-80">Contact</a>
       </nav>
       <button id="themeToggle" type="button" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm card-hover bg-white/70 dark:bg-white/5">
         <span id="themeLabel">Dark</span>
@@ -100,15 +91,12 @@
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="flex-1 flex items-center justify-center py-16 px-4">
-    <div class="max-w-6xl mx-auto">
-      <!-- Welcome Section -->
-      <div class="text-center mb-16">
-        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6">
-          Welcome to<br>
-          <span class="text-[var(--leaf)]">Jeremy Robards</span><br>
-          Portfolio
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-4 py-12 sm:py-16">
+    <div class="grid md:grid-cols-2 gap-8 items-center">
+      <div>
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight">
+          Full-Stack Web Developer & Certified AI Engineer
         </h1>
         <p class="mt-4 text-lg text-slate-700 dark:text-slate-300">
           I architect and deliver AI-driven solutions that don’t just work, they outperform expectations. As a Certified AI Engineer and Full-Stack Web Developer, I build scalable, future-ready applications that turn complex problems into elegant, profitable solutions.
@@ -118,87 +106,27 @@
           If you’re looking for someone who can prototype fast, iterate intelligently, and ship production-grade solutions that stand out, you’ve just found your partner.
 
         </p>
-      </div>
-
-      <!-- Three Main Cards -->
-      <div class="grid md:grid-cols-3 gap-8 lg:gap-12">
-        
-        <!-- AI Development Card -->
-        <a href="/dev1/" class="group block">
-          <div class="hero-card rounded-3xl p-8 lg:p-12 card-hover h-80 lg:h-96 flex flex-col justify-center items-center text-center">
-            <div class="mb-6">
-              <!-- AI Icon -->
-              <svg class="w-16 h-16 lg:w-20 lg:h-20 text-[var(--leaf)] mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" opacity="0.3"/>
-                <path d="M2 17L12 22L22 17"/>
-                <path d="M2 12L12 17L22 12"/>
-              </svg>
-            </div>
-            <h2 class="text-2xl lg:text-3xl font-bold mb-4 group-hover:text-[var(--leaf)] transition-colors">
-              AI Development
-            </h2>
-            <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Cutting-edge AI solutions, machine learning projects, and intelligent automation systems.
-            </p>
-          </div>
-        </a>
-
-        <!-- Motion Picture & Design Card -->
-        <a href="/mpd/" class="group block">
-          <div class="hero-card rounded-3xl p-8 lg:p-12 card-hover h-80 lg:h-96 flex flex-col justify-center items-center text-center">
-            <div class="mb-6">
-              <!-- Film/Design Icon -->
-              <svg class="w-16 h-16 lg:w-20 lg:h-20 text-[var(--koi)] mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M18 4L20 8H17L15 4H13L15 8H12L10 4H8L10 8H7L5 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4H18Z"/>
-              </svg>
-            </div>
-            <h2 class="text-2xl lg:text-3xl font-bold mb-4 group-hover:text-[var(--koi)] transition-colors">
-              Motion Picture<br>& Design
-            </h2>
-            <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Visual storytelling, motion graphics, and creative design solutions that captivate audiences.
-            </p>
-          </div>
-        </a>
-
-        <!-- Coming Soon Card -->
-        <div class="group block opacity-75">
-          <div class="hero-card rounded-3xl p-8 lg:p-12 h-80 lg:h-96 flex flex-col justify-center items-center text-center border-dashed border-2 border-slate-300 dark:border-slate-600">
-            <div class="mb-6">
-              <!-- Coming Soon Icon -->
-              <svg class="w-16 h-16 lg:w-20 lg:h-20 text-slate-400 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22 22 17.52 22 12 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"/>
-              </svg>
-            </div>
-            <h2 class="text-2xl lg:text-3xl font-bold mb-4 text-slate-500 dark:text-slate-400">
-              Coming Soon
-            </h2>
-            <p class="text-slate-500 dark:text-slate-500 leading-relaxed">
-              Exciting new projects and innovations are in development. Stay tuned for updates!
-            </p>
-          </div>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="#proof" class="rounded-xl bg-[var(--leaf)] text-white px-5 py-2.5 text-sm font-semibold card-hover">See Projects</a>
+          <a href="#contact" class="rounded-xl border border-[var(--leaf)] text-[var(--leaf)] px-5 py-2.5 text-sm font-semibold card-hover dark:border-white/30 dark:text-white">Hire Me</a>
         </div>
-
       </div>
-
-      <!-- Additional Links Section -->
-      <div class="text-center mt-16">
-        <p class="text-slate-600 dark:text-slate-400 mb-4">
-          Also check out:
-        </p>
-        <div class="flex flex-wrap justify-center gap-4">
-          <a href="/bullet/" class="inline-flex items-center gap-2 rounded-xl bg-[var(--leaf)]/10 text-[var(--leaf)] border border-[var(--leaf)]/20 px-4 py-2 text-sm font-medium hover:bg-[var(--leaf)]/20 transition-colors">
-            📝 Bullet Note Taker App
-          </a>
-          <a href="/713/" class="inline-flex items-center gap-2 rounded-xl bg-[var(--koi)]/10 text-[var(--koi)] border border-[var(--koi)]/20 px-4 py-2 text-sm font-medium hover:bg-[var(--koi)]/20 transition-colors">
-            🔍 Project 713
-          </a>
+      <div class="relative z-10">
+        <div class="aspect-[16/10] rounded-2xl border border-slate-200/70 dark:border-slate-800/70 overflow-hidden bg-white/50 dark:bg-black/30 backdrop-blur-sm">
+          <!-- start with no src to avoid immediate 404s; JS will set the working URL -->
+          <img
+            id="heroGif"
+            src=""
+            alt="Development preview animation"
+            loading="lazy"
+            class="w-full h-full object-cover"
+          />
         </div>
       </div>
     </div>
-  </main>
+  </section>
 
-  <!-- Footer -->
+  <!-- Proof: Project Cards -->
   <section id="proof" class="max-w-6xl mx-auto px-4 py-8">
     <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Project Proof</h2>
     <p class="mt-2 text-slate-700 dark:text-slate-300">Three core deliverables demonstrating capability and execution.</p>
