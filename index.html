@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="utf-8" />
-  <meta name="vi        <p class="text-xl sm:text-2xl text-slate-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
+  <meta        
+      <!-- Three Main Cards -->="max-w-6xl mx-auto">
+      
+      <!-- Three Main Cards -->  <!-- Three Main Cards -->  <!-- Three Main Cards --> <meta name="vi        <p class="text-xl sm:text-2xl text-slate-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
           Explore my work across AI development, motion picture design, and innovative digital solutions.
         </p>content="width=device-width,initial-scale=1" />
   <title>Jeremy Robards — Portfolio</title>
@@ -22,79 +24,47 @@
   </script>
   <style>
     :root{
-      /* Palette tuned to koi pond image */
-      --ink: #0b1320;        /* deep slate/navy for text in light mode */
-      --paper: #ffffff;      /* base light surface */
-      --pond: #062a2a;       /* deep teal for dark surfaces */
-      --leaf: #10b981;       /* emerald for accents */
+      --ink: #ffffff;
+      --paper: #000000;
+      --pond: #000000;
+      --leaf: #10b981;
       --leaf-600: #059669;
-      --koi: #f59e0b;        /* amber accent (koi) */
+      --koi: #f59e0b;
       --koi-700: #b45309;
     }
-    .card-hover { transition: all 300ms ease; transform: scale(1); }
-    .card-hover:hover { transform: scale(1.05) translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-
-    /* === BACKGROUND LAYER ===
-       Fixed, static, 50% opacity behind all content.
-       DEV NOTE: To use your own file, replace the --bg-url value.
-    */
-    :root {
-      /* Publicly available koi/lilypad image (Unsplash).
-         Use explicit URL on the background below to avoid accidental reuse of other assets. */
-      --bg-url: url('/src/assets/koi.png');
-     /* Similar options you can try:
-     url('https://images.unsplash.com/photo-1530908295418-a12e326966ba?q=80&w=1920&auto=format&fit=crop');
-     url('https://images.unsplash.com/photo-1591123120675-8f3a7a457769?q=80&w=1920&auto=format&fit=crop');
-     */
-     }
-    .bg-fixed-layer {
-      position: fixed;
-      inset: 0;
-      z-index: -10;
-      /* background-image set by loader JS at runtime (avoids path/case/branch issues) */
-      background-image: none;
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      filter: saturate(0.9);
-      opacity: .5;
-      pointer-events: none;
+    .card-hover { 
+      transition: all 300ms ease; 
+      transform: scale(1);
     }
-    /* Subtle readable overlay for dark mode only */
-    .bg-overlay-dark{
-      position: fixed; inset: 0; z-index: -1;
-      background: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,.25), rgba(0,0,0,.45));
-      pointer-events: none;
+    .card-hover:hover { 
+      transform: scale(1.05) translateY(-8px); 
+      box-shadow: 0 20px 40px rgba(255,255,255,0.1);
     }
     .hero-card {
-      background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.6) 100%);
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.2);
     }
-    .dark .hero-card {
-      background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
-      border: 1px solid rgba(255,255,255,0.1);
+    .hero-card:hover {
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.1) 100%);
+      border: 1px solid rgba(255,255,255,0.3);
     }
   </style>
 </head>
-<body class="bg-white text-[var(--ink)] dark:bg-[var(--pond)] dark:text-slate-100 antialiased min-h-screen">
-  <!-- Background (static, 50% opacity) -->
-  <div class="bg-fixed-layer"></div>
-  <div class="bg-overlay-dark hidden dark:block"></div>
+<body class="bg-gradient-to-br from-black via-gray-900 to-black text-white antialiased min-h-screen">
 
   <!-- Header -->
-  <header class="sticky top-0 z-50 border-b border-slate-200/60 dark:border-slate-800/80 backdrop-blur bg-white/70 dark:bg-[color:rgba(6,42,42,0.7)]">
+  <header class="sticky top-0 z-50 border-b border-white/20 backdrop-blur bg-black/50">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="/" class="font-semibold tracking-tight text-lg">Jeremy Robards</a>
+      <a href="/" class="font-semibold tracking-tight text-lg text-white">Jeremy Robards</a>
       <nav class="hidden sm:flex items-center gap-6 text-sm">
-        <a href="/dev1/" class="hover:opacity-80">AI Development</a>
-        <a href="/mpd/" class="hover:opacity-80">Motion Picture & Design</a>
-        <a href="/bullet/" class="hover:opacity-80">Bullet Notes</a>
-        <a href="mailto:jeremy@jeremyrobards.com" class="hover:opacity-80">Contact</a>
+        <a href="/dev1/" class="text-gray-300 hover:text-white transition-colors">AI Development</a>
+        <a href="/mpd/" class="text-gray-300 hover:text-white transition-colors">Motion Picture & Design</a>
+        <a href="/bullet/" class="text-gray-300 hover:text-white transition-colors">Bullet Notes</a>
+        <a href="mailto:jeremy@jeremyrobards.com" class="text-gray-300 hover:text-white transition-colors">Contact</a>
       </nav>
-      <button id="themeToggle" type="button" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm card-hover bg-white/70 dark:bg-white/5">
-        <span id="themeLabel">Dark</span>
+      <button id="themeToggle" type="button" class="inline-flex items-center gap-2 rounded-xl border border-white/30 px-3 py-1.5 text-sm card-hover bg-white/10 text-white">
+        <span id="themeLabel">Light</span>
         <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0-1.06-1.06M6.696 6.696l-1.06-1.06"/></svg>
       </button>
     </div>
@@ -103,13 +73,7 @@
   <!-- Main Content -->
   <main class="flex-1 flex items-center justify-center py-16 px-4">
     <div class="max-w-6xl mx-auto">
-      <!-- Welcome Section -->
-      <div class="text-center mb-16">
-        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6">
-          Welcome to<br>
-          <span class="text-[var(--leaf)]">Jeremy Robards</span><br>
-          Portfolio
-        </h1>
+      
         <p class="mt-4 text-lg text-slate-700 dark:text-slate-300">
           I architect and deliver AI-driven solutions that don’t just work, they outperform expectations. As a Certified AI Engineer and Full-Stack Web Developer, I build scalable, future-ready applications that turn complex problems into elegant, profitable solutions.
 
