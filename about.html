@@ -18,9 +18,31 @@
     <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
-<body>
-    <main>
-        <!-- About Page -->
+<body class="min-h-screen bg-gradient-to-b from-black to-neutral-900 text-white flex flex-col">
+    <main class="flex-1 flex flex-col items-center justify-center px-4 py-8">
+        <!-- Back to Home Link -->
+        <nav class="mb-8">
+            <a href="./index.html" 
+               class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors duration-200 group"
+               data-action="navigate"
+               aria-label="Back to Home">
+                <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Home
+            </a>
+        </nav>
+
+        <!-- About Content -->
+        <div class="text-center max-w-2xl mx-auto">
+            <h1 class="font-orbitron font-black text-4xl md:text-6xl lg:text-7xl tracking-wide text-white mb-8">
+                About
+            </h1>
+            
+            <p class="text-neutral-300 text-lg md:text-xl leading-relaxed">
+                Contact information will be available soon. Please check back later.
+            </p>
+        </div>
     </main>
     
     <!-- Scripts -->
