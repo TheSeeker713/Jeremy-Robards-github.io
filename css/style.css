@@ -71,5 +71,27 @@ img, video, audio {
     border: 0;
 }
 
+/* Accessibility Styles */
+:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Remove default focus for mouse users */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Interactive elements */
+a, button, [role="button"], [tabindex="0"] {
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+a:hover, button:hover, [role="button"]:hover {
+    opacity: 0.8;
+}
+
 /* Component Styles Placeholder */
 /* Add your component styles here */
