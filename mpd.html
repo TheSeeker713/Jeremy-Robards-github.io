@@ -105,6 +105,68 @@
             </div>
         </section>
 
+        <!-- Video Portfolio Carousel -->
+        <section class="max-w-6xl mx-auto mb-12">
+            <div class="bg-neutral-800 rounded-xl p-8 shadow-2xl">
+                <h2 class="font-orbitron font-bold text-2xl md:text-3xl mb-8 text-center">
+                    Video Editing Portfolio
+                </h2>
+                
+                <!-- Main Video Player -->
+                <div class="mb-8">
+                    <div class="relative bg-black rounded-lg overflow-hidden aspect-video">
+                        <iframe id="mainPlayer"
+                                class="w-full h-full"
+                                src="https://www.youtube.com/embed/HG8b4Mh3lXQ?si=81L9PwvPB1WyTwsg"
+                                title="YouTube video player"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allowfullscreen>
+                        </iframe>
+                        
+                        <!-- Video Title Overlay -->
+                        <div class="absolute bottom-4 left-4 bg-black bg-opacity-75 text-white px-3 py-1 rounded">
+                            <span id="videoTitle">Featured Project</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Carousel Navigation -->
+                <div class="relative">
+                    <!-- Left Arrow -->
+                    <button id="carouselLeft" 
+                            class="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 z-10 bg-emerald-600 hover:bg-emerald-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                            aria-label="Previous video">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Right Arrow -->
+                    <button id="carouselRight" 
+                            class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-10 bg-emerald-600 hover:bg-emerald-700 text-white p-3 rounded-full shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                            aria-label="Next video">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Thumbnail Carousel -->
+                    <div class="overflow-hidden mx-8">
+                        <div id="thumbnailContainer" class="flex gap-4 transition-transform duration-300 ease-out">
+                            <!-- Video thumbnails will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Keyboard Navigation Hint -->
+                <div class="text-center text-sm text-neutral-400 mt-6">
+                    Use arrow keys to navigate • Click thumbnails to select • Drag to reorder
+                </div>
+            </div>
+        </section>
+
         <!-- Portfolio Highlights -->
         <section class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <div class="bg-neutral-800 rounded-xl p-6 shadow-lg">
@@ -206,10 +268,203 @@
                 requestAnimationFrame(() => this.animate());
             }
         }
+
+        // Video Carousel Component
+        class VideoCarousel {
+            constructor() {
+                this.videos = [
+                    {
+                        id: 'HG8b4Mh3lXQ',
+                        title: 'Featured Project',
+                        thumbnail: 'https://img.youtube.com/vi/HG8b4Mh3lXQ/mqdefault.jpg'
+                    },
+                    {
+                        id: 'lwfhgKm0h8k',
+                        title: 'Professional Edit',
+                        thumbnail: 'https://img.youtube.com/vi/lwfhgKm0h8k/mqdefault.jpg'
+                    },
+                    {
+                        id: 'gKgI2RI4Yfo',
+                        title: 'Creative Production',
+                        thumbnail: 'https://img.youtube.com/vi/gKgI2RI4Yfo/mqdefault.jpg'
+                    },
+                    {
+                        id: '2CU1brhedgc',
+                        title: 'Motion Graphics Showcase',
+                        thumbnail: 'https://img.youtube.com/vi/2CU1brhedgc/mqdefault.jpg'
+                    },
+                    {
+                        id: 'TTPQ4740BB0',
+                        title: 'Documentary Style Edit',
+                        thumbnail: 'https://img.youtube.com/vi/TTPQ4740BB0/mqdefault.jpg'
+                    },
+                    {
+                        id: 'fJ9rUzIMcZQ',
+                        title: 'Portfolio Reel',
+                        thumbnail: 'https://img.youtube.com/vi/fJ9rUzIMcZQ/mqdefault.jpg'
+                    }
+                ];
+                
+                this.currentIndex = 0;
+                this.isDragging = false;
+                this.startX = 0;
+                this.currentX = 0;
+                
+                this.init();
+            }
+            
+            init() {
+                this.createThumbnails();
+                this.setupEventListeners();
+                this.updateMainPlayer();
+            }
+            
+            createThumbnails() {
+                const container = document.getElementById('thumbnailContainer');
+                container.innerHTML = '';
+                
+                this.videos.forEach((video, index) => {
+                    const thumbnail = document.createElement('div');
+                    thumbnail.className = `flex-shrink-0 cursor-pointer transition-all duration-300 ${
+                        index === this.currentIndex 
+                            ? 'ring-4 ring-emerald-500 scale-110' 
+                            : 'hover:scale-105 opacity-70 hover:opacity-100'
+                    }`;
+                    thumbnail.style.width = '160px';
+                    thumbnail.setAttribute('draggable', 'true');
+                    thumbnail.dataset.index = index;
+                    
+                    thumbnail.innerHTML = `
+                        <div class="bg-neutral-700 rounded-lg overflow-hidden">
+                            <img src="${video.thumbnail}" 
+                                 alt="${video.title}"
+                                 class="w-full aspect-video object-cover"
+                                 loading="lazy">
+                            <div class="p-3">
+                                <h4 class="text-sm font-medium text-white truncate">${video.title}</h4>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Click handler
+                    thumbnail.addEventListener('click', () => this.selectVideo(index));
+                    
+                    // Drag handlers
+                    thumbnail.addEventListener('dragstart', (e) => this.handleDragStart(e));
+                    thumbnail.addEventListener('dragover', (e) => this.handleDragOver(e));
+                    thumbnail.addEventListener('drop', (e) => this.handleDrop(e));
+                    
+                    container.appendChild(thumbnail);
+                });
+            }
+            
+            setupEventListeners() {
+                // Arrow button navigation
+                document.getElementById('carouselLeft').addEventListener('click', () => this.previousVideo());
+                document.getElementById('carouselRight').addEventListener('click', () => this.nextVideo());
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                    
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        this.previousVideo();
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        this.nextVideo();
+                    }
+                });
+            }
+            
+            selectVideo(index) {
+                this.currentIndex = index;
+                this.updateMainPlayer();
+                this.updateThumbnails();
+            }
+            
+            nextVideo() {
+                this.currentIndex = (this.currentIndex + 1) % this.videos.length;
+                this.updateMainPlayer();
+                this.updateThumbnails();
+            }
+            
+            previousVideo() {
+                this.currentIndex = (this.currentIndex - 1 + this.videos.length) % this.videos.length;
+                this.updateMainPlayer();
+                this.updateThumbnails();
+            }
+            
+            updateMainPlayer() {
+                const video = this.videos[this.currentIndex];
+                const iframe = document.getElementById('mainPlayer');
+                const title = document.getElementById('videoTitle');
+                
+                iframe.src = `https://www.youtube.com/embed/${video.id}?si=07A6_tpm-JzH4Bc8`;
+                title.textContent = video.title;
+            }
+            
+            updateThumbnails() {
+                const thumbnails = document.querySelectorAll('[data-index]');
+                thumbnails.forEach((thumb, index) => {
+                    if (index === this.currentIndex) {
+                        thumb.className = thumb.className.replace('opacity-70 hover:opacity-100', '');
+                        thumb.className = thumb.className.replace('hover:scale-105', '');
+                        if (!thumb.className.includes('ring-4')) {
+                            thumb.className += ' ring-4 ring-emerald-500 scale-110';
+                        }
+                    } else {
+                        thumb.className = thumb.className.replace('ring-4 ring-emerald-500 scale-110', '');
+                        if (!thumb.className.includes('opacity-70')) {
+                            thumb.className += ' opacity-70 hover:opacity-100 hover:scale-105';
+                        }
+                    }
+                });
+            }
+            
+            handleDragStart(e) {
+                this.isDragging = true;
+                this.draggedIndex = parseInt(e.target.closest('[data-index]').dataset.index);
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', e.target.outerHTML);
+            }
+            
+            handleDragOver(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            }
+            
+            handleDrop(e) {
+                e.preventDefault();
+                const dropIndex = parseInt(e.target.closest('[data-index]').dataset.index);
+                
+                if (this.draggedIndex !== dropIndex) {
+                    // Reorder videos array
+                    const draggedVideo = this.videos[this.draggedIndex];
+                    this.videos.splice(this.draggedIndex, 1);
+                    this.videos.splice(dropIndex, 0, draggedVideo);
+                    
+                    // Update current index
+                    if (this.currentIndex === this.draggedIndex) {
+                        this.currentIndex = dropIndex;
+                    } else if (this.draggedIndex < this.currentIndex && dropIndex >= this.currentIndex) {
+                        this.currentIndex--;
+                    } else if (this.draggedIndex > this.currentIndex && dropIndex <= this.currentIndex) {
+                        this.currentIndex++;
+                    }
+                    
+                    // Recreate thumbnails
+                    this.createThumbnails();
+                }
+                
+                this.isDragging = false;
+            }
+        }
         
-        // Initialize demo when page loads
+        // Initialize components when page loads
         document.addEventListener('DOMContentLoaded', () => {
             new MotionGraphicsDemo();
+            new VideoCarousel();
         });
     </script>
     <script src="./js/main.js" defer></script>
