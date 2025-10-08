@@ -20,17 +20,47 @@
 </head>
 <body class="min-h-screen bg-gradient-to-b from-black to-neutral-900 text-white flex flex-col">
     <main class="flex-1 flex flex-col items-center justify-center px-4 py-8">
-        <!-- Back to Home Link -->
+        <!-- Dynamic Back Link -->
         <nav class="mb-8">
             <a href="./index.html" 
+               id="backLink"
                class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors duration-200 group"
                data-action="navigate"
                aria-label="Back to Home">
                 <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
-                Back to Home
+                <span id="backText">Back to Home</span>
             </a>
+        </nav>
+
+        <!-- Portfolio Navigation Menu -->
+        <nav class="mb-8">
+            <div class="bg-neutral-800 rounded-xl p-6 shadow-lg max-w-2xl">
+                <h2 class="font-orbitron font-bold text-xl mb-4 text-emerald-400 text-center">Portfolio Navigation</h2>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="./mpd.html" 
+                       class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
+                       data-action="navigate">
+                        Motion Picture & Design
+                    </a>
+                    <a href="./aidev.html" 
+                       class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
+                       data-action="navigate">
+                        AI Development
+                    </a>
+                    <a href="./iis.html" 
+                       class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
+                       data-action="navigate">
+                        Interactive Systems
+                    </a>
+                    <a href="./index.html" 
+                       class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200"
+                       data-action="navigate">
+                        Home
+                    </a>
+                </div>
+            </div>
         </nav>
 
         <!-- About Content -->
@@ -44,6 +74,40 @@
             </p>
         </div>
     </main>
+    
+    <!-- Dynamic Navigation Script -->
+    <script>
+        // Handle dynamic back navigation based on 'from' parameter
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromPage = urlParams.get('from');
+            const backLink = document.getElementById('backLink');
+            const backText = document.getElementById('backText');
+            
+            if (fromPage) {
+                const pageMap = {
+                    'mpd': {
+                        url: './mpd.html',
+                        text: 'Back to Motion Picture & Design'
+                    },
+                    'aidev': {
+                        url: './aidev.html',
+                        text: 'Back to AI Development'
+                    },
+                    'iis': {
+                        url: './iis.html',
+                        text: 'Back to Interactive Systems'
+                    }
+                };
+                
+                if (pageMap[fromPage]) {
+                    backLink.href = pageMap[fromPage].url;
+                    backText.textContent = pageMap[fromPage].text;
+                    backLink.setAttribute('aria-label', pageMap[fromPage].text);
+                }
+            }
+        });
+    </script>
     
     <!-- Scripts -->
     <script src="./js/main.js" defer></script>
