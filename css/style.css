@@ -1,0 +1,75 @@
+/* 
+ * Jeremy Robards Portfolio - Main Stylesheet
+ * GitHub Pages Compatible CSS
+ * ES2025+ Frontend with Modern Design Patterns
+ */
+
+:root {
+    /* Design System Variables */
+    --primary-color: #10b981;
+    --primary-hover: #059669;
+    --background-dark: #000000;
+    --background-gradient: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+    --text-light: #ffffff;
+    --text-muted: #6b7280;
+    --border-subtle: rgba(255, 255, 255, 0.1);
+    
+    /* Typography */
+    --font-system: system-ui, -apple-system, sans-serif;
+    --font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    
+    /* Spacing */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+    --space-xl: 3rem;
+    
+    /* Animations */
+    --transition-fast: 200ms ease;
+    --transition-medium: 300ms ease;
+    --transition-slow: 500ms ease;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-system);
+    background: var(--background-gradient);
+    color: var(--text-light);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* GitHub Pages asset path compatibility */
+img, video, audio {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Utility Classes */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-sm);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Component Styles Placeholder */
+/* Add your component styles here */

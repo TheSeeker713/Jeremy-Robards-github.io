@@ -1,78 +1,185 @@
-# React + Vite
-## About this project
+# Jeremy Robards Portfolio
 
-This repository contains the source for my personal portfolio site (jeremyrobards.com). The site is a lightweight, React + Vite single-page application that showcases projects, skills, a résumé, and contact details. It’s designed for fast local iteration (HMR), accessible markup, and easy static deployment.
+## GitHub Pages Compatible Portfolio Website
 
-## Goals
+A modern, responsive portfolio website built with vanilla ES2025+ JavaScript, optimized for GitHub Pages deployment.
 
-- Present a curated selection of projects and case studies.
-- Provide a clear, scannable résumé and contact options.
-- Be performant and easy to maintain.
-- Serve as a living example of frontend engineering choices (React + Vite, ESLint).
+## 🚀 Project Structure
 
-## Key features
+```
+/
+├── index.html          # Main landing page
+├── aidev.html         # AI Development portfolio
+├── mpd.html           # Motion Picture & Design portfolio  
+├── iis.html           # Innovative Interactive Systems
+├── about.html         # About page
+├── css/
+│   └── style.css      # Main stylesheet with CSS custom properties
+├── js/
+│   └── main.js        # ES2025+ JavaScript modules
+├── assets/            # All image and media assets
+│   ├── *.png          # Image files
+│   ├── *.jpg          # Image files
+│   ├── *.webp         # Optimized images
+│   └── *.svg          # Vector graphics
+├── CNAME              # Custom domain configuration
+└── README.md          # This file
+```
 
-- Project gallery with links and descriptions
-- Resume / About section
-- Contact form or mailto link
-- Responsive, accessible UI
-- Fast local development with HMR
-- Production build optimized for static hosting
+## 🎨 Design System
 
-## Tech stack
+### CSS Architecture
+- **Custom Properties**: CSS variables for consistent theming
+- **Modern Layout**: CSS Grid and Flexbox
+- **Responsive Design**: Mobile-first approach
+- **Dark Theme**: Built-in dark/light mode support
 
-- React
-- Vite (dev server, build)
-- ESLint (linting rules; consider enabling TypeScript for type-aware linting)
-- Optional: CSS-in-JS or utility CSS (project-dependent)
+### Color Palette
+- Primary: `#10b981` (Emerald)
+- Background: Black gradient (`#000000` to `#2d2d2d`)
+- Text: White with muted variants
+- Accents: Emerald with hover states
 
-## Local development
+## ⚡ JavaScript Features
 
-1. Install dependencies
-    - npm install
-2. Start dev server with HMR
-    - npm run dev
-3. Preview production build locally
-    - npm run build
-    - npm run preview
+### ES2025+ Implementation
+- **Class-based Architecture**: Modern OOP patterns
+- **Event Delegation**: Efficient event handling
+- **Module Pattern**: Organized, maintainable code
+- **Local Storage**: Theme persistence
+- **History API**: Client-side navigation
 
-(If you use yarn or pnpm, substitute commands accordingly.)
+### Key Components
+- `PortfolioApp`: Main application class
+- Theme toggle system
+- Asset path management for GitHub Pages
+- Global event handling system
 
-## Build & deploy
+## 🌐 GitHub Pages Deployment
 
-- Build a production bundle:
-  - npm run build
-- Deploy the generated `dist/` folder to any static host (Netlify, Vercel, GitHub Pages, Cloudflare Pages).
-- For GitHub Pages, serve `dist/` via a static-file action or configure your CI to push `dist/` to the gh-pages branch.
+### Asset Path Management
+The JavaScript automatically handles GitHub Pages asset path requirements:
+- Converts `/assets/` paths to `./assets/` for compatibility
+- Ensures all resources load correctly on GitHub Pages
 
-## Project structure (high level)
+### Deployment Steps
+1. Push to `main` branch
+2. Enable GitHub Pages in repository settings
+3. Select source: Deploy from branch `main` / `root`
+4. Custom domain configured via `CNAME` file
 
-- src/ — application source (components, pages, assets)
-- public/ — static assets copied to the build
-- vite.config.* — Vite configuration
-- .eslintrc.* — linting rules
+### Custom Domain Setup
+- Domain: `www.jeremyrobards.com`
+- DNS: CNAME record pointing to `{username}.github.io`
+- HTTPS: Automatically enabled by GitHub Pages
 
-Organize new projects or case studies under src/content or src/data and reference them from the project listing components.
+## 🛠️ Development
 
-## Contributing
+### Local Development
+```bash
+# Serve locally (any static server)
+python -m http.server 8000
+# or
+npx serve .
+# or
+php -S localhost:8000
+```
 
-- Fork, create a branch, and open a PR.
-- Follow existing code style and lint rules.
-- Keep changes focused to content, styling, or small features unless coordinated.
+### File Organization
+- **HTML**: Semantic, accessible markup
+- **CSS**: Component-based architecture with utilities
+- **JS**: Modern ES modules with class-based patterns
+- **Assets**: Centralized in `/assets/` directory
 
-## Contact & license
+### Browser Support
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
 
-- Site owner: Jeremy Robards — contact via the site’s contact section or email.
-- License: choose an appropriate open-source license for code and state license for content.
-- For questions about deployment or content updates, open an issue or contact via the site.
+## 📱 Responsive Design
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Breakpoints
+- Mobile: `< 768px`
+- Tablet: `768px - 1024px`
+- Desktop: `> 1024px`
 
-Currently, two official plugins are available:
+### Features
+- Touch-optimized navigation
+- Responsive images
+- Flexible typography
+- Adaptive layouts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🎯 Performance
 
-## Expanding the ESLint configuration
+### Optimization Features
+- Minimal dependencies (vanilla JS)
+- Optimized images (WebP support)
+- CSS custom properties for theming
+- Efficient event delegation
+- Local storage for user preferences
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Loading Strategy
+- Critical CSS inline for above-fold content
+- Progressive enhancement
+- Lazy loading for images
+- Minimal JavaScript bundle
+
+## 📄 Pages Overview
+
+### index.html
+Main landing page with navigation to portfolio sections
+
+### aidev.html  
+AI Development projects and case studies
+
+### mpd.html
+Motion Picture & Design portfolio showcase
+
+### iis.html
+Innovative Interactive Systems and experiments
+
+### about.html
+Personal information, skills, and contact details
+
+## 🔧 Configuration
+
+### Theme Customization
+Modify CSS custom properties in `style.css`:
+```css
+:root {
+    --primary-color: #10b981;
+    --background-gradient: linear-gradient(...);
+    /* Add your custom values */
+}
+```
+
+### JavaScript Configuration
+Update app settings in `main.js`:
+```javascript
+class PortfolioApp {
+    constructor() {
+        this.config = {
+            // Your configuration
+        };
+    }
+}
+```
+
+## 📈 Analytics & SEO
+
+### Meta Tags
+- Proper meta descriptions
+- Open Graph tags ready
+- Twitter Card support
+- Structured data markup ready
+
+### Performance Monitoring
+- Core Web Vitals optimized
+- Lighthouse score targets: 90+
+- Minimal third-party dependencies
+
+---
+
+**Built with modern web standards for GitHub Pages deployment**
+*ES2025+ | CSS Grid | Custom Properties | GitHub Pages*
