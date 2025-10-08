@@ -18,28 +18,56 @@
     <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
-<body>
-    <main class="welcome-screen">
-        <div class="welcome-container">
-            <h1 class="welcome-title">WELCOME</h1>
-            
-            <nav class="portfolio-nav" role="navigation" aria-label="Portfolio sections">
-                <a href="./mpd.html" class="portfolio-button" data-action="navigate" aria-label="Motion Picture & Design Portfolio">
-                    <img src="./assets/mpd_button.webp" alt="Motion Picture & Design" />
-                </a>
-                <a href="./aidev.html" class="portfolio-button" data-action="navigate" aria-label="AI Development Portfolio">
-                    <img src="./assets/aidev_button.webp" alt="AI Development" />
-                </a>
-                <a href="./iis.html" class="portfolio-button" data-action="navigate" aria-label="Innovative Interactive Systems Portfolio">
-                    <img src="./assets/iis_button.webp" alt="Innovative Interactive Systems" />
-                </a>
-            </nav>
-        </div>
+<body class="min-h-screen bg-gradient-to-b from-black to-neutral-900 text-white flex flex-col">
+    <main class="flex-1 flex flex-col items-center justify-center px-4 py-8">
+        <!-- Welcome Heading -->
+        <h1 class="font-orbitron font-black text-6xl md:text-8xl lg:text-9xl tracking-wide text-white mb-12 md:mb-16 text-center">
+            WELCOME
+        </h1>
         
-        <footer class="welcome-footer">
-            <p>&copy; Copyright 2025 Jeremy Robards</p>
-        </footer>
+        <!-- Portfolio Navigation -->
+        <nav class="flex flex-col sm:flex-row gap-6 md:gap-8 lg:gap-12 items-center justify-center" 
+             role="navigation" 
+             aria-label="Portfolio sections">
+            
+            <!-- Motion Picture & Design -->
+            <a href="./mpd.html" 
+               class="group relative rounded-xl shadow-2xl ring-offset-4 ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-emerald-500/20 hover:shadow-3xl transform"
+               data-action="navigate" 
+               aria-label="Motion Picture & Design Portfolio">
+                <img src="./assets/mpd_button.webp" 
+                     alt="Motion Picture & Design" 
+                     class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-cover rounded-xl transition-all duration-300 ease-out group-hover:brightness-110" />
+            </a>
+            
+            <!-- AI Development -->
+            <a href="./aidev.html" 
+               class="group relative rounded-xl shadow-2xl ring-offset-4 ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-emerald-500/20 hover:shadow-3xl transform"
+               data-action="navigate" 
+               aria-label="AI Development Portfolio">
+                <img src="./assets/aidev_button.webp" 
+                     alt="AI Development" 
+                     class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-cover rounded-xl transition-all duration-300 ease-out group-hover:brightness-110" />
+            </a>
+            
+            <!-- Innovative Interactive Systems -->
+            <a href="./iis.html" 
+               class="group relative rounded-xl shadow-2xl ring-offset-4 ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-emerald-500/20 hover:shadow-3xl transform"
+               data-action="navigate" 
+               aria-label="Innovative Interactive Systems Portfolio">
+                <img src="./assets/iis_button.webp" 
+                     alt="Innovative Interactive Systems" 
+                     class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-cover rounded-xl transition-all duration-300 ease-out group-hover:brightness-110" />
+            </a>
+        </nav>
     </main>
+    
+    <!-- Footer -->
+    <footer class="flex items-center justify-center py-6">
+        <p class="text-neutral-400 text-sm md:text-base">
+            &copy; Copyright 2025 Jeremy Robards
+        </p>
+    </footer>
     
     <!-- Scripts -->
     <script src="./js/main.js" defer></script>
