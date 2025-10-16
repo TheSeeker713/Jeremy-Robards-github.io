@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load and display article
   async function loadArticle() {
     try {
-      const response = await fetch(`./_articles/${slug}.md`);
+      const response = await fetch(`./articles/${slug}.md`);
       if (!response.ok) throw new Error('Article not found');
 
       const markdown = await response.text();

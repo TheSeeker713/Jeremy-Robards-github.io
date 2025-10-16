@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-const articlesDir = path.resolve('_articles');
+const articlesDir = path.resolve('articles');
 const manifestPath = path.join(articlesDir, 'manifest.json');
 
 async function generateManifest() {
