@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Function to fetch and render articles
   async function loadArticles() {
     try {
-      const manifestResponse = await fetch('/_articles/manifest.json');
+      const manifestResponse = await fetch('./_articles/manifest.json');
       if (!manifestResponse.ok) throw new Error('manifest.json not found.');
 
       const articleFiles = await manifestResponse.json();
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Create an array of promises for fetching all articles
-      const articlePromises = articleFiles.map(file => fetch(`/_articles/${file}`).then(res => res.text()));
+      const articlePromises = articleFiles.map(file => fetch(`./_articles/${file}`).then(res => res.text()));
       const articleContents = await Promise.all(articlePromises);
 
       // Process and display each article
