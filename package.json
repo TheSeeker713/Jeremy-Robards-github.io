@@ -4,7 +4,10 @@
   "description": "Jeremy Robards Portfolio - GitHub Pages Compatible",
   "scripts": {
     "build:css": "tailwindcss -i ./tailwind/input.css -o ./css/tailwind.css --minify",
-    "dev": "tailwindcss -i ./tailwind/input.css -o ./css/tailwind.css --watch"
+    "dev": "tailwindcss -i ./tailwind/input.css -o ./css/tailwind.css --watch",
+    "generate:manifest": "node generate-manifest.mjs",
+    "cms:proxy": "npx decap-server",
+    "serve": "python -m http.server 8000"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.10"

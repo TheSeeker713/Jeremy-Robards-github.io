@@ -1,0 +1,23 @@
+# LOCAL TESTING CONFIGURATION
+# Use this for local development without authentication
+# To use: rename this file to config.yml (backup the original first)
+
+backend:
+  name: test-repo
+
+# This is where media files (like images) will be uploaded.
+media_folder: "assets/images/uploads"
+public_folder: "/assets/images/uploads"
+
+# This defines the content types, which we're calling "articles".
+collections:
+  - name: "articles" # Used in routes, e.g., /admin/collections/articles
+    label: "Articles" # Used in the UI
+    folder: "_articles" # The folder to store content files in
+    create: true # Allow users to create new documents in this collection
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # Filename template for new documents
+    fields: # The fields for each document, usually in front matter
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+      - { label: "Featured Image", name: "thumbnail", widget: "image", optional: true }
+      - { label: "Body", name: "body", widget: "markdown" }

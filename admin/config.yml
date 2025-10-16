@@ -1,0 +1,33 @@
+# OFFLINE-ONLY ADMIN CONFIGURATION
+# This CMS is accessible only on your local machine
+# No authentication required, no remote access possible
+
+backend:
+  name: git-gateway
+
+# Enable local backend for offline-only admin access  
+# This connects to the decap-server running on port 8081
+local_backend: true
+
+# Media files (images) storage location
+media_folder: "assets/images/uploads"
+public_folder: "./assets/images/uploads"
+
+# Article collection configuration
+collections:
+  - name: "articles"
+    label: "Articles"
+    folder: "_articles"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    # Enable editorial workflow for draft/review/publish states
+    editor:
+      preview: true
+    fields:
+      - { label: "Title", name: "title", widget: "string", required: true }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+      - { label: "⚠️ PUBLISH TOGGLE - Turn OFF to make article visible on website", name: "draft", widget: "boolean", default: false, hint: "ON = Hidden (draft), OFF = Published and visible to public" }
+      - { label: "Featured Image", name: "thumbnail", widget: "image", required: false }
+      - { label: "Excerpt", name: "excerpt", widget: "text", required: false, hint: "Short summary for article preview" }
+      - { label: "Tags", name: "tags", widget: "list", required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
