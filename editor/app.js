@@ -111,8 +111,23 @@ class EditorApp {
 
 	#handleAction(action) {
 		switch (action) {
-			case "add-text":
-				this.blockEditor.addTextBlock();
+			case "add-paragraph":
+				this.blockEditor.addBlock("paragraph");
+				break;
+			case "add-heading":
+				this.blockEditor.addBlock("heading");
+				break;
+			case "add-list":
+				this.blockEditor.addBlock("list");
+				break;
+			case "add-quote":
+				this.blockEditor.addBlock("quote");
+				break;
+			case "add-code":
+				this.blockEditor.addBlock("code");
+				break;
+			case "add-embed":
+				this.blockEditor.addBlock("embed");
 				break;
 			case "add-image":
 				this.blockEditor.addImageBlock();

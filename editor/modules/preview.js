@@ -30,7 +30,13 @@ export default class Preview {
         }
 
         if (this.meta) {
-            const date = metadata.publishDate ? new Date(metadata.publishDate).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) : "Pending publish date";
+            const date = metadata.publishDate
+                ? new Date(metadata.publishDate).toLocaleDateString(undefined, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric"
+                  })
+                : "Pending publish date";
             const tags = metadata.tags?.length ? metadata.tags.join(" • ") : "Tags pending";
             this.meta.textContent = `${date} • ${tags}`;
         }
@@ -47,30 +53,71 @@ export default class Preview {
 
         return blocks
             .map((block) => {
-                if (block.type === "image" && block.src) {
-                    const caption = block.caption ? `<figcaption>${this.#escape(block.caption)}</figcaption>` : "";
-                    return `<figure><img src="${block.src}" alt="${this.#escape(block.caption || "Article image")}">${caption}</figure>`;
+                switch (block.type) {
+                    case "heading":
+                        return this.#renderHeading(block);
+                    case "list":
+                        return this.#renderList(block);
+                    case "quote":
+                        return this.#renderQuote(block);
+                    case "code":
+                        return this.#renderCode(block);
+                    case "image":
+                        return this.#renderImage(block);
+                    case "embed":
+                        return this.#renderEmbed(block);
+                    case "note":
+                        return `<aside>${this.#escape(block.text || block.content || "Note")}</aside>`;
+                    case "paragraph":
+                    default:
+                        return `<p>${this.#formatText(block.text || block.content || "")}</p>`;
                 }
-
-                if (block.type === "note") {
-                    return `<aside>${this.#escape(block.content || "Note")}</aside>`;
-                }
-
-                if (block.type === "text") {
-                    if (block.variant?.startsWith("heading")) {
-                        const level = block.variant.split("-")[1] || "2";
-                        const tag = Number(level) >= 2 && Number(level) <= 4 ? `h${level}` : "h2";
-                        return `<${tag}>${this.#escape(block.content || "Heading")}</${tag}>`;
-                    }
-
-                    if (block.variant === "quote") {
-                        return `<blockquote>${this.#escape(block.content || "")}</blockquote>`;
-                    }
-                }
-
-                return `<p>${this.#formatText(block.content || "")}</p>`;
             })
             .join("");
+    }
+
+    #renderHeading(block) {
+        const level = Number(block.level) >= 2 && Number(block.level) <= 4 ? Number(block.level) : 2;
+        const tag = `h${level}`;
+        return `<${tag}>${this.#escape(block.text || "Heading")}</${tag}>`;
+    }
+
+    #renderList(block) {
+        const items = Array.isArray(block.items) ? block.items : [];
+        if (!items.length) {
+            return "";
+        }
+        const tag = block.style === "ordered" ? "ol" : "ul";
+        const listItems = items.map((item) => `<li>${this.#escape(item)}</li>`).join("");
+        return `<${tag}>${listItems}</${tag}>`;
+    }
+
+    #renderQuote(block) {
+        const cite = block.cite ? `<cite>${this.#escape(block.cite)}</cite>` : "";
+        return `<blockquote>${this.#escape(block.text || "")}${cite}</blockquote>`;
+    }
+
+    #renderCode(block) {
+        const language = block.language ? ` class="language-${this.#escape(block.language)}"` : "";
+        return `<pre><code${language}>${this.#escape(block.code || "")}</code></pre>`;
+    }
+
+    #renderImage(block) {
+        if (!block.src) return "";
+        const layout = block.layout || "full";
+        const caption = block.caption ? `<figcaption>${this.#escape(block.caption)}</figcaption>` : "";
+        const alt = this.#escape(block.alt || block.caption || "Article image");
+        return `<figure class="preview__figure preview__figure--${layout}"><img src="${block.src}" alt="${alt}">${caption}</figure>`;
+    }
+
+    #renderEmbed(block) {
+        if (block.html) {
+            return `<div class="preview__embed">${block.html}</div>`;
+        }
+        if (block.url) {
+            return `<div class="preview__embed"><a href="${this.#escape(block.url)}" target="_blank" rel="noopener">${this.#escape(block.url)}</a></div>`;
+        }
+        return "";
     }
 
     #escape(value) {

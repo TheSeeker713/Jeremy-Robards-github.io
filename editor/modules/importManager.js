@@ -430,11 +430,22 @@ export default class ImportManager {
                 return [this.#createTextBlock(section.text || section.content || "", `heading-${Math.min(section.level || 2, 4)}`)];
             case "quote":
                 return [this.#createTextBlock(section.text || section.content || "", "quote")];
+            case "list":
+            case "bulleted-list":
+            case "ordered-list":
+                return [
+                    this.#createListBlock({
+                        items: section.items || section.content || [],
+                        style: type === "ordered-list" || section.style === "ordered" ? "ordered" : "unordered"
+                    })
+                ];
             case "image":
                 return [
                     this.#createImageBlock({
                         src: section.src || section.url || "",
-                        caption: section.caption || ""
+                        caption: section.caption || "",
+                        alt: section.alt || section.caption || "",
+                        layout: section.layout || "full"
                     })
                 ];
             case "html":
@@ -764,8 +775,12 @@ export default class ImportManager {
     }
 
     #inferDescriptionFromBlocks(blocks = []) {
-        const paragraph = blocks.find((block) => block.type === "text" && block.variant === "paragraph");
-        return paragraph ? this.#extractFirstSentence(paragraph.content) : "";
+        const paragraph = blocks.find((block) => block.type === "paragraph");
+        if (paragraph) {
+            return this.#extractFirstSentence(paragraph.text || paragraph.content || "");
+        }
+        const quote = blocks.find((block) => block.type === "quote");
+        return quote ? this.#extractFirstSentence(quote.text || quote.content || "") : "";
     }
 
     #extractFirstSentence(text = "") {
@@ -774,20 +789,48 @@ export default class ImportManager {
     }
 
     #createTextBlock(content, variant = "paragraph") {
-        return {
-            id: this.#id(),
-            type: "text",
-            content: String(content || ""),
-            variant
-        };
+        const text = String(content || "");
+        const id = this.#id();
+        switch (variant) {
+            case "quote":
+                return { id, type: "quote", text };
+            case "heading-3":
+            case "heading-4":
+            case "heading-2": {
+                const level = Number(variant.split("-")[1] || 2);
+                return { id, type: "heading", text, level };
+            }
+            default:
+                return { id, type: "paragraph", text };
+        }
     }
 
-    #createImageBlock({ src = "", caption = "" }) {
+    #createImageBlock({ src = "", caption = "", alt = "", layout = "full" }) {
         return {
             id: this.#id(),
             type: "image",
             src,
-            caption
+            caption,
+            alt,
+            layout
+        };
+    }
+
+    #createListBlock({ items = [], style = "unordered" }) {
+        let listItems = [];
+        if (Array.isArray(items)) {
+            listItems = items.map((item) => String(item).trim()).filter(Boolean);
+        } else if (typeof items === "string") {
+            listItems = items
+                .split(/\r?\n/)
+                .map((item) => item.replace(/^[-*]\s*/, "").trim())
+                .filter(Boolean);
+        }
+        return {
+            id: this.#id(),
+            type: "list",
+            style: style === "ordered" ? "ordered" : "unordered",
+            items: listItems
         };
     }
 
