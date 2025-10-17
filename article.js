@@ -141,14 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
       dislikeCount.textContent = reactions.dislikes;
 
       // Reset both buttons
-      likeBtn.classList.remove('bg-emerald-600', 'border-emerald-400', 'opacity-50', 'cursor-not-allowed');
+      likeBtn.classList.remove('bg-blue-600', 'border-blue-400', 'opacity-50', 'cursor-not-allowed');
       dislikeBtn.classList.remove('bg-red-600', 'border-red-400', 'opacity-50', 'cursor-not-allowed');
       likeBtn.disabled = false;
       dislikeBtn.disabled = false;
 
       if (userVote === 'like') {
         // Highlight like, disable dislike
-        likeBtn.classList.add('bg-emerald-600', 'border-emerald-400');
+        likeBtn.classList.add('bg-blue-600', 'border-blue-400');
         dislikeBtn.classList.add('opacity-50', 'cursor-not-allowed');
         dislikeBtn.disabled = true;
       } else if (userVote === 'dislike') {
