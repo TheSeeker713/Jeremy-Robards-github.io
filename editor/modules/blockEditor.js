@@ -4,6 +4,14 @@ const BLOCK_TYPES = {
     NOTE: "note"
 };
 
+const TEXT_VARIANTS = [
+    { value: "paragraph", label: "Paragraph" },
+    { value: "heading-2", label: "H2" },
+    { value: "heading-3", label: "H3" },
+    { value: "heading-4", label: "H4" },
+    { value: "quote", label: "Pull Quote" }
+];
+
 export default class BlockEditor {
     constructor(listEl, { onChange, toast, imageTools }) {
         this.listEl = listEl;
@@ -27,6 +35,16 @@ export default class BlockEditor {
             this.#updateBlock(id, field, value);
         });
 
+        this.listEl.addEventListener("change", (event) => {
+            const item = event.target.closest(".block-item");
+            if (!item) return;
+            const id = item.dataset.id;
+            const field = event.target.dataset.field;
+            if (!field) return;
+            const value = event.target.value;
+            this.#updateBlock(id, field, value);
+        });
+
         this.listEl.addEventListener("click", async (event) => {
             const target = event.target;
             const item = target.closest(".block-item");
@@ -44,7 +62,12 @@ export default class BlockEditor {
     }
 
     loadBlocks(blocks = []) {
-        this.blocks = blocks.map((block) => ({ ...block }));
+        this.blocks = blocks.map((block) => {
+            if (block.type === BLOCK_TYPES.TEXT && !block.variant) {
+                return { ...block, variant: "paragraph" };
+            }
+            return { ...block };
+        });
         this.#render();
     }
 
@@ -52,7 +75,8 @@ export default class BlockEditor {
         const block = {
             id: this.#id(),
             type: BLOCK_TYPES.TEXT,
-            content
+            content,
+            variant: "paragraph"
         };
         this.blocks.push(block);
         this.#render();
@@ -136,11 +160,27 @@ export default class BlockEditor {
         item.appendChild(heading);
 
         if (block.type === BLOCK_TYPES.TEXT) {
+            const controls = document.createElement("div");
+            controls.className = "block-item__controls";
+
+            const select = document.createElement("select");
+            select.dataset.field = "variant";
+            TEXT_VARIANTS.forEach((variant) => {
+                const option = document.createElement("option");
+                option.value = variant.value;
+                option.textContent = variant.label;
+                select.appendChild(option);
+            });
+            select.value = block.variant || "paragraph";
+            controls.appendChild(select);
+
             const textarea = document.createElement("textarea");
             textarea.rows = 5;
             textarea.dataset.field = "content";
             textarea.value = block.content || "";
-            item.appendChild(textarea);
+            controls.appendChild(textarea);
+
+            item.appendChild(controls);
         }
 
         if (block.type === BLOCK_TYPES.IMAGE) {

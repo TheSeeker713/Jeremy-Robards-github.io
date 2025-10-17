@@ -21,7 +21,8 @@ class EditorApp {
 			previewTitle: document.querySelector("[data-preview-title]"),
 			previewDek: document.querySelector("[data-preview-dek]"),
 			previewMeta: document.querySelector("[data-preview-meta]"),
-			previewBody: document.querySelector("[data-preview-body]")
+			previewBody: document.querySelector("[data-preview-body]"),
+			modalRoot: document.querySelector("[data-modal-root]")
 		};
 
 		this.state = {
@@ -33,7 +34,10 @@ class EditorApp {
 				publishDate: ""
 			},
 			blocks: [],
-			assets: []
+			assets: [],
+			additionalMetadata: {},
+			source: null,
+			warnings: []
 		};
 
 		this.#hydrateFromStore();
@@ -48,7 +52,10 @@ class EditorApp {
 			this.state = {
 				metadata: { ...this.state.metadata, ...cached.metadata },
 				blocks: Array.isArray(cached.blocks) ? cached.blocks : [],
-				assets: Array.isArray(cached.assets) ? cached.assets : []
+				assets: Array.isArray(cached.assets) ? cached.assets : [],
+				additionalMetadata: cached.additionalMetadata || {},
+				source: cached.source || null,
+				warnings: cached.warnings || []
 			};
 		}
 	}
@@ -86,6 +93,7 @@ class EditorApp {
 			dropzoneEl: this.elements.dropzone,
 			listEl: this.elements.importList,
 			toast: this.toast,
+			modalRoot: this.elements.modalRoot,
 			onImport: (payload) => this.#handleImport(payload)
 		});
 	}
@@ -120,25 +128,28 @@ class EditorApp {
 		}
 	}
 
-	#handleImport({ metadata = {}, blocks = [], assets = [] }) {
-		if (Object.keys(metadata).length) {
-			const mergedMetadata = { ...this.state.metadata, ...metadata };
-			this.state.metadata = mergedMetadata;
-			this.metadataPanel.setMetadata(mergedMetadata);
-		}
+	#handleImport(draft) {
+		if (!draft) return;
+		const { metadata = {}, blocks = [], assets = [], additionalMetadata = {}, source = null, warnings = [] } = draft;
 
-		if (blocks.length) {
-			const nextBlocks = [...this.state.blocks, ...blocks];
-			this.state.blocks = nextBlocks;
-			this.blockEditor.loadBlocks(nextBlocks);
-		}
+		const mergedMetadata = { ...this.state.metadata, ...metadata };
+		this.state.metadata = mergedMetadata;
+		this.metadataPanel.setMetadata(mergedMetadata);
 
-		if (assets.length) {
-			this.state.assets = [...this.state.assets, ...assets];
-		}
+		this.state.blocks = Array.isArray(blocks) ? blocks : [];
+		this.blockEditor.loadBlocks(this.state.blocks);
+
+		this.state.assets = Array.isArray(assets) ? assets : [];
+		this.state.additionalMetadata = { ...additionalMetadata };
+		this.state.source = source;
+		this.state.warnings = warnings;
 
 		this.#persist();
 		this.#renderPreview();
+
+		if (warnings?.length) {
+			this.toast.show(warnings[0]);
+		}
 	}
 
 	#render() {
@@ -158,7 +169,12 @@ class EditorApp {
 
 	#exportDraft() {
 		const payload = {
-			...this.state,
+			metadata: { ...this.state.metadata, ...this.state.additionalMetadata },
+			blocks: this.state.blocks,
+			assets: this.state.assets,
+			source: this.state.source,
+			warnings: this.state.warnings,
+			additionalMetadata: this.state.additionalMetadata,
 			exportedAt: new Date().toISOString()
 		};
 		const slug = this.state.metadata.slug || "draft";

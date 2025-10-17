@@ -56,6 +56,18 @@ export default class Preview {
                     return `<aside>${this.#escape(block.content || "Note")}</aside>`;
                 }
 
+                if (block.type === "text") {
+                    if (block.variant?.startsWith("heading")) {
+                        const level = block.variant.split("-")[1] || "2";
+                        const tag = Number(level) >= 2 && Number(level) <= 4 ? `h${level}` : "h2";
+                        return `<${tag}>${this.#escape(block.content || "Heading")}</${tag}>`;
+                    }
+
+                    if (block.variant === "quote") {
+                        return `<blockquote>${this.#escape(block.content || "")}</blockquote>`;
+                    }
+                }
+
                 return `<p>${this.#formatText(block.content || "")}</p>`;
             })
             .join("");

@@ -1,12 +1,31 @@
-const SUPPORTED_TYPES = ["text/markdown", "text/plain", "application/json", "application/pdf"];
+import matter from "../vendor/gray-matter.js";
+import { ensurePdfJs } from "../vendor/pdfjs/index.js";
+
+const JSON_FIELDS = [
+    { key: "title", label: "Title", required: true, aliases: ["title", "name", "headline"] },
+    { key: "subtitle", label: "Subtitle", aliases: ["subtitle", "subheading"] },
+    { key: "author", label: "Author", aliases: ["author", "byline"] },
+    { key: "category", label: "Category", aliases: ["category", "section"] },
+    { key: "tags", label: "Tags", aliases: ["tags", "keywords"] },
+    { key: "published_at", label: "Published Date", aliases: ["published_at", "publishdate", "date"] },
+    { key: "excerpt", label: "Excerpt", aliases: ["excerpt", "summary", "description"] },
+    { key: "hero_image", label: "Hero Image", aliases: ["hero_image", "heroimage", "image", "hero"] },
+    { key: "hero_caption", label: "Hero Caption", aliases: ["hero_caption", "caption"] },
+    { key: "body", label: "Body", required: true, aliases: ["body", "content", "sections"] }
+];
+
+const REQUIRED_FIELDS = JSON_FIELDS.filter((field) => field.required).map((field) => field.key);
+const TEXT_DECODER = typeof TextDecoder !== "undefined" ? new TextDecoder("utf-8") : null;
 
 export default class ImportManager {
-    constructor({ dropzoneEl, listEl, toast, onImport }) {
+    constructor({ dropzoneEl, listEl, toast, modalRoot, onImport }) {
         this.dropzoneEl = dropzoneEl;
         this.listEl = listEl;
         this.toast = toast;
+        this.modalRoot = modalRoot;
         this.onImport = onImport;
         this.importedItems = [];
+        this.activeModalCleanup = null;
 
         this.#bindEvents();
     }
@@ -47,148 +66,439 @@ export default class ImportManager {
         }
 
         const files = Array.from(fileList);
-        const results = await Promise.all(files.map((file) => this.#processFile(file)));
+        let successCount = 0;
 
-        const merged = results.reduce(
-            (acc, result) => {
-                if (!result) return acc;
-                if (result.metadata) {
-                    acc.metadata = { ...acc.metadata, ...result.metadata };
+        for (const file of files) {
+            try {
+                const { draft, detection } = await this.#processFile(file);
+                if (draft) {
+                    successCount += 1;
+                    this.#recordImport(file, detection);
+                    this.onImport?.(draft);
                 }
-                if (result.blocks?.length) {
-                    acc.blocks.push(...result.blocks);
-                }
-                if (result.assets?.length) {
-                    acc.assets.push(...result.assets);
-                }
-                return acc;
-            },
-            { metadata: {}, blocks: [], assets: [] }
-        );
+            } catch (error) {
+                console.warn("Import failed", error);
+                this.toast?.show(`Failed to import ${file.name}: ${error.message}`);
+            }
+        }
 
-        this.importedItems.push(...files.map((file) => ({
-            name: file.name,
-            size: file.size,
-            type: file.type || "unknown"
-        })));
+        if (successCount) {
+            this.toast?.show(`Imported ${successCount} file${successCount === 1 ? "" : "s"}.`);
+        }
 
         this.#renderImportList();
-        this.toast?.show(`Imported ${files.length} file${files.length > 1 ? "s" : ""}.`);
-        this.onImport?.(merged);
     }
 
     async #processFile(file) {
-        const mime = file.type || this.#inferMime(file.name);
-        if (!SUPPORTED_TYPES.includes(mime)) {
-            return {
-                blocks: [this.#createNoteBlock(`Unsupported file type: ${file.name}`)]
-            };
-        }
+        const buffer = await this.#readBuffer(file);
+        const detection = this.#detectFileType(file, buffer);
 
-        if (mime === "application/pdf") {
-            const placeholder = await this.#createPdfPlaceholder(file);
-            return { assets: [placeholder.asset], blocks: [placeholder.block] };
-        }
-
-        const text = await this.#readAsText(file);
-        if (mime === "application/json") {
-            return this.#parseJson(text, file.name);
-        }
-
-        return {
-            blocks: this.#markdownToBlocks(text)
-        };
-    }
-
-    async #createPdfPlaceholder(file) {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const base64 = this.#arrayBufferToBase64(reader.result);
-                resolve({
-                    asset: {
-                        kind: "pdf",
-                        name: file.name,
-                        data: base64
-                    },
-                    block: this.#createNoteBlock(`PDF ready for manual review: ${file.name}`)
-                });
-            };
-            reader.readAsArrayBuffer(file);
-        });
-    }
-
-    #arrayBufferToBase64(buffer) {
-        let binary = "";
-        const bytes = new Uint8Array(buffer);
-        const len = bytes.byteLength;
-        for (let i = 0; i < len; i += 1) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return window.btoa(binary);
-    }
-
-    async #readAsText(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onerror = () => reject(new Error(`Unable to read ${file.name}`));
-            reader.onload = () => resolve(reader.result);
-            reader.readAsText(file);
-        });
-    }
-
-    #parseJson(raw, filename) {
-        try {
-            const parsed = JSON.parse(raw);
-            const blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
-            const metadata = typeof parsed.metadata === "object" ? parsed.metadata : {};
-            return { blocks, metadata };
-        } catch (error) {
-            return {
-                blocks: [this.#createNoteBlock(`Failed to parse ${filename}: ${error.message}`)]
-            };
+        switch (detection.kind) {
+            case "markdown":
+                return { draft: await this.#processMarkdown(file, buffer), detection };
+            case "json":
+                return { draft: await this.#processJson(file, buffer), detection };
+            case "pdf":
+                return { draft: await this.#processPdf(file, buffer), detection };
+            default:
+                throw new Error("Unsupported file type");
         }
     }
 
-    #markdownToBlocks(text) {
-        const sections = text
-            .split(/\n{2,}/)
-            .map((chunk) => chunk.trim())
-            .filter(Boolean);
+    #detectFileType(file, buffer) {
+        const extension = this.#fileExtension(file.name);
+        const signature = this.#readSignature(buffer);
+        const snippet = this.#decodeSnippet(buffer).trimStart();
 
-        if (!sections.length) {
-            return [this.#createNoteBlock("No content detected in markdown file.")];
+        if (signature.startsWith("%PDF")) {
+            return { kind: "pdf", label: "PDF" };
         }
 
-        return sections.map((section) => ({
-            id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
-            type: "text",
-            content: section
-        }));
-    }
+        if (snippet.startsWith("{") || snippet.startsWith("[")) {
+            return { kind: "json", label: "JSON" };
+        }
 
-    #createNoteBlock(message) {
-        return {
-            id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
-            type: "note",
-            content: message
-        };
-    }
+        if (snippet.startsWith("---") || snippet.includes("\n#") || snippet.startsWith("#")) {
+            return { kind: "markdown", label: "Markdown" };
+        }
 
-    #inferMime(filename) {
-        const ext = filename.split(".").pop()?.toLowerCase();
-        switch (ext) {
+        switch (extension) {
+            case "pdf":
+                return { kind: "pdf", label: "PDF" };
+            case "json":
+                return { kind: "json", label: "JSON" };
             case "md":
             case "markdown":
             case "txt":
-                return "text/markdown";
-            case "json":
-                return "application/json";
-            case "pdf":
-                return "application/pdf";
             default:
-                return "";
+                return { kind: "markdown", label: "Markdown" };
         }
+    }
+
+    async #processMarkdown(file, buffer) {
+        const text = this.#decodeText(buffer);
+        const parsed = matter(text);
+        const metadataInfo = this.#normaliseMarkdownMetadata(parsed.data, parsed.content, file.name);
+        let blocks = this.#markdownToBlocks(parsed.content);
+        const warnings = [...(metadataInfo.warnings || [])];
+
+        if (!blocks.length) {
+            blocks = [this.#createTextBlock("Import detected no body content.")];
+            warnings.push("Markdown file contained no paragraphs. Verify the source.");
+        }
+
+        return this.#createDraft({
+            metadata: metadataInfo.metadata,
+            additionalMetadata: metadataInfo.additional,
+            blocks,
+            assets: [],
+            source: {
+                type: "markdown",
+                fileName: file.name,
+                frontmatter: parsed.data
+            },
+            warnings
+        });
+    }
+
+    async #processJson(file, buffer) {
+        const text = this.#decodeText(buffer);
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (error) {
+            throw new Error(`Invalid JSON: ${error.message}`);
+        }
+
+        if (Array.isArray(data)) {
+            data = data[0];
+        }
+
+        if (typeof data !== "object" || data === null) {
+            throw new Error("JSON root must be an object.");
+        }
+
+        const { mapping, needsUserInput } = this.#deriveJsonMapping(data);
+        let resolvedMapping = mapping;
+
+        if (needsUserInput) {
+            const userMapping = await this.#promptJsonMapping(Object.keys(data), mapping);
+            if (!userMapping) {
+                throw new Error("JSON import cancelled.");
+            }
+            resolvedMapping = userMapping;
+        }
+
+        const titleValue = this.#valueFromMapping(data, resolvedMapping.title);
+        const bodyValue = this.#valueFromMapping(data, resolvedMapping.body);
+
+        if (!titleValue || !bodyValue) {
+            throw new Error("JSON is missing required fields after mapping.");
+        }
+
+        const metadata = {};
+        metadata.title = String(titleValue).trim();
+        metadata.description = this.#coerceString(this.#valueFromMapping(data, resolvedMapping.excerpt));
+        metadata.tags = this.#normaliseTags(this.#valueFromMapping(data, resolvedMapping.tags));
+        metadata.publishDate = this.#coerceString(this.#valueFromMapping(data, resolvedMapping.published_at));
+        metadata.slug = this.#coerceString(data.slug) || this.#slugify(metadata.title);
+
+        const additionalMetadata = {
+            subtitle: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.subtitle)),
+            author: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.author)),
+            category: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.category)),
+            heroImage: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.hero_image)),
+            heroCaption: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.hero_caption))
+        };
+
+        const blocks = this.#normaliseJsonBody(bodyValue);
+        if (!blocks.length) {
+            throw new Error("JSON body produced no blocks.");
+        }
+
+        if (!metadata.description) {
+            metadata.description = this.#inferDescriptionFromBlocks(blocks);
+        }
+
+        return this.#createDraft({
+            metadata,
+            additionalMetadata,
+            blocks,
+            assets: [],
+            source: {
+                type: "json",
+                fileName: file.name,
+                mapping: resolvedMapping
+            }
+        });
+    }
+
+    async #processPdf(file, buffer) {
+        let pdfjs;
+        try {
+            pdfjs = await ensurePdfJs();
+        } catch (error) {
+            throw new Error(error.message || "PDF.js loader error.");
+        }
+
+        const loadingTask = pdfjs.getDocument({ data: buffer });
+        const pdfDocument = await loadingTask.promise;
+        const pagesText = [];
+
+        for (let pageNumber = 1; pageNumber <= pdfDocument.numPages; pageNumber += 1) {
+            const page = await pdfDocument.getPage(pageNumber);
+            const content = await page.getTextContent();
+            const strings = content.items
+                .map((item) => (item.str || "").trim())
+                .filter(Boolean);
+            if (strings.length) {
+                pagesText.push(strings.join(" "));
+            }
+        }
+
+        const rawText = pagesText.join("\n\n");
+        if (!rawText.trim()) {
+            throw new Error("PDF extraction returned no text.");
+        }
+
+        const editedText = await this.#promptTextEdit({
+            title: "Review PDF Extraction",
+            description: "Edit the extracted text below before converting into article blocks.",
+            initialValue: rawText
+        });
+
+        if (editedText === null) {
+            throw new Error("PDF import cancelled.");
+        }
+
+        const blocks = this.#plainTextToBlocks(editedText, { detectHeadings: true });
+        const metadata = {};
+        const warnings = [];
+
+        const headingBlock = blocks.find((block) => block.type === "text" && block.variant?.startsWith("heading"));
+        if (headingBlock) {
+            metadata.title = headingBlock.content;
+        } else if (blocks.length) {
+            metadata.title = this.#extractFirstSentence(blocks[0].content);
+        }
+
+        if (!metadata.title) {
+            metadata.title = file.name.replace(/\.[^.]+$/, "");
+            warnings.push("Title inferred from filename. Update before publishing.");
+        }
+
+        metadata.description = this.#inferDescriptionFromBlocks(blocks);
+        metadata.slug = this.#slugify(metadata.title);
+
+        return this.#createDraft({
+            metadata,
+            additionalMetadata: {},
+            blocks,
+            assets: [],
+            source: {
+                type: "pdf",
+                fileName: file.name,
+                pageCount: pdfDocument.numPages
+            },
+            warnings
+        });
+    }
+
+    #normaliseMarkdownMetadata(data = {}, content = "", fileName = "") {
+        const metadata = {};
+        const additional = {};
+        const warnings = [];
+
+        if (data.title) metadata.title = String(data.title).trim();
+        if (data.slug) metadata.slug = String(data.slug).trim();
+        const descriptionSource = data.description || data.summary || data.excerpt;
+        if (descriptionSource) metadata.description = String(descriptionSource).trim();
+        metadata.tags = this.#normaliseTags(data.tags);
+        metadata.publishDate = this.#coerceString(data.publishDate || data.date);
+
+        if (data.subtitle) additional.subtitle = String(data.subtitle).trim();
+        if (data.author) additional.author = String(data.author).trim();
+        if (data.category) additional.category = String(data.category).trim();
+        if (data.hero_image || data.heroImage) additional.heroImage = String(data.hero_image || data.heroImage).trim();
+        if (data.hero_caption || data.heroCaption) additional.heroCaption = String(data.hero_caption || data.heroCaption).trim();
+
+        if (!metadata.title) {
+            const firstHeading = this.#findFirstMarkdownHeading(content);
+            if (firstHeading) {
+                metadata.title = firstHeading;
+            } else {
+                metadata.title = fileName.replace(/\.[^.]+$/, "");
+                warnings.push("Title inferred from filename. Update before publishing.");
+            }
+        }
+
+        if (!metadata.description) {
+            metadata.description = this.#inferDescriptionFromText(content);
+        }
+
+        metadata.slug = metadata.slug || this.#slugify(metadata.title);
+
+        return { metadata, additional, warnings };
+    }
+
+    #markdownToBlocks(markdown = "") {
+        const lines = markdown.split(/\r?\n/);
+        const blocks = [];
+        let buffer = [];
+
+        const flushParagraph = () => {
+            if (!buffer.length) return;
+            const paragraph = buffer.join("\n").trim();
+            if (paragraph) {
+                blocks.push(this.#createTextBlock(paragraph, "paragraph"));
+            }
+            buffer = [];
+        };
+
+        lines.forEach((rawLine) => {
+            const line = rawLine.trim();
+            const imageMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)/);
+            if (imageMatch) {
+                flushParagraph();
+                blocks.push(this.#createImageBlock({ src: imageMatch[2], caption: imageMatch[1] }));
+                return;
+            }
+
+            if (/^#{1,6}\s+/.test(line)) {
+                flushParagraph();
+                const level = Math.min(line.match(/^#{1,6}/)[0].length, 4);
+                const content = line.replace(/^#{1,6}\s+/, "").trim();
+                blocks.push(this.#createTextBlock(content, `heading-${level}`));
+                return;
+            }
+
+            if (line.startsWith(">")) {
+                flushParagraph();
+                const quote = line.replace(/^>\s?/, "");
+                blocks.push(this.#createTextBlock(quote, "quote"));
+                return;
+            }
+
+            if (!line) {
+                flushParagraph();
+                return;
+            }
+
+            buffer.push(line);
+        });
+
+        flushParagraph();
+        return blocks;
+    }
+
+    #normaliseJsonBody(body) {
+        if (Array.isArray(body)) {
+            return body
+                .map((item) => this.#convertJsonSection(item))
+                .flat()
+                .filter(Boolean);
+        }
+
+        if (typeof body === "string") {
+            return this.#plainTextToBlocks(body);
+        }
+
+        if (typeof body === "object" && body) {
+            return this.#convertJsonSection(body).filter(Boolean);
+        }
+
+        return [];
+    }
+
+    #convertJsonSection(section) {
+        if (typeof section === "string") {
+            return [this.#createTextBlock(section, "paragraph")];
+        }
+
+        if (Array.isArray(section)) {
+            return section.map((item) => this.#convertJsonSection(item)).flat();
+        }
+
+        if (typeof section !== "object" || !section) {
+            return [];
+        }
+
+        const type = (section.type || "paragraph").toLowerCase();
+        switch (type) {
+            case "heading":
+            case "header":
+                return [this.#createTextBlock(section.text || section.content || "", `heading-${Math.min(section.level || 2, 4)}`)];
+            case "quote":
+                return [this.#createTextBlock(section.text || section.content || "", "quote")];
+            case "image":
+                return [
+                    this.#createImageBlock({
+                        src: section.src || section.url || "",
+                        caption: section.caption || ""
+                    })
+                ];
+            case "html":
+                return [this.#createTextBlock(section.html || section.content || "", "paragraph")];
+            default:
+                return [this.#createTextBlock(section.text || section.content || "", "paragraph")];
+        }
+    }
+
+    #plainTextToBlocks(text, { detectHeadings = false } = {}) {
+        const segments = text
+            .split(/\r?\n{2,}/)
+            .map((segment) => segment.trim())
+            .filter(Boolean);
+
+        return segments.map((segment) => {
+            if (detectHeadings && this.#looksLikeHeading(segment)) {
+                return this.#createTextBlock(segment, "heading-2");
+            }
+            return this.#createTextBlock(segment, "paragraph");
+        });
+    }
+
+    #looksLikeHeading(segment) {
+        if (!segment) return false;
+        const words = segment.split(/\s+/);
+        const isShort = segment.length <= 80 && words.length <= 12;
+        const isUppercase = segment === segment.toUpperCase() && /[A-Z]/.test(segment);
+        const endsWithSentencePunctuation = /[.!?]$/.test(segment.trim());
+        return !endsWithSentencePunctuation && (isUppercase || isShort);
+    }
+
+    #createDraft({ metadata = {}, additionalMetadata = {}, blocks = [], assets = [], source = {}, warnings = [] }) {
+        const baseMetadata = {
+            title: metadata.title ? String(metadata.title).trim() : "",
+            slug: metadata.slug ? this.#slugify(metadata.slug) : "",
+            description: metadata.description ? String(metadata.description).trim() : "",
+            tags: this.#normaliseTags(metadata.tags),
+            publishDate: metadata.publishDate ? String(metadata.publishDate).trim() : ""
+        };
+
+        if (!baseMetadata.slug) {
+            baseMetadata.slug = this.#slugify(baseMetadata.title || source.fileName || "article");
+        }
+
+        return {
+            metadata: baseMetadata,
+            additionalMetadata,
+            blocks: Array.isArray(blocks) ? blocks : [],
+            assets: Array.isArray(assets) ? assets : [],
+            source: {
+                ...source,
+                importedAt: new Date().toISOString()
+            },
+            warnings
+        };
+    }
+
+    #recordImport(file, detection) {
+        this.importedItems.push({
+            name: file.name,
+            size: file.size,
+            type: detection.label || detection.kind
+        });
     }
 
     #renderImportList() {
@@ -196,9 +506,351 @@ export default class ImportManager {
         this.listEl.innerHTML = "";
         this.importedItems.slice(-6).forEach((item) => {
             const li = document.createElement("li");
-            li.textContent = `${item.name} • ${this.#formatSize(item.size)}`;
+            li.textContent = `${item.name} • ${item.type} • ${this.#formatSize(item.size)}`;
             this.listEl.appendChild(li);
         });
+    }
+
+    #deriveJsonMapping(data) {
+        const keys = Object.keys(data || {});
+        const normalisedMap = keys.reduce((acc, key) => {
+            acc[key.toLowerCase()] = key;
+            return acc;
+        }, {});
+
+        const mapping = {};
+        JSON_FIELDS.forEach((field) => {
+            const found = field.aliases?.map((alias) => normalisedMap[alias.toLowerCase()]).find(Boolean);
+            if (found) {
+                mapping[field.key] = found;
+            }
+        });
+
+        const missingRequired = REQUIRED_FIELDS.some((key) => !mapping[key]);
+
+        return {
+            mapping,
+            needsUserInput: missingRequired
+        };
+    }
+
+    async #promptJsonMapping(keys, initialMapping = {}) {
+        if (!this.modalRoot) {
+            const titleKey = window.prompt("JSON mapping: enter the key for title", initialMapping.title || "");
+            const bodyKey = window.prompt("JSON mapping: enter the key for body", initialMapping.body || "");
+            if (!titleKey || !bodyKey) return null;
+            return { ...initialMapping, title: titleKey, body: bodyKey };
+        }
+
+        return new Promise((resolve) => {
+            const overlay = this.modalRoot;
+            overlay.innerHTML = "";
+            overlay.hidden = false;
+            overlay.dataset.open = "true";
+
+            const modal = document.createElement("section");
+            modal.className = "modal";
+
+            const form = document.createElement("form");
+            form.className = "modal__form";
+
+            const header = document.createElement("header");
+            header.className = "modal__header";
+            const title = document.createElement("h2");
+            title.className = "modal__title";
+            title.textContent = "Map JSON Fields";
+            header.appendChild(title);
+
+            const body = document.createElement("div");
+            body.className = "modal__body modal__form";
+            const hint = document.createElement("p");
+            hint.textContent = "Choose which keys match the CMS schema. Title and Body are required.";
+            body.appendChild(hint);
+
+            JSON_FIELDS.forEach((field) => {
+                const wrapper = document.createElement("div");
+                wrapper.className = "modal__field";
+                const label = document.createElement("label");
+                label.textContent = `${field.label}${field.required ? " *" : ""}`;
+                const select = document.createElement("select");
+                select.name = field.key;
+                if (field.required) select.required = true;
+
+                const ignoreOption = document.createElement("option");
+                ignoreOption.value = "__none__";
+                ignoreOption.textContent = field.required ? "Select key" : "Ignore";
+                select.appendChild(ignoreOption);
+
+                keys.forEach((key) => {
+                    const option = document.createElement("option");
+                    option.value = key;
+                    option.textContent = key;
+                    if (initialMapping[field.key] === key) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+
+                if (!initialMapping[field.key] && !field.required) {
+                    select.value = "__none__";
+                }
+
+                wrapper.appendChild(label);
+                wrapper.appendChild(select);
+                body.appendChild(wrapper);
+            });
+
+            const actions = document.createElement("div");
+            actions.className = "modal__actions";
+            const cancelButton = document.createElement("button");
+            cancelButton.type = "button";
+            cancelButton.className = "button button--ghost";
+            cancelButton.textContent = "Cancel";
+            const confirmButton = document.createElement("button");
+            confirmButton.type = "submit";
+            confirmButton.className = "button button--primary";
+            confirmButton.textContent = "Apply Mapping";
+            actions.appendChild(cancelButton);
+            actions.appendChild(confirmButton);
+
+            form.appendChild(header);
+            form.appendChild(body);
+            form.appendChild(actions);
+            modal.appendChild(form);
+            overlay.appendChild(modal);
+
+            const cleanup = () => {
+                overlay.dataset.open = "false";
+                overlay.hidden = true;
+                overlay.innerHTML = "";
+                document.removeEventListener("keydown", onKeydown);
+            };
+
+            const onKeydown = (event) => {
+                if (event.key === "Escape") {
+                    cleanup();
+                    resolve(null);
+                }
+            };
+
+            document.addEventListener("keydown", onKeydown);
+
+            form.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const formData = new FormData(form);
+                const mapping = {};
+                let valid = true;
+                JSON_FIELDS.forEach((field) => {
+                    const value = formData.get(field.key);
+                    if (field.required && (!value || value === "__none__")) {
+                        valid = false;
+                    }
+                    if (value && value !== "__none__") {
+                        mapping[field.key] = value;
+                    }
+                });
+
+                if (!valid) {
+                    this.toast?.show("Please map all required fields.");
+                    return;
+                }
+
+                cleanup();
+                resolve(mapping);
+            });
+
+            cancelButton.addEventListener("click", () => {
+                cleanup();
+                resolve(null);
+            });
+        });
+    }
+
+    async #promptTextEdit({ title, description, initialValue }) {
+        if (!this.modalRoot) {
+            const result = window.prompt(`${title}\n${description}`, initialValue);
+            return result === null ? null : result;
+        }
+
+        return new Promise((resolve) => {
+            const overlay = this.modalRoot;
+            overlay.innerHTML = "";
+            overlay.hidden = false;
+            overlay.dataset.open = "true";
+
+            const modal = document.createElement("section");
+            modal.className = "modal";
+
+            const form = document.createElement("form");
+            form.className = "modal__form";
+
+            const header = document.createElement("header");
+            header.className = "modal__header";
+            const heading = document.createElement("h2");
+            heading.className = "modal__title";
+            heading.textContent = title;
+            header.appendChild(heading);
+
+            const body = document.createElement("div");
+            body.className = "modal__body";
+            const hint = document.createElement("p");
+            hint.textContent = description;
+            const textarea = document.createElement("textarea");
+            textarea.className = "modal__textarea";
+            textarea.value = initialValue;
+            body.appendChild(hint);
+            body.appendChild(textarea);
+
+            const actions = document.createElement("div");
+            actions.className = "modal__actions";
+            const cancelButton = document.createElement("button");
+            cancelButton.type = "button";
+            cancelButton.className = "button button--ghost";
+            cancelButton.textContent = "Cancel";
+            const confirmButton = document.createElement("button");
+            confirmButton.type = "submit";
+            confirmButton.className = "button button--primary";
+            confirmButton.textContent = "Use Text";
+            actions.appendChild(cancelButton);
+            actions.appendChild(confirmButton);
+
+            form.appendChild(header);
+            form.appendChild(body);
+            form.appendChild(actions);
+            modal.appendChild(form);
+            overlay.appendChild(modal);
+
+            const cleanup = () => {
+                overlay.dataset.open = "false";
+                overlay.hidden = true;
+                overlay.innerHTML = "";
+                document.removeEventListener("keydown", onKeydown);
+            };
+
+            const onKeydown = (event) => {
+                if (event.key === "Escape") {
+                    cleanup();
+                    resolve(null);
+                }
+            };
+
+            document.addEventListener("keydown", onKeydown);
+
+            form.addEventListener("submit", (event) => {
+                event.preventDefault();
+                cleanup();
+                resolve(textarea.value);
+            });
+
+            cancelButton.addEventListener("click", () => {
+                cleanup();
+                resolve(null);
+            });
+        });
+    }
+
+    #findFirstMarkdownHeading(content) {
+        const match = content.match(/^#{1,6}\s+(.+)$/m);
+        return match ? match[1].trim() : "";
+    }
+
+    #inferDescriptionFromText(text = "") {
+        const match = text
+            .replace(/^---[\s\S]*?---/, "")
+            .split(/\r?\n{2,}/)
+            .map((paragraph) => paragraph.trim())
+            .find((paragraph) => paragraph && !paragraph.startsWith("#"));
+        return match ? this.#extractFirstSentence(match) : "";
+    }
+
+    #inferDescriptionFromBlocks(blocks = []) {
+        const paragraph = blocks.find((block) => block.type === "text" && block.variant === "paragraph");
+        return paragraph ? this.#extractFirstSentence(paragraph.content) : "";
+    }
+
+    #extractFirstSentence(text = "") {
+        const match = String(text).trim().match(/[^.!?]+[.!?]?/);
+        return match ? match[0].trim() : String(text).trim();
+    }
+
+    #createTextBlock(content, variant = "paragraph") {
+        return {
+            id: this.#id(),
+            type: "text",
+            content: String(content || ""),
+            variant
+        };
+    }
+
+    #createImageBlock({ src = "", caption = "" }) {
+        return {
+            id: this.#id(),
+            type: "image",
+            src,
+            caption
+        };
+    }
+
+    #normaliseTags(value) {
+        if (!value) return [];
+        if (Array.isArray(value)) {
+            return value.map((item) => String(item).trim()).filter(Boolean);
+        }
+        if (typeof value === "string") {
+            return value
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean);
+        }
+        return [];
+    }
+
+    #valueFromMapping(data, key) {
+        if (!key) return undefined;
+        return data[key];
+    }
+
+    #coerceString(value) {
+        if (value === undefined || value === null) return "";
+        return String(value).trim();
+    }
+
+    #slugify(value) {
+        return String(value || "")
+            .toLowerCase()
+            .normalize("NFKD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+            || "article";
+    }
+
+    #readBuffer(file) {
+        return file.arrayBuffer();
+    }
+
+    #decodeText(buffer) {
+        if (TEXT_DECODER) {
+            return TEXT_DECODER.decode(buffer);
+        }
+        return new TextDecoder("utf-8").decode(buffer);
+    }
+
+    #decodeSnippet(buffer, length = 512) {
+        const view = buffer instanceof ArrayBuffer ? new Uint8Array(buffer, 0, Math.min(length, buffer.byteLength)) : new Uint8Array(buffer.buffer, buffer.byteOffset, Math.min(length, buffer.byteLength));
+        return this.#decodeText(view);
+    }
+
+    #readSignature(buffer, length = 5) {
+        const bytes = new Uint8Array(buffer instanceof ArrayBuffer ? buffer.slice(0, length) : buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + length));
+        return Array.from(bytes)
+            .map((byte) => String.fromCharCode(byte))
+            .join("");
+    }
+
+    #fileExtension(filename = "") {
+        const parts = filename.toLowerCase().split(".");
+        return parts.length > 1 ? parts.pop() : "";
     }
 
     #formatSize(bytes) {
@@ -210,5 +862,9 @@ export default class ImportManager {
             unitIndex += 1;
         }
         return `${size.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
+    }
+
+    #id() {
+        return crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random());
     }
 }
