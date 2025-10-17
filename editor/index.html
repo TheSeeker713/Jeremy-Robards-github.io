@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Offline Portfolio CMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="app-header__details">
+            <h1>Portfolio Article Studio</h1>
+            <p>Create and publish long-form features from markdown, JSON, or PDF sources.</p>
+        </div>
+        <div class="app-header__actions">
+            <button type="button" data-action="export" class="button button--ghost">Export Draft</button>
+            <button type="button" data-action="publish" class="button button--primary">Publish</button>
+        </div>
+    </header>
+
+    <main class="layout">
+        <section class="panel" id="import-panel">
+            <header class="panel__header">
+                <h2>Import</h2>
+            </header>
+            <div class="panel__body">
+                <div class="dropzone" data-dropzone>
+                    <input type="file" id="file-input" class="dropzone__input" accept=".md,.markdown,.json,.pdf" multiple>
+                    <div class="dropzone__content">
+                        <p>Drop files here or <label for="file-input" class="link">browse</label></p>
+                        <small>Supports Markdown, JSON, and PDF.</small>
+                    </div>
+                </div>
+                <ul class="import-list" data-import-list aria-live="polite"></ul>
+            </div>
+        </section>
+
+        <section class="panel" id="block-panel">
+            <header class="panel__header">
+                <h2>Blocks</h2>
+                <div class="panel__header-actions">
+                    <button type="button" data-action="add-text" class="button button--sm">+ Text Block</button>
+                    <button type="button" data-action="add-image" class="button button--sm">+ Image Block</button>
+                </div>
+            </header>
+            <div class="panel__body">
+                <ol class="block-list" data-block-list></ol>
+            </div>
+        </section>
+
+        <section class="panel" id="metadata-panel">
+            <header class="panel__header">
+                <h2>Metadata</h2>
+            </header>
+            <div class="panel__body">
+                <form data-metadata-form class="metadata-form">
+                    <label>
+                        Title
+                        <input type="text" name="title" placeholder="Article headline" required>
+                    </label>
+                    <label>
+                        Slug
+                        <input type="text" name="slug" placeholder="article-slug" required>
+                    </label>
+                    <label>
+                        Description
+                        <textarea name="description" rows="3" placeholder="One sentence summary"></textarea>
+                    </label>
+                    <label>
+                        Tags
+                        <input type="text" name="tags" placeholder="tag-one, tag-two">
+                    </label>
+                    <label>
+                        Publish Date
+                        <input type="date" name="publishDate">
+                    </label>
+                </form>
+            </div>
+        </section>
+
+        <section class="panel panel--preview" id="preview-panel">
+            <header class="panel__header">
+                <h2>Preview</h2>
+            </header>
+            <div class="panel__body panel__body--scroll">
+                <article class="preview" data-preview>
+                    <header class="preview__masthead">
+                        <p class="preview__kicker" data-preview-kicker>Feature</p>
+                        <h2 class="preview__title" data-preview-title>Untitled Feature Story</h2>
+                        <p class="preview__dek" data-preview-dek>Add a description to see the deck.</p>
+                        <p class="preview__meta" data-preview-meta>Pending publish date • Tags pending</p>
+                    </header>
+                    <section class="preview__body" data-preview-body>
+                        <p>Add blocks to build your article. The live preview will use a editorial, magazine-inspired layout.</p>
+                    </section>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast" data-toast hidden></div>
+
+    <script src="./app.js" type="module"></script>
+</body>
+</html>
