@@ -25,9 +25,13 @@ collections:
       preview: true
     fields:
       - { label: "Title", name: "title", widget: "string", required: true }
+      - { label: "Subtitle", name: "subtitle", widget: "string", required: false, hint: "Optional subtitle or deck" }
       - { label: "Publish Date", name: "date", widget: "datetime" }
       - { label: "⚠️ PUBLISH TOGGLE - Turn OFF to make article visible on website", name: "draft", widget: "boolean", default: false, hint: "ON = Hidden (draft), OFF = Published and visible to public" }
-      - { label: "Featured Image", name: "thumbnail", widget: "image", required: false }
-      - { label: "Excerpt", name: "excerpt", widget: "text", required: false, hint: "Short summary for article preview" }
-      - { label: "Tags", name: "tags", widget: "list", required: false }
-      - { label: "Body", name: "body", widget: "markdown" }
+      - { label: "Author", name: "author", widget: "string", default: "Jeremy Robards", required: false }
+      - { label: "Category", name: "category", widget: "select", options: ["Technology", "Development", "Design", "Creative Process", "Business", "Personal", "Tutorial", "Case Study"], required: false }
+      - { label: "Featured Image", name: "thumbnail", widget: "image", required: false, hint: "Hero image for article" }
+      - { label: "Featured Image Caption", name: "thumbnail_caption", widget: "string", required: false }
+      - { label: "Excerpt", name: "excerpt", widget: "text", required: false, hint: "Short summary (2-3 sentences) for article preview and SEO" }
+      - { label: "Tags", name: "tags", widget: "list", required: false, hint: "Simple keywords (no hashtags needed)" }
+      - { label: "Body", name: "body", widget: "markdown", hint: "Use markdown for formatting. For images: ![alt text](./assets/images/uploads/your-image.jpg)" }

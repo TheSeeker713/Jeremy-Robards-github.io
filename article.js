@@ -72,21 +72,62 @@ document.addEventListener('DOMContentLoaded', () => {
       // Update document title
       document.title = `${frontmatter.title || 'Article'} | Jeremy Robards`;
 
-      // Display article header
+      // Calculate read time (average 200 words per minute)
+      const wordCount = body.trim().split(/\s+/).length;
+      const readTime = Math.ceil(wordCount / 200);
+
+      // Display article header with magazine-style layout
       const headerHtml = `
-        ${frontmatter.thumbnail ? `<img src="${frontmatter.thumbnail}" alt="${frontmatter.title}" class="w-full h-96 object-cover rounded-lg mb-6 shadow-2xl" />` : ''}
-        <h1 class="text-4xl md:text-5xl font-bold font-orbitron text-white mb-4">${frontmatter.title || 'Untitled Article'}</h1>
-        <div class="flex items-center gap-4 text-gray-400 mb-4">
-          <time datetime="${frontmatter.date}">${frontmatter.date ? new Date(frontmatter.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}</time>
-          ${frontmatter.tags ? `<span>•</span><div class="flex gap-2">${frontmatter.tags.split(',').map(tag => `<span class="px-2 py-1 bg-emerald-600 text-white text-xs rounded">${tag.trim()}</span>`).join('')}</div>` : ''}
+        <div class="article-header-magazine">
+          ${frontmatter.category ? `<div class="article-category">${frontmatter.category}</div>` : ''}
+          <h1 class="article-title-magazine">${frontmatter.title || 'Untitled Article'}</h1>
+          ${frontmatter.subtitle ? `<p class="article-subtitle">${frontmatter.subtitle}</p>` : ''}
+          ${frontmatter.excerpt ? `<p class="text-xl text-gray-400 leading-relaxed mb-6">${frontmatter.excerpt}</p>` : ''}
+          
+          <div class="article-meta">
+            ${frontmatter.author ? `<span class="article-author">By ${frontmatter.author}</span>` : ''}
+            ${frontmatter.date ? `<time class="article-date" datetime="${frontmatter.date}">${new Date(frontmatter.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>` : ''}
+            <span class="article-read-time">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              ${readTime} min read
+            </span>
+          </div>
         </div>
-        ${frontmatter.excerpt ? `<p class="text-xl text-gray-300 italic">${frontmatter.excerpt}</p>` : ''}
+        
+        ${frontmatter.thumbnail ? `
+          <div class="article-hero-image">
+            <img src="${frontmatter.thumbnail}" alt="${frontmatter.title}" />
+          </div>
+          ${frontmatter.thumbnail_caption ? `<p class="article-hero-caption">${frontmatter.thumbnail_caption}</p>` : ''}
+        ` : ''}
       `;
       document.getElementById('article-header').innerHTML = headerHtml;
 
-      // Display article body
+      // Display article body with magazine styling
       const htmlBody = marked.parse(body);
-      document.getElementById('article-body').innerHTML = htmlBody;
+      
+      // Add tags at the end if they exist (clean display, no hashtags)
+      let tagsHtml = '';
+      if (frontmatter.tags) {
+        const tagList = typeof frontmatter.tags === 'string' 
+          ? frontmatter.tags.split(',').map(t => t.trim().replace(/^#+/, '')) 
+          : Array.isArray(frontmatter.tags) 
+          ? frontmatter.tags.map(t => String(t).trim().replace(/^#+/, ''))
+          : [];
+        
+        if (tagList.length > 0 && tagList[0]) {
+          tagsHtml = `
+            <div class="article-tags">
+              ${tagList.map(tag => `<span class="article-tag">${tag}</span>`).join('')}
+            </div>
+          `;
+        }
+      }
+      
+      document.getElementById('article-body').innerHTML = htmlBody + tagsHtml;
+      document.getElementById('article-body').classList.add('article-body-magazine');
 
       // Hide loading, show content
       document.getElementById('loading').style.display = 'none';

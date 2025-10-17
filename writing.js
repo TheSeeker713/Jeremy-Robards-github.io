@@ -83,11 +83,23 @@ document.addEventListener('DOMContentLoaded', () => {
           const htmlBody = marked.parse(body); // Convert markdown body to HTML
           const excerpt = frontmatter.excerpt || htmlBody.substring(0, 200) + '...';
           
-          // Display tags if available
-          const tagsHtml = frontmatter.tags 
+          // Calculate read time (average 200 words per minute)
+          const wordCount = body.trim().split(/\s+/).length;
+          const readTime = Math.ceil(wordCount / 200);
+          
+          // Display tags if available (clean display, no hashtags)
+          const tagList = frontmatter.tags 
+            ? (typeof frontmatter.tags === 'string' 
+                ? frontmatter.tags.split(',').map(t => t.trim().replace(/^#+/, '')) 
+                : Array.isArray(frontmatter.tags) 
+                ? frontmatter.tags.map(t => String(t).trim().replace(/^#+/, ''))
+                : [])
+            : [];
+          
+          const tagsHtml = tagList.length > 0 && tagList[0]
             ? `<div class="flex flex-wrap gap-2 mt-3">
-                ${frontmatter.tags.split(',').map(tag => 
-                  `<span class="px-2 py-1 bg-emerald-600 text-white text-xs rounded">${tag.trim()}</span>`
+                ${tagList.map(tag => 
+                  `<span class="px-2 py-1 bg-emerald-600 bg-opacity-20 border border-emerald-600 text-emerald-400 text-xs rounded-full">${tag}</span>`
                 ).join('')}
                </div>`
             : '';
@@ -96,13 +108,26 @@ document.addEventListener('DOMContentLoaded', () => {
           const articleSlug = articleFiles[articleContents.indexOf(content)].replace('.md', '');
           
           return `
-            <article class="article-card bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden p-6 border border-gray-700 hover:border-emerald-400 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl" data-action="view-article" data-slug="${articleSlug}">
-              ${frontmatter.thumbnail ? `<img src="${frontmatter.thumbnail}" alt="${frontmatter.title}" class="w-full h-48 object-cover rounded-lg mb-4" />` : ''}
-              <h2 class="text-2xl font-bold text-white mb-2">${frontmatter.title || 'Untitled Article'}</h2>
-              <p class="text-sm text-gray-400 mb-4">${frontmatter.date ? new Date(frontmatter.date).toLocaleDateString() : ''}</p>
-              <div class="text-gray-300 mb-4">${excerpt}</div>
-              ${tagsHtml}
-              <div class="mt-4 text-emerald-400 text-sm font-semibold">Read More →</div>
+            <article class="article-card bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden border border-gray-700 hover:border-emerald-400 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl" data-action="view-article" data-slug="${articleSlug}">
+              ${frontmatter.thumbnail ? `<img src="${frontmatter.thumbnail}" alt="${frontmatter.title}" class="w-full h-56 object-cover" />` : ''}
+              <div class="p-6">
+                ${frontmatter.category ? `<div class="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">${frontmatter.category}</div>` : ''}
+                <h2 class="text-2xl font-bold text-white mb-2 leading-tight">${frontmatter.title || 'Untitled Article'}</h2>
+                ${frontmatter.subtitle ? `<p class="text-gray-400 text-sm mb-3">${frontmatter.subtitle}</p>` : ''}
+                <div class="flex items-center gap-3 text-xs text-gray-500 mb-4">
+                  ${frontmatter.date ? `<time>${new Date(frontmatter.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</time>` : ''}
+                  ${frontmatter.date && readTime ? '<span>•</span>' : ''}
+                  ${readTime ? `<span>${readTime} min read</span>` : ''}
+                </div>
+                <div class="text-gray-300 text-sm mb-4 line-clamp-3">${excerpt}</div>
+                ${tagsHtml}
+                <div class="mt-4 text-emerald-400 text-sm font-semibold flex items-center gap-1">
+                  Read Article 
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </div>
             </article>
           `;
         })
