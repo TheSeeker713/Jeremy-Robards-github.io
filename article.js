@@ -89,8 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('article-body').innerHTML = htmlBody;
 
       // Hide loading, show content
-      document.getElementById('loading').classList.add('hidden');
-      document.getElementById('article-content').classList.remove('hidden');
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('article-content').style.display = 'block';
 
       // Initialize interactions
       initializeLikeDislike(slug);
@@ -105,8 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Show error state
   function showError() {
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('error').classList.remove('hidden');
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error').style.display = 'block';
   }
 
   // Like/Dislike functionality with privacy-first user identification
