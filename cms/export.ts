@@ -79,6 +79,15 @@ type ArticleBlock =
 
 type ArticleLink = { label?: string; url?: string };
 
+type FeedEntry = {
+  title: string;
+  slug: string;
+  url: string;
+  hero: string | null;
+  excerpt: string;
+  published_at: string;
+};
+
 type ArticleMetadata = {
   title: string;
   subtitle?: string;
@@ -164,7 +173,7 @@ export async function exportArticle(draft: ArticleDraft, outDir = "./dist"): Pro
   const htmlBody = renderBlocks(draft.blocks);
   const heroAlt = metadata.hero_caption || metadata.title || "Feature hero image";
   const metaLine = buildMetaLine(metadata, publishedDate);
-  const jsonLd = buildJsonLd(metadata, canonicalUrl, publishedDate);
+  const jsonLd = buildJsonLd(metadata, canonicalUrl, baseUrl);
 
   const renderedHtml = eta.renderString(ARTICLE_TEMPLATE, {
     title: metadata.title,
@@ -197,7 +206,7 @@ export async function exportArticle(draft: ArticleDraft, outDir = "./dist"): Pro
   await fs.mkdir(path.dirname(archivePath), { recursive: true });
   await fs.writeFile(archivePath, markdownOutput, "utf-8");
 
-  const feedEntry = {
+  const feedEntry: FeedEntry = {
     title: metadata.title,
     slug,
     url: canonicalUrl,
@@ -234,7 +243,8 @@ function normaliseMetadata(input: Partial<ArticleMetadata>): ArticleMetadata {
   };
 
   merged.slug = slugify(merged.slug || merged.title);
-  merged.published_at = new Date(merged.published_at || new Date().toISOString()).toISOString();
+  const parsedDate = new Date(merged.published_at || new Date().toISOString());
+  merged.published_at = Number.isNaN(parsedDate.getTime()) ? new Date().toISOString() : parsedDate.toISOString();
 
   return merged;
 }
@@ -436,7 +446,7 @@ function buildMetaLine(metadata: ArticleMetadata, publishedDate: Date): string {
   return parts.join(" — ");
 }
 
-function buildJsonLd(metadata: ArticleMetadata, canonicalUrl: string, publishedDate: Date): string {
+function buildJsonLd(metadata: ArticleMetadata, canonicalUrl: string, baseUrl: string): string {
   const json: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -455,7 +465,7 @@ function buildJsonLd(metadata: ArticleMetadata, canonicalUrl: string, publishedD
     };
   }
   if (metadata.hero_image) {
-    json.image = [absoluteUrl(metadata.hero_image, canonicalUrl)];
+    json.image = [absoluteUrl(metadata.hero_image, baseUrl)];
   }
   if (metadata.tags?.length) {
     json.keywords = metadata.tags.join(", ");
@@ -472,19 +482,19 @@ function absoluteUrl(resource: string, baseUrl: string): string {
   return `${base}${resource.startsWith("/") ? "" : "/"}${resource.replace(/^\//u, "")}`;
 }
 
-async function updateFeed(feedPath: string, entry: Record<string, unknown>): Promise<void> {
-  let feed: Record<string, unknown>[] = [];
+async function updateFeed(feedPath: string, entry: FeedEntry): Promise<void> {
+  let feed: FeedEntry[] = [];
   try {
     const raw = await fs.readFile(feedPath, "utf-8");
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
-      feed = parsed;
+      feed = parsed as FeedEntry[];
     }
   } catch {
     // Fresh feed
   }
 
-  const existingIndex = feed.findIndex((item) => item && (item as { slug?: string }).slug === entry.slug);
+  const existingIndex = feed.findIndex((item) => item?.slug === entry.slug);
   if (existingIndex >= 0) {
     feed[existingIndex] = entry;
   } else {
@@ -492,8 +502,8 @@ async function updateFeed(feedPath: string, entry: Record<string, unknown>): Pro
   }
 
   feed.sort((a, b) => {
-    const aDate = new Date((a as { published_at?: string }).published_at || 0).getTime();
-    const bDate = new Date((b as { published_at?: string }).published_at || 0).getTime();
+    const aDate = new Date(a.published_at || 0).getTime();
+    const bDate = new Date(b.published_at || 0).getTime();
     return bDate - aDate;
   });
 
@@ -511,7 +521,12 @@ function buildFrontmatter(metadata: ArticleMetadata, additional: Record<string, 
       value.forEach((item) => {
         if (item === undefined || item === null) return;
         if (typeof item === "object") {
-          lines.push("  -" + serializeObject(item, 2));
+          const entries = Object.entries(item as Record<string, unknown>).filter(([, val]) => val !== undefined && val !== null && val !== "");
+          if (!entries.length) return;
+          lines.push("  -");
+          entries.forEach(([childKey, childValue]) => {
+            lines.push(`    ${childKey}: ${yamlString(String(childValue))}`);
+          });
         } else {
           lines.push(`  - ${yamlString(String(item))}`);
         }
@@ -543,29 +558,11 @@ function buildFrontmatter(metadata: ArticleMetadata, additional: Record<string, 
   appendLine("links", metadata.links);
 
   Object.entries(additional).forEach(([key, value]) => {
-    if (key in metadata) return;
+    if (Object.prototype.hasOwnProperty.call(metadata, key)) return;
     appendLine(key, value);
   });
 
   return lines.join("\n");
-}
-
-function serializeObject(value: unknown, indent: number): string {
-  if (!value || typeof value !== "object") {
-    return ` ${yamlString(String(value ?? ""))}`;
-  }
-  const entries = Object.entries(value as Record<string, unknown>);
-  if (!entries.length) return " {}";
-  const indentSpaces = " ".repeat(indent);
-  return entries
-    .map(([key, val], index) => {
-      const prefix = index === 0 ? "" : `\n${indentSpaces}`;
-      if (val && typeof val === "object") {
-        return `${prefix}${key}:${serializeObject(val, indent + 2)}`;
-      }
-      return `${prefix}${key}: ${yamlString(String(val ?? ""))}`;
-    })
-    .join("");
 }
 
 function yamlString(value: string): string {
@@ -576,25 +573,25 @@ function blocksToMarkdown(blocks: ArticleBlock[]): string {
   const sections = blocks.map((block) => {
     switch (block.type) {
       case "heading":
-        return `${"#".repeat(block.level && block.level >= 2 && block.level <= 6 ? block.level : 2)} ${block.text}`.trim();
+        return `${"#".repeat(block.level && block.level >= 2 && block.level <= 6 ? block.level : 2)} ${block.text || ""}`.trim();
       case "list":
         return formatListMarkdown(block);
       case "quote":
-        return block.text
+        return (block.text || "")
           .split(/\n/g)
           .map((line) => `> ${line}`)
           .join("\n");
       case "code":
-        return `\n\n\u0060\u0060\u0060${block.language || ""}\n${block.code}\n\u0060\u0060\u0060\n`;
+        return `\n\n\u0060\u0060\u0060${block.language || ""}\n${block.code || ""}\n\u0060\u0060\u0060\n`;
       case "image":
         return `![${block.alt || ""}](${block.src || ""})${block.caption ? `\n_${block.caption}_` : ""}`;
       case "embed":
         return block.url || block.html || "";
       case "note":
-        return `> ${block.text}`;
+        return `> ${block.text || ""}`;
       case "paragraph":
       default:
-        return block.text;
+        return (block as ParagraphBlock).text || "";
     }
   });
   return sections.filter(Boolean).join("\n\n").trim();
@@ -610,13 +607,14 @@ function formatListMarkdown(block: ListBlock): string {
 }
 
 function slugify(value: string): string {
-  return value
+  const slug = value
     .toLowerCase()
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/gu, "")
     .replace(/[^a-z0-9]+/gu, "-")
     .replace(/^-+|-+$/gu, "")
     .trim();
+  return slug || "article";
 }
 
 function normaliseTags(value: string[] | undefined): string[] {
