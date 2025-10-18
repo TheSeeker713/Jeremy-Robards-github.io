@@ -1,0 +1,80 @@
+╔════════════════════════════════════════════════════════════════╗
+║    CLOUDFLARE PAGES PROJECT - MANUAL SETUP NEEDED              ║
+╚════════════════════════════════════════════════════════════════╝
+
+⚠️ ISSUE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The API token doesn't have permission to create new Pages projects.
+We need to create the project manually in Cloudflare dashboard first.
+
+✅ SOLUTION: CREATE PROJECT IN DASHBOARD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: Go to Cloudflare Pages
+───────────────────────────────
+1. Open: https://dash.cloudflare.com/
+2. Click: "Workers & Pages" in left sidebar
+3. Click: "Create application" button
+4. Click: "Pages" tab
+5. Click: "Upload assets"
+
+STEP 2: Create Project
+──────────────────────
+1. Project name: jeremyrobards-site
+2. Click: "Create project"
+3. You'll see upload area - DON'T upload yet
+4. Just create the empty project
+
+STEP 3: Deploy from CLI
+───────────────────────
+After creating the project, return here and run:
+
+npm run deploy
+
+This time it will work because the project exists!
+
+🔄 ALTERNATIVE: USE DASHBOARD UPLOAD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Or you can upload directly in the dashboard:
+
+1. After creating project, drag and drop these files:
+   - index.html
+   - about.html
+   - aidev.html
+   - mpd.html
+   - iis.html
+   - writing.html
+   - article.html
+   - /css/ folder
+   - /js/ folder
+   - /assets/ folder
+   - /articles/ folder
+
+2. Click "Deploy site"
+
+Future updates can then use: npm run deploy
+
+💡 WHY THIS HAPPENED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The API token template "Edit Cloudflare Pages" allows:
+✅ Deploy to existing projects
+❌ Create new projects
+
+To auto-create projects, you'd need a custom token with:
+- Account → Cloudflare Pages → Edit
+- Account → Account Settings → Read
+
+But it's easier to just create the project once in the dashboard,
+then deploy via CLI after that.
+
+🎯 NEXT STEPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Create project in dashboard: https://dash.cloudflare.com/
+2. Project name: jeremyrobards-site
+3. Come back and tell me when it's created
+4. I'll run: npm run deploy
+
+✨ This only needs to be done ONCE!
