@@ -15,6 +15,25 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, "..");
 
+// Check if TypeScript has been compiled
+const REQUIRED_MODULES = [
+  path.join(ROOT_DIR, ".build", "cms", "export.js")
+];
+
+async function checkCompilation() {
+  for (const modulePath of REQUIRED_MODULES) {
+    try {
+      await fs.access(modulePath);
+    } catch {
+      console.error("\n❌ Error: TypeScript files not compiled\n");
+      console.error("Required module not found:", modulePath);
+      console.error("\n💡 Run this command first:");
+      console.error("   npm run cms:compile\n");
+      process.exit(1);
+    }
+  }
+}
+
 const app = express();
 const PORT = process.env.CMS_PORT || 5173;
 
@@ -175,7 +194,10 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, async () => {
+  // Verify TypeScript compilation on startup
+  await checkCompilation();
+
   console.log("\n🚀 CMS Development Server");
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
   console.log(`📝 Editor UI:   http://localhost:${PORT}`);

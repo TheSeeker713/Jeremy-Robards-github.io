@@ -6,14 +6,17 @@
   "scripts": {
     "build:css": "tailwindcss -i ./tailwind/input.css -o ./css/tailwind.css --minify",
     "dev": "tailwindcss -i ./tailwind/input.css -o ./css/tailwind.css --watch",
+    "serve": "python -m http.server 8000",
     "generate:manifest": "node generate-manifest.mjs",
+    "clean": "rimraf dist .build",
+    "cms:setup": "node cms/setup.js",
+    "cms:dev": "node cms/serve.js",
+    "cms:export": "ts-node cms/export.ts",
+    "cms:publish": "node cms/publish.js",
     "cms:compile": "tsc",
-    "cms:dev": "npm run cms:compile && node cms/serve.js",
     "cms:proxy": "npx decap-server",
     "cms:build": "node -e \"console.log('cms build pipeline pending')\"",
-    "cms:publish": "node cms/publish-cli.js --verbose",
-    "cms:test": "node cms/test-publish.js",
-    "serve": "python -m http.server 8000"
+    "cms:test": "node cms/test-publish.js"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",
