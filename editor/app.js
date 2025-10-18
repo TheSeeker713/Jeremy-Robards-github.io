@@ -335,7 +335,13 @@ class EditorApp {
 		this.store.save(this.state);
 	}
 
-	#exportDraft() {
+	async #exportDraft() {
+		// Validate required metadata before export
+		if (!this.state.metadataValidation.valid) {
+			this.toast.show("⚠️ Please fix validation errors before exporting.");
+			return;
+		}
+
 		const payload = {
 			metadata: { ...this.state.metadata, ...this.state.additionalMetadata },
 			blocks: this.state.blocks,
@@ -345,23 +351,82 @@ class EditorApp {
 			additionalMetadata: this.state.additionalMetadata,
 			exportedAt: new Date().toISOString()
 		};
-		const slug = this.state.metadata.slug || this.#slugify(this.state.metadata.title || "draft") || "draft";
-		const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-		const url = URL.createObjectURL(blob);
-		const anchor = document.createElement("a");
-		anchor.href = url;
-		anchor.download = `${slug}-draft.json`;
-		document.body.appendChild(anchor);
-		anchor.click();
-		anchor.remove();
-		URL.revokeObjectURL(url);
-		this.toast.show("Draft exported. Connect build pipeline to populate dist/.");
+
+		this.toast.show("📦 Exporting article...");
+
+		try {
+			const response = await fetch("/api/export", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(payload)
+			});
+
+			const result = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || `Export failed: ${response.status}`);
+			}
+
+			this.toast.show(`✓ Exported to /dist/${result.data.path}`);
+			console.log("Export result:", result);
+		} catch (error) {
+			console.error("Export error:", error);
+			this.toast.show(`✗ Export failed: ${error.message}`);
+		}
 	}
 
-	#publishDraft() {
-		const event = new CustomEvent("cms:publish", { detail: { state: this.state } });
-		window.dispatchEvent(event);
-		this.toast.show("Publish pipeline pending. Hook this button to cms/publish.");
+	async #publishDraft() {
+		// Check if metadata is valid
+		if (!this.state.metadataValidation.valid) {
+			this.toast.show("⚠️ Please fix validation errors before publishing.");
+			return;
+		}
+
+		// Confirm publish action
+		if (!confirm("Deploy to Cloudflare Pages? This will make your article live.")) {
+			return;
+		}
+
+		this.toast.show("🚀 Publishing to Cloudflare Pages...");
+
+		try {
+			const response = await fetch("/api/publish", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ outDir: "./dist" })
+			});
+
+			const result = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || `Publish failed: ${response.status}`);
+			}
+
+			const { url, count, size, duration } = result.data;
+			const sizeKB = (size / 1024).toFixed(2);
+			const durationSec = (duration / 1000).toFixed(2);
+			
+			this.toast.show(`✓ Published! ${count} files (${sizeKB} KB) in ${durationSec}s`);
+			console.log("Publish result:", result);
+
+			// Show deployment URL
+			if (url) {
+				setTimeout(() => {
+					if (confirm(`Open deployment?\n${url}`)) {
+						window.open(url, "_blank");
+					}
+				}, 1000);
+			}
+		} catch (error) {
+			console.error("Publish error:", error);
+			this.toast.show(`✗ Publish failed: ${error.message}`);
+
+			if (error.message.includes("wrangler")) {
+				setTimeout(() => {
+					this.toast.show("💡 Install wrangler: npm install -g wrangler");
+				}, 3000);
+			}
+		}
 	}
 }
 

@@ -7,6 +7,8 @@
     "build:css": "tailwindcss -i ./tailwind/input.css -o ./css/tailwind.css --minify",
     "dev": "tailwindcss -i ./tailwind/input.css -o ./css/tailwind.css --watch",
     "generate:manifest": "node generate-manifest.mjs",
+    "cms:compile": "tsc",
+    "cms:dev": "npm run cms:compile && node cms/serve.js",
     "cms:proxy": "npx decap-server",
     "cms:build": "node -e \"console.log('cms build pipeline pending')\"",
     "cms:publish": "node cms/publish-cli.js --verbose",
@@ -33,5 +35,9 @@
     "vanilla-js"
   ],
   "author": "Jeremy Robards",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
 }
