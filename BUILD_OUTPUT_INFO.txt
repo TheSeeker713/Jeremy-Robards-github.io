@@ -1,0 +1,125 @@
+╔════════════════════════════════════════════════════════════════╗
+║    BUILD OUTPUT CONFIGURATION - UPDATED ✅                      ║
+╚════════════════════════════════════════════════════════════════╝
+
+🎯 YOUR SITE TYPE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+You have a STATIC GITHUB PAGES SITE that deploys from the root directory.
+
+✅ Your HTML files are already in the root:
+   - index.html
+   - about.html
+   - aidev.html
+   - mpd.html
+   - iis.html
+   - writing.html
+   - article.html
+
+✅ Your assets are in:
+   - /css/
+   - /js/
+   - /assets/
+
+📦 UPDATED CONFIGURATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ wrangler.toml
+   pages_build_output_dir = "."  (deploys from root directory)
+
+✅ package.json scripts updated:
+   npm run deploy         → deploys root directory (.)
+   npm run deploy:verbose → deploys root directory (.) with logs
+   npm run deploy:test    → still deploys _tinydeploy/ for testing
+
+✅ .cfignore excludes:
+   ✓ node_modules/
+   ✓ cms/ (your CMS system)
+   ✓ editor/ (your editor UI)
+   ✓ _tinydeploy/ (test folder)
+   ✓ .build/ (TypeScript output)
+   ✓ .git/ (version control)
+   ✓ .vscode/ (IDE files)
+   ✓ *.md files (documentation)
+   ✓ Config files (package.json, tsconfig.json, etc.)
+
+📂 WHAT WILL BE DEPLOYED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+When you run "npm run deploy", Cloudflare will upload:
+
+✅ HTML files (index.html, about.html, etc.)
+✅ /css/ folder (your stylesheets)
+✅ /js/ folder (your JavaScript)
+✅ /assets/ folder (images, videos, etc.)
+✅ /articles/ folder (your published articles)
+✅ .nojekyll file (GitHub Pages config)
+✅ CNAME file (custom domain config)
+
+❌ Will NOT upload (excluded by .cfignore):
+❌ node_modules/
+❌ cms/
+❌ editor/
+❌ shared/
+❌ templates/
+❌ worker/
+❌ admin/
+❌ _articles/
+❌ _tinydeploy/
+❌ tailwind/
+❌ .build/
+❌ .git/
+❌ .vscode/
+❌ *.md files
+❌ Config files
+
+🚀 READY TO DEPLOY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your configuration is now correct for your site structure!
+
+STEP 1: Build CSS (if you made changes)
+────────────────────────────────────────
+npm run build
+
+STEP 2: Authenticate with Cloudflare
+─────────────────────────────────────
+npx wrangler login
+
+STEP 3: Test deployment (recommended)
+──────────────────────────────────────
+npm run deploy:test
+
+This will deploy the _tinydeploy/ test page to verify authentication
+and upload pipeline work correctly.
+
+STEP 4: Deploy your full site
+──────────────────────────────
+npm run deploy
+
+This will upload:
+- All HTML files
+- /css/, /js/, /assets/
+- /articles/
+- Other production files
+
+STEP 5: Check deployment
+─────────────────────────
+Look for output like:
+✨ Success! Uploaded X files
+🌎 View your site at: https://jeremyrobards-site.pages.dev
+
+💡 NOTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Your site deploys from ROOT (.) not dist/
+   This is correct for GitHub Pages-style sites.
+
+2. .cfignore prevents uploading development files
+   This keeps your deployment clean and fast.
+
+3. You can still use "npm run deploy:test" anytime
+   It deploys _tinydeploy/ to test the pipeline.
+
+4. After first deploy, set up your custom domain:
+   https://dash.cloudflare.com/ → Pages → jeremyrobards-site → Settings → Domains
+
+✨ You're all set! Run: npx wrangler login

@@ -1,0 +1,161 @@
+╔════════════════════════════════════════════════════════════════╗
+║    GITHUB PAGES → CLOUDFLARE PAGES MIGRATION PLAN              ║
+╚════════════════════════════════════════════════════════════════╝
+
+🎯 GOAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ www.jeremyrobards.com hosted on CLOUDFLARE PAGES
+✅ GitHub repo still exists (for version control)
+✅ GitHub Pages deployment DISABLED
+
+📊 CURRENT STATUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Domain registered on Cloudflare
+✅ Nameservers: gabriel.ns.cloudflare.com, maya.ns.cloudflare.com
+✅ Domain status: Active
+✅ DNS managed by Cloudflare
+✅ GitHub repo: Jeremy-Robards-github.io (will stay as version control)
+
+🚀 DEPLOYMENT STEPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: Authenticate with Cloudflare
+─────────────────────────────────────
+npx wrangler login
+
+This opens a browser for you to authorize Wrangler.
+
+STEP 2: Test deployment
+────────────────────────
+npm run deploy:test
+
+This deploys a tiny test page to verify everything works.
+You'll get: https://jeremyrobards-site.pages.dev
+
+STEP 3: Deploy your full site
+──────────────────────────────
+npm run deploy
+
+This uploads your entire site to Cloudflare Pages.
+
+STEP 4: Connect your custom domain
+───────────────────────────────────
+1. Go to: https://dash.cloudflare.com/
+2. Click: Pages → jeremyrobards-site
+3. Click: Custom domains
+4. Click: "Set up a custom domain"
+5. Enter: www.jeremyrobards.com
+6. Click: "Activate domain"
+
+Cloudflare will automatically:
+- Create the DNS records (CNAME pointing to your Pages deployment)
+- Set up SSL certificate
+- Enable CDN
+
+STEP 5: Add root domain redirect (optional)
+────────────────────────────────────────────
+If you want jeremyrobards.com (without www) to redirect:
+
+1. In Cloudflare Pages custom domains, add: jeremyrobards.com
+2. Cloudflare will create a redirect rule automatically
+
+STEP 6: Disable GitHub Pages
+─────────────────────────────
+1. Go to: https://github.com/TheSeeker713/Jeremy-Robards-github.io
+2. Click: Settings
+3. Scroll to: Pages section
+4. Click: "Unpublish site" or change Source to "None"
+
+This stops GitHub from trying to build/deploy your site.
+
+📝 AFTER MIGRATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your workflow will be:
+
+1. Edit files locally
+2. Commit to GitHub (for version control):
+   git add .
+   git commit -m "Update site"
+   git push origin main
+
+3. Deploy to Cloudflare:
+   npm run deploy
+
+Note: GitHub is now ONLY for version control, not hosting.
+
+🔄 CONTINUOUS WORKFLOW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Every time you want to update your live site:
+
+# Make changes to files
+# Test locally: npm run serve
+
+# Build CSS if needed
+npm run build
+
+# Deploy to Cloudflare
+npm run deploy
+
+# Optional: commit to GitHub
+git add .
+git commit -m "Description of changes"
+git push
+
+🌐 DNS CONFIGURATION (AUTO-HANDLED BY CLOUDFLARE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+When you add www.jeremyrobards.com in Cloudflare Pages, it will automatically:
+
+✅ Create CNAME record: www → jeremyrobards-site.pages.dev
+✅ Enable SSL/TLS (automatic HTTPS)
+✅ Enable Cloudflare CDN (faster worldwide)
+✅ Enable DDoS protection
+✅ Enable Web Application Firewall (WAF)
+
+You don't need to manually configure DNS!
+
+⚡ BENEFITS OF CLOUDFLARE PAGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+vs GitHub Pages:
+✅ Faster global CDN (300+ data centers)
+✅ Better DDoS protection
+✅ More deploy options (manual control)
+✅ Better analytics
+✅ Functions/Workers support (if needed later)
+✅ Preview deployments
+✅ Rollback capability
+✅ Better integration with Cloudflare features
+
+🔐 GITHUB REPO STATUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your repo will stay at:
+https://github.com/TheSeeker713/Jeremy-Robards-github.io
+
+Purpose: VERSION CONTROL ONLY
+- Track changes
+- Backup
+- Collaboration
+- History
+
+NOT used for: Hosting (that's now Cloudflare's job)
+
+🎬 READY TO START?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Run these commands in order:
+
+1. npx wrangler login
+2. npm run deploy:test
+3. npm run deploy
+4. Then set up custom domain in Cloudflare dashboard
+
+Expected result:
+- www.jeremyrobards.com → Your site on Cloudflare Pages
+- Fast, secure, global CDN
+- GitHub repo remains for version control only
+
+✨ Let's start with: npx wrangler login

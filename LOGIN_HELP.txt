@@ -1,0 +1,66 @@
+╔════════════════════════════════════════════════════════════════╗
+║    CLOUDFLARE LOGIN - ALTERNATIVE METHOD                       ║
+╚════════════════════════════════════════════════════════════════╝
+
+🔐 USE API TOKEN INSTEAD OF BROWSER LOGIN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+If browser login fails, use an API token instead:
+
+STEP 1: Create API Token
+─────────────────────────
+1. Go to: https://dash.cloudflare.com/profile/api-tokens
+2. Click: "Create Token"
+3. Use template: "Edit Cloudflare Pages"
+4. Click: "Continue to summary"
+5. Click: "Create Token"
+6. COPY the token (you won't see it again!)
+
+STEP 2: Add to .env file
+────────────────────────
+1. Copy .env.example to .env:
+   copy .env.example .env
+
+2. Edit .env and fill in:
+   
+   CLOUDFLARE_ACCOUNT_ID=your_account_id_here
+   CLOUDFLARE_API_TOKEN=your_token_here
+
+   Find Account ID at: https://dash.cloudflare.com/
+   (It's in the URL after dash.cloudflare.com/)
+
+STEP 3: Test authentication
+────────────────────────────
+npx wrangler whoami
+
+Should show your email and account.
+
+STEP 4: Deploy
+──────────────
+npm run deploy
+
+This will use the token from .env automatically.
+
+✅ BENEFITS OF API TOKEN METHOD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ No browser needed
+✅ Works in CI/CD
+✅ More reliable
+✅ Token stored securely in .env (gitignored)
+
+🔄 OR TRY BROWSER LOGIN AGAIN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Cancel current login (Ctrl+C), then:
+
+1. Restart terminal
+2. Run: npx wrangler login
+3. Manually open the URL in browser
+4. Click "Allow"
+5. Return to terminal
+
+💡 RECOMMENDED: Use API Token
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+It's more reliable and easier for repeated deployments.
+
+Next step after auth: npm run deploy

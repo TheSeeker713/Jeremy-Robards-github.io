@@ -1,0 +1,126 @@
+╔════════════════════════════════════════════════════════════════╗
+║    CLOUDFLARE PAGES DEPLOYMENT - SETUP COMPLETE ✅              ║
+╚════════════════════════════════════════════════════════════════╝
+
+📦 FILES CREATED/UPDATED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ wrangler.toml          - Cloudflare Pages configuration
+✅ .cfignore              - Deployment ignore rules
+✅ package.json           - Added deploy scripts
+✅ .env.example           - Environment variable template
+✅ .vscode/tasks.json     - VS Code deploy tasks
+✅ _tinydeploy/           - Smoke test deployment folder
+✅ DEPLOYING.md           - Complete deployment guide
+✅ cms/publish.js         - Already exists (for CMS articles)
+
+🔧 BUILD OUTPUT DIRECTORY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Current setting: dist/
+
+⚠️  CONFIRM: Is "dist/" your build output folder?
+   - If YES: You're all set!
+   - If NO: Update wrangler.toml (pages_build_output_dir) and 
+            package.json scripts to point to your actual folder
+
+🔐 NEXT STEPS - AUTHENTICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OPTION A: Interactive Login (Recommended)
+──────────────────────────────────────────
+npx wrangler --version
+npx wrangler login
+npx wrangler whoami
+
+OPTION B: API Token (For CI/CD)
+────────────────────────────────
+1. Create token at: https://dash.cloudflare.com/profile/api-tokens
+2. Use template: "Edit Cloudflare Pages"
+3. Copy .env.example to .env:
+   cp .env.example .env
+4. Add your credentials to .env:
+   CLOUDFLARE_ACCOUNT_ID=your_account_id
+   CLOUDFLARE_API_TOKEN=your_token
+
+🧪 TEST DEPLOYMENT (Run this first!)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+npm run deploy:test
+
+This deploys a tiny test page to verify:
+- Authentication works
+- Upload pipeline works
+- Cloudflare Pages project is ready
+- You'll get a *.pages.dev URL to check
+
+🚀 PRODUCTION DEPLOYMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Step 1: Build your site
+────────────────────────
+npm run build
+
+Step 2: Deploy
+──────────────
+npm run deploy
+
+Or with verbose output:
+npm run deploy:verbose
+
+Or from VS Code:
+Press Ctrl+Shift+B → Select "Cloudflare: Deploy"
+
+🌐 CUSTOM DOMAIN SETUP (After first successful deploy)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Go to: https://dash.cloudflare.com/ → Pages
+2. Click on: jeremyrobards-site
+3. Go to: Settings → Domains
+4. Click: "Set up a custom domain"
+5. Enter: www.jeremyrobards.com
+6. Follow DNS setup instructions
+
+If migrating from GitHub Pages:
+- Remove old CNAME record pointing to *.github.io
+- Add new CNAME record from Cloudflare setup
+- Wait 5-30 minutes for DNS propagation
+
+🐛 TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"Path too long" errors on Windows?
+───────────────────────────────────
+Enable long paths (run PowerShell as Admin):
+New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
+
+Then add to .env:
+CLOUDFLARE_API_MAX_CONCURRENCY=4
+
+Authentication errors (401/403)?
+─────────────────────────────────
+npx wrangler logout
+npx wrangler login
+npx wrangler whoami
+
+Deployment hanging/timing out?
+───────────────────────────────
+npm run deploy:verbose
+
+See what will be uploaded:
+npx wrangler pages deploy dist --dry-run --project-name jeremyrobards-site
+
+📚 DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Complete guide: DEPLOYING.md
+Quick reference: This file
+
+💡 QUICK COMMAND REFERENCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+npm run build           Build site
+npm run deploy:test     Test deployment (smoke test)
+npm run deploy          Deploy to production
+npm run deploy:verbose  Deploy with verbose output
+
+npx wrangler login      Authenticate
+npx wrangler whoami     Verify authentication
+npx wrangler logout     Clear credentials
+
+✨ You're all set! Start with: npx wrangler login

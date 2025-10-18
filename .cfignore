@@ -1,0 +1,82 @@
+# Cloudflare Pages Ignore Rules
+# Files/folders listed here will NOT be uploaded during deployment
+# This reduces upload time and avoids hitting file count limits
+
+# Dependencies
+node_modules/
+.pnpm-store/
+.yarn/
+
+# Source files (not needed in production)
+src/
+scripts/
+cms/
+editor/
+shared/
+templates/
+worker/
+admin/
+_articles/
+_tinydeploy/
+tailwind/
+
+# Build artifacts we don't deploy
+.build/
+.cache/
+.temp/
+
+# Config files not needed in production
+tsconfig.json
+tailwind.config.mjs
+wrangler.toml
+package.json
+package-lock.json
+
+# Design files
+*.psd
+*.ai
+*.sketch
+*.blend
+*.fig
+
+# Archives
+*.zip
+*.tar
+*.gz
+*.rar
+
+# Source maps (optional - remove this line if you want them deployed)
+*.map
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Version control
+.git/
+.svn/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test files
+__tests__/
+*.test.js
+*.spec.js
+
+# Documentation (optional - remove these lines if you want them deployed)
+*.md
+DEPLOY_CHECKLIST.txt
+.github/

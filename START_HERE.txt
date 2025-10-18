@@ -1,0 +1,91 @@
+╔════════════════════════════════════════════════════════════════╗
+║    CLOUDFLARE MIGRATION - QUICK START CHECKLIST                ║
+╚════════════════════════════════════════════════════════════════╝
+
+🎯 YOUR SITUATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Domain: www.jeremyrobards.com
+✅ DNS: Already on Cloudflare nameservers
+✅ Code: In GitHub repo (Jeremy-Robards-github.io)
+✅ Goal: Host on Cloudflare Pages, keep GitHub for version control
+
+⚡ QUICK START (5 MINUTES)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ STEP 1: Login to Cloudflare
+   npx wrangler login
+   
+   → Opens browser
+   → Click "Allow"
+   → Returns to terminal
+
+□ STEP 2: Test deployment (optional but recommended)
+   npm run deploy:test
+   
+   → Uploads tiny test page
+   → Shows: https://jeremyrobards-site.pages.dev
+   → Verify it works in browser
+
+□ STEP 3: Deploy your full site
+   npm run deploy
+   
+   → Uploads entire site
+   → Takes 1-2 minutes
+   → Shows deployment URL
+
+□ STEP 4: Connect your domain
+   1. Go to: https://dash.cloudflare.com/
+   2. Pages → jeremyrobards-site
+   3. Custom domains → "Set up a custom domain"
+   4. Enter: www.jeremyrobards.com
+   5. Click: "Activate domain"
+   
+   → Cloudflare creates DNS automatically
+   → SSL certificate issued automatically
+   → Takes 1-5 minutes to activate
+
+□ STEP 5: Disable GitHub Pages (optional)
+   1. GitHub repo → Settings
+   2. Pages section
+   3. Unpublish site
+   
+   → Prevents confusion
+   → GitHub now only for version control
+
+✅ DONE!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Your site is now:
+- Hosted on Cloudflare Pages
+- Available at www.jeremyrobards.com
+- Faster (global CDN)
+- More secure (DDoS protection)
+- GitHub repo kept for version control
+
+🔄 FUTURE UPDATES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+To update your live site:
+
+1. Edit files locally
+2. npm run build (if CSS changed)
+3. npm run deploy
+4. Done! (live in ~30 seconds)
+
+Optional - commit to GitHub:
+git add .
+git commit -m "Update"
+git push
+
+💡 NOTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ No CNAME file needed (Cloudflare handles DNS)
+✅ No .nojekyll needed (not using Jekyll)
+✅ GitHub Pages disabled (use Cloudflare instead)
+✅ Deployments are manual (you control when)
+✅ No GitHub Actions needed (deploy from local)
+
+🚀 START NOW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+npx wrangler login

@@ -1,0 +1,21 @@
+# Cloudflare Pages Configuration
+# https://developers.cloudflare.com/pages/platform/functions/
+
+# Project name (must match your Cloudflare Pages project)
+name = "jeremyrobards-site"
+
+# Account ID from Cloudflare dashboard
+# Find it at: https://dash.cloudflare.com/ (in the URL after the domain)
+# Set CLOUDFLARE_ACCOUNT_ID in .env (not committed)
+# Wrangler will read it from environment variables
+account_id = "${CLOUDFLARE_ACCOUNT_ID}"
+
+# Directory containing the built static site to deploy
+# This must match your build output folder
+# For GitHub Pages sites that deploy from root, use "." (current directory)
+# Common values: dist, build, public, out, or "." for root
+pages_build_output_dir = "."
+
+# Note: For Cloudflare Pages deployments via Direct Upload,
+# wrangler will upload the entire contents of pages_build_output_dir.
+# Use .cfignore to exclude unnecessary files (node_modules, cms, etc.).
