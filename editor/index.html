@@ -123,19 +123,11 @@
             <header class="panel__header">
                 <h2>Preview</h2>
             </header>
-            <div class="panel__body panel__body--scroll">
-                <article class="preview" data-preview>
-                    <header class="preview__masthead">
-                        <p class="preview__kicker" data-preview-kicker>Feature</p>
-                        <h2 class="preview__title" data-preview-title>Untitled Feature Story</h2>
-                        <p class="preview__subtitle" data-preview-subtitle>Subtitle pending</p>
-                        <p class="preview__dek" data-preview-dek>Add an excerpt to see the standfirst.</p>
-                        <p class="preview__meta" data-preview-meta>Pending publish date • Tags pending</p>
-                    </header>
-                    <section class="preview__body" data-preview-body>
-                        <p>Add blocks to build your article. The live preview will use a editorial, magazine-inspired layout.</p>
-                    </section>
-                </article>
+            <div class="panel__body">
+                <div class="preview-shell" data-preview>
+                    <div class="preview-shell__status" data-preview-status aria-live="polite">Loading preview template…</div>
+                    <iframe class="preview-shell__frame" data-preview-frame title="Article preview"></iframe>
+                </div>
             </div>
         </section>
     </main>

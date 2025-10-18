@@ -2,53 +2,31 @@ import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
 import { Eta } from "eta";
+import { fileURLToPath } from "url";
+import {
+  renderBlocks,
+  buildMetaLine,
+  buildJsonLd,
+  absoluteUrl,
+  slugify,
+  normaliseTags,
+  normaliseLinks
+} from "../shared/articleTemplate.js";
 
 const DEFAULT_BASE_URL = "https://www.jeremyrobards.com";
 const eta = new Eta({ autoEscape: true });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const TEMPLATE_PATH = path.resolve(__dirname, "../templates/article.eta");
 
-const ARTICLE_TEMPLATE = `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title><%= it.title %></title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="<%= it.description %>">
-  <link rel="canonical" href="<%= it.canonicalUrl %>">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="<%= it.title %>">
-  <meta property="og:description" content="<%= it.description %>">
-  <meta property="og:url" content="<%= it.canonicalUrl %>">
-  <% if (it.ogImage) { %><meta property="og:image" content="<%= it.ogImage %>"><% } %>
-  <meta property="article:published_time" content="<%= it.publishedIso %>">
-  <% if (it.tags && it.tags.length) { %>
-    <% for (const tag of it.tags) { %>
-      <meta property="article:tag" content="<%= tag %>">
-    <% } %>
-  <% } %>
-  <script type="application/ld+json"><%- it.jsonLd %></script>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-  <article class="article">
-    <header class="article__header">
-      <% if (it.category) { %><p class="article__category"><%= it.category %></p><% } %>
-      <h1 class="article__title"><%= it.title %></h1>
-      <% if (it.subtitle) { %><p class="article__subtitle"><%= it.subtitle %></p><% } %>
-      <p class="article__meta"><%= it.metaLine %></p>
-      <p class="article__excerpt"><%= it.description %></p>
-      <% if (it.heroImage) { %>
-        <figure class="article__hero">
-          <img src="<%= it.heroImage %>" alt="<%= it.heroAlt %>">
-          <% if (it.heroCaption) { %><figcaption><%= it.heroCaption %></figcaption><% } %>
-        </figure>
-      <% } %>
-    </header>
-    <main class="article__body">
-      <%- it.content %>
-    </main>
-  </article>
-</body>
-</html>`;
+let templateCache: string | null = null;
+
+async function getArticleTemplate(): Promise<string> {
+  if (!templateCache) {
+    templateCache = await fs.readFile(TEMPLATE_PATH, "utf-8");
+  }
+  return templateCache;
+}
 
 type ParagraphBlock = { type: "paragraph"; text: string };
 type HeadingBlock = { type: "heading"; text: string; level?: number };
@@ -132,6 +110,13 @@ export async function exportArticle(draft: ArticleDraft, outDir = "./dist"): Pro
   const canonicalUrl = `${baseUrl}/${articleRelDir}/`;
   const assetDir = path.join(outDir, "article-assets", slug);
   const assetUrlBase = path.posix.join("/article-assets", slug);
+  let stylesheetHref = path.posix.relative(articleRelDir, "css/style.css");
+  if (!stylesheetHref) {
+    stylesheetHref = "css/style.css";
+  }
+  if (!stylesheetHref.startsWith(".")) {
+    stylesheetHref = `./${stylesheetHref}`;
+  }
 
   await fs.mkdir(path.dirname(articleOutputPath), { recursive: true });
   await fs.mkdir(assetDir, { recursive: true });
@@ -174,8 +159,9 @@ export async function exportArticle(draft: ArticleDraft, outDir = "./dist"): Pro
   const heroAlt = metadata.hero_caption || metadata.title || "Feature hero image";
   const metaLine = buildMetaLine(metadata, publishedDate);
   const jsonLd = buildJsonLd(metadata, canonicalUrl, baseUrl);
+  const articleTemplate = await getArticleTemplate();
 
-  const renderedHtml = eta.renderString(ARTICLE_TEMPLATE, {
+  const renderedHtml = eta.renderString(articleTemplate, {
     title: metadata.title,
     subtitle: metadata.subtitle || "",
     description: metadata.excerpt,
@@ -189,7 +175,9 @@ export async function exportArticle(draft: ArticleDraft, outDir = "./dist"): Pro
     heroImage: metadata.hero_image || "",
     heroCaption: metadata.hero_caption || "",
     heroAlt,
-    content: htmlBody
+    content: htmlBody,
+    links: metadata.links || [],
+    stylesheetHref
   });
 
   if (!renderedHtml) {
@@ -354,133 +342,6 @@ function uniqueFileName(
   return candidate;
 }
 
-function renderBlocks(blocks: ArticleBlock[]): string {
-  return blocks
-    .map((block) => {
-      switch (block.type) {
-        case "heading":
-          return renderHeading(block);
-        case "list":
-          return renderList(block);
-        case "quote":
-          return renderQuote(block);
-        case "code":
-          return renderCode(block);
-        case "image":
-          return renderImage(block);
-        case "embed":
-          return renderEmbed(block);
-        case "note":
-          return `<aside>${escapeHtml((block as NoteBlock).text || "")}</aside>`;
-        case "paragraph":
-        default:
-          return `<p>${formatText((block as ParagraphBlock).text || "")}</p>`;
-      }
-    })
-    .join("\n");
-}
-
-function renderHeading(block: HeadingBlock): string {
-  const level = block.level && block.level >= 2 && block.level <= 4 ? block.level : 2;
-  const tag = `h${level}`;
-  return `<${tag}>${escapeHtml(block.text || "")}</${tag}>`;
-}
-
-function renderList(block: ListBlock): string {
-  const items = Array.isArray(block.items) ? block.items : [];
-  if (!items.length) return "";
-  const tag = block.style === "ordered" ? "ol" : "ul";
-  const listItems = items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
-  return `<${tag}>${listItems}</${tag}>`;
-}
-
-function renderQuote(block: QuoteBlock): string {
-  const cite = block.cite ? `<cite>${escapeHtml(block.cite)}</cite>` : "";
-  return `<blockquote><p>${escapeHtml(block.text || "")}</p>${cite}</blockquote>`;
-}
-
-function renderCode(block: CodeBlock): string {
-  const language = block.language ? ` class="language-${escapeHtml(block.language)}"` : "";
-  return `<pre><code${language}>${escapeHtml(block.code || "")}</code></pre>`;
-}
-
-function renderImage(block: ImageBlock): string {
-  if (!block.src) return "";
-  const layout = block.layout || "full";
-  const caption = block.caption ? `<figcaption>${escapeHtml(block.caption)}</figcaption>` : "";
-  const alt = escapeHtml(block.alt || block.caption || "Article image");
-  const src = escapeHtml(block.src);
-  return `<figure class="article-image article-image--${escapeHtml(layout)}"><img src="${src}" alt="${alt}">${caption}</figure>`;
-}
-
-function renderEmbed(block: EmbedBlock): string {
-  if (block.html) return block.html;
-  if (block.url) {
-    const safe = escapeHtml(block.url);
-    return `<div class="article-embed"><a href="${safe}" rel="noopener" target="_blank">${safe}</a></div>`;
-  }
-  return "";
-}
-
-function escapeHtml(value: string): string {
-  return String(value)
-    .replace(/&/gu, "&amp;")
-    .replace(/</gu, "&lt;")
-    .replace(/>/gu, "&gt;")
-    .replace(/"/gu, "&quot;")
-    .replace(/'/gu, "&#039;");
-}
-
-function formatText(text: string): string {
-  return escapeHtml(text).replace(/\n/gu, "<br>");
-}
-
-function buildMetaLine(metadata: ArticleMetadata, publishedDate: Date): string {
-  const date = publishedDate.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  });
-  const parts = [date];
-  if (metadata.author) parts.push(`By ${metadata.author}`);
-  return parts.join(" — ");
-}
-
-function buildJsonLd(metadata: ArticleMetadata, canonicalUrl: string, baseUrl: string): string {
-  const json: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: metadata.title,
-    description: metadata.excerpt,
-    datePublished: metadata.published_at,
-    dateModified: metadata.published_at,
-    url: canonicalUrl,
-    mainEntityOfPage: canonicalUrl
-  };
-
-  if (metadata.author) {
-    json.author = {
-      "@type": "Person",
-      name: metadata.author
-    };
-  }
-  if (metadata.hero_image) {
-    json.image = [absoluteUrl(metadata.hero_image, baseUrl)];
-  }
-  if (metadata.tags?.length) {
-    json.keywords = metadata.tags.join(", ");
-  }
-
-  return JSON.stringify(json, null, 2);
-}
-
-function absoluteUrl(resource: string, baseUrl: string): string {
-  if (resource.startsWith("http://") || resource.startsWith("https://")) {
-    return resource;
-  }
-  const base = baseUrl.replace(/index\.html$/u, "").replace(/\/+$/u, "");
-  return `${base}${resource.startsWith("/") ? "" : "/"}${resource.replace(/^\//u, "")}`;
-}
 
 async function updateFeed(feedPath: string, entry: FeedEntry): Promise<void> {
   let feed: FeedEntry[] = [];
@@ -606,33 +467,3 @@ function formatListMarkdown(block: ListBlock): string {
   return items.map((item) => `- ${item}`).join("\n");
 }
 
-function slugify(value: string): string {
-  const slug = value
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/gu, "")
-    .replace(/[^a-z0-9]+/gu, "-")
-    .replace(/^-+|-+$/gu, "")
-    .trim();
-  return slug || "article";
-}
-
-function normaliseTags(value: string[] | undefined): string[] {
-  if (!value) return [];
-  const set = new Set<string>();
-  value.forEach((tag) => {
-    const clean = String(tag || "").trim();
-    if (clean) set.add(clean);
-  });
-  return Array.from(set);
-}
-
-function normaliseLinks(value: ArticleLink[] | undefined): ArticleLink[] {
-  if (!value) return [];
-  return value
-    .map((link) => ({
-      label: link.label ? String(link.label).trim() : "",
-      url: link.url ? String(link.url).trim() : ""
-    }))
-    .filter((link) => link.label || link.url);
-}

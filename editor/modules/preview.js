@@ -1,193 +1,182 @@
+import { Eta } from "../vendor/eta.browser.mjs";
+import { renderBlocks, buildMetaLine, buildJsonLd, absoluteUrl, slugify } from "../../shared/articleTemplate.js";
+
+const TEMPLATE_URL = "../../templates/article.eta";
+
 const DEFAULT_STATE = {
     metadata: {
         title: "Untitled Feature Story",
         subtitle: "",
         excerpt: "Add an excerpt to see the standfirst.",
         published_at: "",
-        category: "",
+        category: "Feature",
         author: "",
         tags: [],
         hero_image: "",
         hero_caption: "",
         links: []
     },
-    blocks: []
+    blocks: [
+        {
+            type: "paragraph",
+            text: "Start writing to see the live preview update instantly."
+        }
+    ]
 };
 
 export default class Preview {
-    constructor({ root, kicker, title, subtitle, dek, meta, body }) {
+    constructor({ root, frame, status }) {
         this.root = root;
-        this.kicker = kicker;
-        this.title = title;
-        this.subtitle = subtitle;
-        this.dek = dek;
-        this.meta = meta;
-        this.body = body;
+        this.frame = frame;
+        this.status = status;
+        this.eta = new Eta({ autoEscape: true });
+        this.templatePromise = null;
+        this.templateCache = null;
+        this.latestState = DEFAULT_STATE;
+        this.renderToken = 0;
+
+        if (this.frame) {
+            this.frame.classList.add("is-loading");
+        }
     }
 
     render(state = DEFAULT_STATE) {
-        const metadata = { ...DEFAULT_STATE.metadata, ...(state.metadata || {}) };
-        const blocks = Array.isArray(state.blocks) ? state.blocks : DEFAULT_STATE.blocks;
+        const token = ++this.renderToken;
+        this.latestState = {
+            metadata: { ...DEFAULT_STATE.metadata, ...(state.metadata || {}) },
+            blocks: Array.isArray(state.blocks) ? state.blocks : DEFAULT_STATE.blocks
+        };
 
-        if (this.kicker) {
-            const kickerValue = metadata.category || "Feature";
-            this.kicker.textContent = kickerValue ? kickerValue.toUpperCase() : "FEATURE";
-        }
-
-        if (this.title) {
-            this.title.textContent = metadata.title || DEFAULT_STATE.metadata.title;
-        }
-
-        if (this.subtitle) {
-            if (metadata.subtitle) {
-                this.subtitle.textContent = metadata.subtitle;
-                this.subtitle.hidden = false;
-            } else {
-                this.subtitle.textContent = "";
-                this.subtitle.hidden = true;
-            }
-        }
-
-        if (this.dek) {
-            this.dek.textContent = metadata.excerpt || DEFAULT_STATE.metadata.excerpt;
-        }
-
-        if (this.meta) {
-            const dateText = metadata.published_at ? this.#formatDate(metadata.published_at) : "Publish date pending";
-            const authorText = metadata.author ? `By ${metadata.author}` : "";
-            const tagsText = metadata.tags?.length ? metadata.tags.join(" • ") : "Add tags";
-            const metaParts = [dateText, authorText, tagsText].filter(Boolean);
-            this.meta.textContent = metaParts.join(" • ");
-        }
-
-        if (this.body) {
-            const hero = this.#renderHero(metadata);
-            const content = this.#renderBlocks(blocks);
-            const links = this.#renderLinks(metadata.links);
-            this.body.innerHTML = [hero, content, links].filter(Boolean).join("");
-        }
-    }
-
-    #renderBlocks(blocks) {
-        if (!blocks.length) {
-            return "<p>Add blocks to build your article. The live preview will use a editorial, magazine-inspired layout.</p>";
-        }
-
-        return blocks
-            .map((block) => {
-                switch (block.type) {
-                    case "heading":
-                        return this.#renderHeading(block);
-                    case "list":
-                        return this.#renderList(block);
-                    case "quote":
-                        return this.#renderQuote(block);
-                    case "code":
-                        return this.#renderCode(block);
-                    case "image":
-                        return this.#renderImage(block);
-                    case "embed":
-                        return this.#renderEmbed(block);
-                    case "note":
-                        return `<aside>${this.#escape(block.text || block.content || "Note")}</aside>`;
-                    case "paragraph":
-                    default:
-                        return `<p>${this.#formatText(block.text || block.content || "")}</p>`;
-                }
-            })
-            .join("");
-    }
-
-    #renderHeading(block) {
-        const level = Number(block.level) >= 2 && Number(block.level) <= 4 ? Number(block.level) : 2;
-        const tag = `h${level}`;
-        return `<${tag}>${this.#escape(block.text || "Heading")}</${tag}>`;
-    }
-
-    #renderList(block) {
-        const items = Array.isArray(block.items) ? block.items : [];
-        if (!items.length) {
-            return "";
-        }
-        const tag = block.style === "ordered" ? "ol" : "ul";
-        const listItems = items.map((item) => `<li>${this.#escape(item)}</li>`).join("");
-        return `<${tag}>${listItems}</${tag}>`;
-    }
-
-    #renderQuote(block) {
-        const cite = block.cite ? `<cite>${this.#escape(block.cite)}</cite>` : "";
-        return `<blockquote>${this.#escape(block.text || "")}${cite}</blockquote>`;
-    }
-
-    #renderCode(block) {
-        const language = block.language ? ` class="language-${this.#escape(block.language)}"` : "";
-        return `<pre><code${language}>${this.#escape(block.code || "")}</code></pre>`;
-    }
-
-    #renderImage(block) {
-        if (!block.src) return "";
-        const layout = block.layout || "full";
-        const caption = block.caption ? `<figcaption>${this.#escape(block.caption)}</figcaption>` : "";
-        const alt = this.#escape(block.alt || block.caption || "Article image");
-        return `<figure class="preview__figure preview__figure--${layout}"><img src="${block.src}" alt="${alt}">${caption}</figure>`;
-    }
-
-    #renderEmbed(block) {
-        if (block.html) {
-            return `<div class="preview__embed">${block.html}</div>`;
-        }
-        if (block.url) {
-            return `<div class="preview__embed"><a href="${this.#escape(block.url)}" target="_blank" rel="noopener">${this.#escape(block.url)}</a></div>`;
-        }
-        return "";
-    }
-
-    #renderHero(metadata) {
-        if (!metadata.hero_image) return "";
-        const caption = metadata.hero_caption ? `<figcaption>${this.#escape(metadata.hero_caption)}</figcaption>` : "";
-        const alt = this.#escape(metadata.hero_caption || metadata.title || "Feature hero image");
-        const src = this.#escape(metadata.hero_image);
-        return `<figure class="preview__hero"><img src="${src}" alt="${alt}">${caption}</figure>`;
-    }
-
-    #renderLinks(links) {
-        if (!Array.isArray(links) || !links.length) return "";
-        const items = links
-            .map((link) => {
-                if (!link) return "";
-                const label = this.#escape(link.label || link.url || "Resource");
-                const url = link.url ? this.#escape(link.url) : "";
-                if (url) {
-                    return `<li><a href="${url}" target="_blank" rel="noopener">${label}</a></li>`;
-                }
-                return `<li>${label}</li>`;
-            })
-            .filter(Boolean)
-            .join("");
-        if (!items) return "";
-        return `<section class="preview__links"><h3>Further Reading</h3><ul>${items}</ul></section>`;
-    }
-
-    #escape(value) {
-        return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-    #formatText(text) {
-        return this.#escape(text).replace(/\n/g, "<br>");
-    }
-
-    #formatDate(value) {
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) return "Publish date pending";
-        return date.toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "short",
-            day: "numeric"
+        this.#showStatus("Rendering preview…");
+        this.#renderAsync(token).catch((error) => {
+            console.error("Preview render failed:", error);
+            this.#showStatus("Preview unavailable. Check console for details.");
         });
+    }
+
+    async #renderAsync(token) {
+        if (!this.frame || !this.eta) {
+            this.#showStatus("Preview disabled in this environment.");
+            return;
+        }
+
+        if (this.frame) {
+            this.frame.classList.add("is-loading");
+        }
+
+        const template = await this.#loadTemplate();
+        if (!template) {
+            this.#showStatus("Unable to load preview template.");
+            return;
+        }
+
+        if (token !== this.renderToken) {
+            return;
+        }
+
+        const metadata = this.latestState.metadata;
+        const blocks = this.latestState.blocks;
+        const htmlBody = renderBlocks(blocks) || "<p>Start writing to see your article take shape.</p>";
+
+        const { baseUrl, canonicalUrl, publishedIso, stylesheetHref } = this.#deriveCanonical(metadata);
+        const publishedDate = new Date(publishedIso);
+        const metaLine = buildMetaLine(metadata, publishedDate);
+        const jsonLd = buildJsonLd({ ...metadata, published_at: publishedIso }, canonicalUrl, baseUrl);
+
+        const rendered = this.eta.renderString(template, {
+            title: metadata.title || DEFAULT_STATE.metadata.title,
+            subtitle: metadata.subtitle || "",
+            description: metadata.excerpt || DEFAULT_STATE.metadata.excerpt,
+            canonicalUrl,
+            ogImage: metadata.hero_image ? absoluteUrl(metadata.hero_image, baseUrl) : undefined,
+            publishedIso,
+            tags: metadata.tags || [],
+            jsonLd,
+            category: metadata.category || "",
+            metaLine,
+            heroImage: metadata.hero_image || "",
+            heroCaption: metadata.hero_caption || "",
+            heroAlt: metadata.hero_caption || metadata.title || "Feature hero image",
+            content: htmlBody,
+            links: metadata.links || [],
+            stylesheetHref
+        });
+
+        if (token !== this.renderToken) {
+            return;
+        }
+
+        this.#writeToFrame(rendered);
+        this.#hideStatus();
+    }
+
+    async #loadTemplate() {
+        if (this.templateCache) return this.templateCache;
+        if (!this.templatePromise) {
+            this.templatePromise = fetch(TEMPLATE_URL)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch template: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then((text) => {
+                    this.templateCache = text;
+                    return text;
+                })
+                .catch((error) => {
+                    console.error("Failed to load article template:", error);
+                    this.templateCache = null;
+                    return null;
+                });
+        }
+        return this.templatePromise;
+    }
+
+    #deriveCanonical(metadata) {
+        const origin = typeof window !== "undefined" && window.location ? window.location.origin : "";
+        const defaultBase = origin && origin !== "null" ? origin : "https://preview.local";
+        const baseUrl = defaultBase.replace(/\/$/, "");
+        const slugSource = metadata.slug || metadata.title || "preview";
+        const slug = slugify(slugSource || "preview");
+        const canonicalUrl = `${baseUrl}/preview/${slug}`;
+
+        const parsedDate = metadata.published_at ? new Date(metadata.published_at) : new Date();
+        const publishedIso = Number.isNaN(parsedDate.getTime()) ? new Date().toISOString() : parsedDate.toISOString();
+
+        const stylesheetHref = "../css/style.css";
+
+        return { baseUrl, canonicalUrl, publishedIso, stylesheetHref };
+    }
+
+    #writeToFrame(html) {
+        if (!this.frame) return;
+        const doc = this.frame.contentDocument;
+        if (!doc) return;
+
+        this.frame.classList.add("is-loading");
+        doc.open();
+        doc.write(html);
+        doc.close();
+
+        requestAnimationFrame(() => {
+            const height = doc.documentElement?.scrollHeight || doc.body?.scrollHeight || 960;
+            this.frame.style.height = `${Math.max(height, 720)}px`;
+            this.frame.classList.remove("is-loading");
+        });
+    }
+
+    #showStatus(message) {
+        if (!this.status) return;
+        this.status.textContent = message;
+        this.status.hidden = false;
+        if (this.frame) {
+            this.frame.classList.remove("is-loading");
+        }
+    }
+
+    #hideStatus() {
+        if (!this.status) return;
+        this.status.hidden = true;
     }
 }

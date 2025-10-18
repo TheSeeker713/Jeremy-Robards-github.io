@@ -34,12 +34,8 @@ class EditorApp {
 			blockList: document.querySelector("[data-block-list]"),
 			metadataForm: document.querySelector("[data-metadata-form]"),
 			previewRoot: document.querySelector("[data-preview]"),
-			previewKicker: document.querySelector("[data-preview-kicker]"),
-			previewTitle: document.querySelector("[data-preview-title]"),
-			previewSubtitle: document.querySelector("[data-preview-subtitle]"),
-			previewDek: document.querySelector("[data-preview-dek]"),
-			previewMeta: document.querySelector("[data-preview-meta]"),
-			previewBody: document.querySelector("[data-preview-body]"),
+			previewStatus: document.querySelector("[data-preview-status]"),
+			previewFrame: document.querySelector("[data-preview-frame]"),
 			modalRoot: document.querySelector("[data-modal-root]")
 		};
 
@@ -103,12 +99,8 @@ class EditorApp {
 
 		this.preview = new Preview({
 			root: this.elements.previewRoot,
-			kicker: this.elements.previewKicker,
-			title: this.elements.previewTitle,
-			subtitle: this.elements.previewSubtitle,
-			dek: this.elements.previewDek,
-			meta: this.elements.previewMeta,
-			body: this.elements.previewBody
+			status: this.elements.previewStatus,
+			frame: this.elements.previewFrame
 		});
 
 		this.importManager = new ImportManager({

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title><%= it.title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="<%= it.description %>">
+  <link rel="canonical" href="<%= it.canonicalUrl %>">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="<%= it.title %>">
+  <meta property="og:description" content="<%= it.description %>">
+  <meta property="og:url" content="<%= it.canonicalUrl %>">
+  <% if (it.ogImage) { %><meta property="og:image" content="<%= it.ogImage %>"><% } %>
+  <meta property="article:published_time" content="<%= it.publishedIso %>">
+  <% if (it.tags && it.tags.length) { %>
+    <% for (const tag of it.tags) { %>
+      <meta property="article:tag" content="<%= tag %>">
+    <% } %>
+  <% } %>
+  <script type="application/ld+json"><%- it.jsonLd %></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="<%= it.stylesheetHref %>">
+</head>
+<body class="article-page">
+  <article class="article-magazine">
+    <header class="article-header-magazine">
+      <% if (it.category) { %><p class="article-category"><%= it.category %></p><% } %>
+      <h1 class="article-title-magazine"><%= it.title %></h1>
+      <% if (it.subtitle) { %><p class="article-subtitle"><%= it.subtitle %></p><% } %>
+      <p class="article-meta"><%= it.metaLine %></p>
+      <p class="article-excerpt"><%= it.description %></p>
+      <% if (it.tags && it.tags.length) { %>
+        <div class="article-tags">
+          <% for (const tag of it.tags) { %>
+            <span class="article-tag"><%= tag %></span>
+          <% } %>
+        </div>
+      <% } %>
+    </header>
+    <% if (it.heroImage) { %>
+      <figure class="article-hero-image">
+        <img src="<%= it.heroImage %>" alt="<%= it.heroAlt %>">
+        <% if (it.heroCaption) { %><figcaption class="article-hero-caption"><%= it.heroCaption %></figcaption><% } %>
+      </figure>
+    <% } %>
+    <section class="article-body-magazine">
+      <%- it.content %>
+    </section>
+    <% if (it.links && it.links.length) { %>
+      <aside class="article-links">
+        <h2>Further Reading</h2>
+        <ul>
+          <% for (const link of it.links) { %>
+            <% if (link && (link.url || link.label)) { %>
+              <% if (link.url) { %>
+                <li><a href="<%= link.url %>" rel="noopener"><%= link.label || link.url %></a></li>
+              <% } else { %>
+                <li><%= link.label %></li>
+              <% } %>
+            <% } %>
+          <% } %>
+        </ul>
+      </aside>
+    <% } %>
+  </article>
+</body>
+</html>
