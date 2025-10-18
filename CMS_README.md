@@ -115,26 +115,32 @@ npm run cms:publish
 ```bash
 npm run cms:setup
 ```
-**Purpose**: Interactive setup wizard for configuring the CMS
+**Purpose**: One-time setup for Cloudflare credentials
 
 **What it does**:
-- Prompts for Cloudflare credentials (Account ID, API Token, Project Name)
-- Creates or updates `.env` file with validated credentials
-- Checks for required dependencies (wrangler, ts-node)
-- Optionally installs missing dependencies
-- Validates configuration by testing Cloudflare API connection
+- Prompts for Cloudflare Account ID and API Token (inquirer)
+- Writes `.env` with CF_ACCOUNT_ID, CF_API_TOKEN, CF_PAGES_PROJECT=jr-articles
+- Optionally verifies credentials using `wrangler whoami`
+- Supports a `--dry-run` flag to print the .env content without writing
 
 **When to use**:
 - First time setting up the CMS on a new machine
 - Updating Cloudflare credentials
-- Troubleshooting configuration issues
+- Troubleshooting authentication issues
 
 **Interactive prompts**:
 ```
 ? Cloudflare Account ID: abc123...
 ? Cloudflare API Token: ••••••••
-? Cloudflare Pages Project Name: my-articles-site
-? Install wrangler globally? (Y/n)
+? Write .env to J:/.../.env? (Y/n)
+? Verify credentials with 'wrangler whoami'? (Y/n)
+```
+
+**Dry run example**:
+```bash
+npm run cms:setup -- --dry-run
+# or
+node cms/setup.js --dry-run
 ```
 
 ---
