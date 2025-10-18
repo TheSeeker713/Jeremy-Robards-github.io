@@ -58,27 +58,63 @@
                 <h2>Metadata</h2>
             </header>
             <div class="panel__body">
-                <form data-metadata-form class="metadata-form">
-                    <label>
-                        Title
-                        <input type="text" name="title" placeholder="Article headline" required>
-                    </label>
-                    <label>
-                        Slug
-                        <input type="text" name="slug" placeholder="article-slug" required>
-                    </label>
-                    <label>
-                        Description
-                        <textarea name="description" rows="3" placeholder="One sentence summary"></textarea>
-                    </label>
-                    <label>
-                        Tags
-                        <input type="text" name="tags" placeholder="tag-one, tag-two">
-                    </label>
-                    <label>
-                        Publish Date
-                        <input type="date" name="publishDate">
-                    </label>
+                <form data-metadata-form class="metadata-form" autocomplete="off">
+                    <div class="metadata-form__grid">
+                        <label class="metadata-form__field" data-field="title">
+                            <span>Title</span>
+                            <input type="text" name="title" placeholder="Feature headline" required>
+                            <small class="metadata-form__message" data-field-message="title"></small>
+                        </label>
+                        <label class="metadata-form__field" data-field="subtitle">
+                            <span>Subtitle</span>
+                            <input type="text" name="subtitle" placeholder="Optional kicker">
+                            <small class="metadata-form__message" data-field-message="subtitle"></small>
+                        </label>
+                        <label class="metadata-form__field" data-field="author">
+                            <span>Author</span>
+                            <input type="text" name="author" placeholder="Byline">
+                            <small class="metadata-form__message" data-field-message="author"></small>
+                        </label>
+                        <label class="metadata-form__field" data-field="category">
+                            <span>Category</span>
+                            <input type="text" name="category" placeholder="Discipline or section">
+                            <small class="metadata-form__message" data-field-message="category"></small>
+                        </label>
+                        <div class="metadata-form__field metadata-form__field--tags" data-field="tags">
+                            <span>Tags</span>
+                            <div class="metadata-form__chips" data-tags-container></div>
+                            <input type="text" data-tags-input placeholder="Add a tag and press Enter">
+                            <div class="metadata-form__suggestions" data-tag-suggestions></div>
+                            <small class="metadata-form__message" data-field-message="tags"></small>
+                        </div>
+                        <label class="metadata-form__field" data-field="published_at">
+                            <span>Published</span>
+                            <input type="datetime-local" name="published_at">
+                            <small class="metadata-form__message" data-field-message="published_at"></small>
+                        </label>
+                        <label class="metadata-form__field metadata-form__field--full" data-field="excerpt">
+                            <span>Excerpt</span>
+                            <textarea name="excerpt" rows="3" placeholder="One-sentence standfirst" required></textarea>
+                            <small class="metadata-form__message" data-field-message="excerpt"></small>
+                        </label>
+                        <label class="metadata-form__field" data-field="hero_image">
+                            <span>Hero Image URL</span>
+                            <input type="url" name="hero_image" placeholder="https://">
+                            <small class="metadata-form__message" data-field-message="hero_image"></small>
+                        </label>
+                        <label class="metadata-form__field" data-field="hero_caption">
+                            <span>Hero Caption</span>
+                            <input type="text" name="hero_caption" placeholder="Photo credit or context">
+                            <small class="metadata-form__message" data-field-message="hero_caption"></small>
+                        </label>
+                    </div>
+                    <div class="metadata-form__aux">
+                        <p class="metadata-form__hint">Slug preview: <span data-slug-preview>draft</span></p>
+                        <div class="metadata-form__links" data-field="links">
+                            <div class="metadata-form__links-list" data-links></div>
+                            <button type="button" class="button button--sm button--ghost" data-action="add-link">+ Resource Link</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </section>
@@ -92,7 +128,8 @@
                     <header class="preview__masthead">
                         <p class="preview__kicker" data-preview-kicker>Feature</p>
                         <h2 class="preview__title" data-preview-title>Untitled Feature Story</h2>
-                        <p class="preview__dek" data-preview-dek>Add a description to see the deck.</p>
+                        <p class="preview__subtitle" data-preview-subtitle>Subtitle pending</p>
+                        <p class="preview__dek" data-preview-dek>Add an excerpt to see the standfirst.</p>
                         <p class="preview__meta" data-preview-meta>Pending publish date • Tags pending</p>
                     </header>
                     <section class="preview__body" data-preview-body>

@@ -1,48 +1,70 @@
 const DEFAULT_STATE = {
     metadata: {
         title: "Untitled Feature Story",
-        description: "Add a description to see the deck.",
-        publishDate: "",
-        tags: []
+        subtitle: "",
+        excerpt: "Add an excerpt to see the standfirst.",
+        published_at: "",
+        category: "",
+        author: "",
+        tags: [],
+        hero_image: "",
+        hero_caption: "",
+        links: []
     },
     blocks: []
 };
 
 export default class Preview {
-    constructor({ root, title, dek, meta, body }) {
+    constructor({ root, kicker, title, subtitle, dek, meta, body }) {
         this.root = root;
+        this.kicker = kicker;
         this.title = title;
+        this.subtitle = subtitle;
         this.dek = dek;
         this.meta = meta;
         this.body = body;
     }
 
     render(state = DEFAULT_STATE) {
-        const metadata = state.metadata || DEFAULT_STATE.metadata;
+        const metadata = { ...DEFAULT_STATE.metadata, ...(state.metadata || {}) };
         const blocks = Array.isArray(state.blocks) ? state.blocks : DEFAULT_STATE.blocks;
+
+        if (this.kicker) {
+            const kickerValue = metadata.category || "Feature";
+            this.kicker.textContent = kickerValue ? kickerValue.toUpperCase() : "FEATURE";
+        }
 
         if (this.title) {
             this.title.textContent = metadata.title || DEFAULT_STATE.metadata.title;
         }
 
+        if (this.subtitle) {
+            if (metadata.subtitle) {
+                this.subtitle.textContent = metadata.subtitle;
+                this.subtitle.hidden = false;
+            } else {
+                this.subtitle.textContent = "";
+                this.subtitle.hidden = true;
+            }
+        }
+
         if (this.dek) {
-            this.dek.textContent = metadata.description || DEFAULT_STATE.metadata.description;
+            this.dek.textContent = metadata.excerpt || DEFAULT_STATE.metadata.excerpt;
         }
 
         if (this.meta) {
-            const date = metadata.publishDate
-                ? new Date(metadata.publishDate).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric"
-                  })
-                : "Pending publish date";
-            const tags = metadata.tags?.length ? metadata.tags.join(" • ") : "Tags pending";
-            this.meta.textContent = `${date} • ${tags}`;
+            const dateText = metadata.published_at ? this.#formatDate(metadata.published_at) : "Publish date pending";
+            const authorText = metadata.author ? `By ${metadata.author}` : "";
+            const tagsText = metadata.tags?.length ? metadata.tags.join(" • ") : "Add tags";
+            const metaParts = [dateText, authorText, tagsText].filter(Boolean);
+            this.meta.textContent = metaParts.join(" • ");
         }
 
         if (this.body) {
-            this.body.innerHTML = this.#renderBlocks(blocks);
+            const hero = this.#renderHero(metadata);
+            const content = this.#renderBlocks(blocks);
+            const links = this.#renderLinks(metadata.links);
+            this.body.innerHTML = [hero, content, links].filter(Boolean).join("");
         }
     }
 
@@ -120,6 +142,32 @@ export default class Preview {
         return "";
     }
 
+    #renderHero(metadata) {
+        if (!metadata.hero_image) return "";
+        const caption = metadata.hero_caption ? `<figcaption>${this.#escape(metadata.hero_caption)}</figcaption>` : "";
+        const alt = this.#escape(metadata.hero_caption || metadata.title || "Feature hero image");
+        const src = this.#escape(metadata.hero_image);
+        return `<figure class="preview__hero"><img src="${src}" alt="${alt}">${caption}</figure>`;
+    }
+
+    #renderLinks(links) {
+        if (!Array.isArray(links) || !links.length) return "";
+        const items = links
+            .map((link) => {
+                if (!link) return "";
+                const label = this.#escape(link.label || link.url || "Resource");
+                const url = link.url ? this.#escape(link.url) : "";
+                if (url) {
+                    return `<li><a href="${url}" target="_blank" rel="noopener">${label}</a></li>`;
+                }
+                return `<li>${label}</li>`;
+            })
+            .filter(Boolean)
+            .join("");
+        if (!items) return "";
+        return `<section class="preview__links"><h3>Further Reading</h3><ul>${items}</ul></section>`;
+    }
+
     #escape(value) {
         return String(value)
             .replace(/&/g, "&amp;")
@@ -131,5 +179,15 @@ export default class Preview {
 
     #formatText(text) {
         return this.#escape(text).replace(/\n/g, "<br>");
+    }
+
+    #formatDate(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "Publish date pending";
+        return date.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        });
     }
 }

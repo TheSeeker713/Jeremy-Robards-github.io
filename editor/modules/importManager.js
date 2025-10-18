@@ -11,6 +11,7 @@ const JSON_FIELDS = [
     { key: "excerpt", label: "Excerpt", aliases: ["excerpt", "summary", "description"] },
     { key: "hero_image", label: "Hero Image", aliases: ["hero_image", "heroimage", "image", "hero"] },
     { key: "hero_caption", label: "Hero Caption", aliases: ["hero_caption", "caption"] },
+    { key: "links", label: "Links", aliases: ["links", "resources", "related"] },
     { key: "body", label: "Body", required: true, aliases: ["body", "content", "sections"] }
 ];
 
@@ -196,33 +197,33 @@ export default class ImportManager {
             throw new Error("JSON is missing required fields after mapping.");
         }
 
-        const metadata = {};
-        metadata.title = String(titleValue).trim();
-        metadata.description = this.#coerceString(this.#valueFromMapping(data, resolvedMapping.excerpt));
-        metadata.tags = this.#normaliseTags(this.#valueFromMapping(data, resolvedMapping.tags));
-        metadata.publishDate = this.#coerceString(this.#valueFromMapping(data, resolvedMapping.published_at));
-        metadata.slug = this.#coerceString(data.slug) || this.#slugify(metadata.title);
-
-        const additionalMetadata = {
+        const metadata = {
+            title: String(titleValue).trim(),
             subtitle: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.subtitle)),
             author: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.author)),
             category: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.category)),
-            heroImage: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.hero_image)),
-            heroCaption: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.hero_caption))
+            excerpt: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.excerpt)),
+            tags: this.#normaliseTags(this.#valueFromMapping(data, resolvedMapping.tags)),
+            published_at: this.#coerceDate(this.#valueFromMapping(data, resolvedMapping.published_at)),
+            hero_image: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.hero_image)),
+            hero_caption: this.#coerceString(this.#valueFromMapping(data, resolvedMapping.hero_caption)),
+            links: this.#normaliseLinks(this.#valueFromMapping(data, resolvedMapping.links)),
+            slug: this.#coerceString(data.slug)
         };
+        metadata.slug = metadata.slug || this.#slugify(metadata.title);
 
         const blocks = this.#normaliseJsonBody(bodyValue);
         if (!blocks.length) {
             throw new Error("JSON body produced no blocks.");
         }
 
-        if (!metadata.description) {
-            metadata.description = this.#inferDescriptionFromBlocks(blocks);
+        if (!metadata.excerpt) {
+            metadata.excerpt = this.#inferDescriptionFromBlocks(blocks);
         }
 
         return this.#createDraft({
             metadata,
-            additionalMetadata,
+            additionalMetadata: {},
             blocks,
             assets: [],
             source: {
@@ -272,7 +273,7 @@ export default class ImportManager {
         }
 
         const blocks = this.#plainTextToBlocks(editedText, { detectHeadings: true });
-        const metadata = {};
+        const metadata = { title: "", excerpt: "", slug: "" };
         const warnings = [];
 
         const headingBlock = blocks.find((block) => block.type === "text" && block.variant?.startsWith("heading"));
@@ -287,8 +288,8 @@ export default class ImportManager {
             warnings.push("Title inferred from filename. Update before publishing.");
         }
 
-        metadata.description = this.#inferDescriptionFromBlocks(blocks);
-        metadata.slug = this.#slugify(metadata.title);
+        metadata.excerpt = this.#inferDescriptionFromBlocks(blocks);
+        metadata.slug = metadata.slug || this.#slugify(metadata.title);
 
         return this.#createDraft({
             metadata,
@@ -305,22 +306,26 @@ export default class ImportManager {
     }
 
     #normaliseMarkdownMetadata(data = {}, content = "", fileName = "") {
-        const metadata = {};
-        const additional = {};
+        const metadata = {
+            title: this.#coerceString(data.title),
+            subtitle: this.#coerceString(data.subtitle),
+            author: this.#coerceString(data.author || data.byline),
+            category: this.#coerceString(data.category),
+            tags: this.#normaliseTags(data.tags),
+            published_at: this.#coerceDate(data.published_at || data.publishDate || data.publishedAt || data.date),
+            excerpt: "",
+            hero_image: this.#coerceString(data.hero_image || data.heroImage),
+            hero_caption: this.#coerceString(data.hero_caption || data.heroCaption),
+            links: this.#normaliseLinks(data.links),
+            slug: this.#coerceString(data.slug)
+        };
+        const additional = { ...data };
         const warnings = [];
 
-        if (data.title) metadata.title = String(data.title).trim();
-        if (data.slug) metadata.slug = String(data.slug).trim();
-        const descriptionSource = data.description || data.summary || data.excerpt;
-        if (descriptionSource) metadata.description = String(descriptionSource).trim();
-        metadata.tags = this.#normaliseTags(data.tags);
-        metadata.publishDate = this.#coerceString(data.publishDate || data.date);
-
-        if (data.subtitle) additional.subtitle = String(data.subtitle).trim();
-        if (data.author) additional.author = String(data.author).trim();
-        if (data.category) additional.category = String(data.category).trim();
-        if (data.hero_image || data.heroImage) additional.heroImage = String(data.hero_image || data.heroImage).trim();
-        if (data.hero_caption || data.heroCaption) additional.heroCaption = String(data.hero_caption || data.heroCaption).trim();
+        const descriptionSource = data.excerpt ?? data.summary ?? data.description;
+        if (descriptionSource !== undefined) {
+            metadata.excerpt = this.#coerceString(descriptionSource);
+        }
 
         if (!metadata.title) {
             const firstHeading = this.#findFirstMarkdownHeading(content);
@@ -332,11 +337,38 @@ export default class ImportManager {
             }
         }
 
-        if (!metadata.description) {
-            metadata.description = this.#inferDescriptionFromText(content);
+        if (!metadata.excerpt) {
+            metadata.excerpt = this.#inferDescriptionFromText(content);
         }
 
         metadata.slug = metadata.slug || this.#slugify(metadata.title);
+
+        const knownKeys = [
+            "title",
+            "slug",
+            "description",
+            "summary",
+            "excerpt",
+            "subtitle",
+            "author",
+            "byline",
+            "category",
+            "tags",
+            "published_at",
+            "publishDate",
+            "publishedAt",
+            "date",
+            "hero_image",
+            "heroImage",
+            "hero_caption",
+            "heroCaption",
+            "links"
+        ];
+        knownKeys.forEach((key) => {
+            if (key in additional) {
+                delete additional[key];
+            }
+        });
 
         return { metadata, additional, warnings };
     }
@@ -480,15 +512,25 @@ export default class ImportManager {
 
     #createDraft({ metadata = {}, additionalMetadata = {}, blocks = [], assets = [], source = {}, warnings = [] }) {
         const baseMetadata = {
-            title: metadata.title ? String(metadata.title).trim() : "",
-            slug: metadata.slug ? this.#slugify(metadata.slug) : "",
-            description: metadata.description ? String(metadata.description).trim() : "",
+            title: this.#coerceString(metadata.title),
+            subtitle: this.#coerceString(metadata.subtitle),
+            author: this.#coerceString(metadata.author),
+            category: this.#coerceString(metadata.category),
             tags: this.#normaliseTags(metadata.tags),
-            publishDate: metadata.publishDate ? String(metadata.publishDate).trim() : ""
+            published_at: this.#coerceDate(metadata.published_at || metadata.publishDate || metadata.date),
+            excerpt: this.#coerceString(metadata.excerpt || metadata.description),
+            hero_image: this.#coerceString(metadata.hero_image || metadata.heroImage),
+            hero_caption: this.#coerceString(metadata.hero_caption || metadata.heroCaption),
+            links: this.#normaliseLinks(metadata.links),
+            slug: this.#coerceString(metadata.slug)
         };
 
         if (!baseMetadata.slug) {
             baseMetadata.slug = this.#slugify(baseMetadata.title || source.fileName || "article");
+        }
+
+        if (!Array.isArray(baseMetadata.links)) {
+            baseMetadata.links = [];
         }
 
         return {
@@ -835,22 +877,71 @@ export default class ImportManager {
     }
 
     #normaliseTags(value) {
+        const source = Array.isArray(value)
+            ? value
+            : typeof value === "string"
+                ? value.split(/[,;\n]/)
+                : [];
+        const deduped = [];
+        source
+            .map((item) => this.#coerceString(item))
+            .filter(Boolean)
+            .forEach((tag) => {
+                if (!deduped.some((existing) => existing.toLowerCase() === tag.toLowerCase())) {
+                    deduped.push(tag);
+                }
+            });
+        return deduped;
+    }
+
+    #normaliseLinks(value) {
         if (!value) return [];
         if (Array.isArray(value)) {
-            return value.map((item) => String(item).trim()).filter(Boolean);
+            return value
+                .map((entry) => {
+                    if (!entry) return null;
+                    if (typeof entry === "string") {
+                        const label = this.#coerceString(entry);
+                        return label ? { label, url: "" } : null;
+                    }
+                    if (typeof entry === "object") {
+                        const label = this.#coerceString(entry.label ?? entry.title ?? entry.name);
+                        const url = this.#coerceString(entry.url ?? entry.href ?? entry.link);
+                        if (!label && !url) return null;
+                        return { label, url };
+                    }
+                    return null;
+                })
+                .filter(Boolean);
+        }
+        if (typeof value === "object") {
+            return Object.entries(value)
+                .map(([label, url]) => {
+                    const cleanLabel = this.#coerceString(label);
+                    const cleanUrl = this.#coerceString(url);
+                    if (!cleanLabel && !cleanUrl) return null;
+                    return { label: cleanLabel, url: cleanUrl };
+                })
+                .filter(Boolean);
         }
         if (typeof value === "string") {
-            return value
-                .split(",")
-                .map((item) => item.trim())
-                .filter(Boolean);
+            const label = this.#coerceString(value);
+            return label ? [{ label, url: "" }] : [];
         }
         return [];
     }
 
     #valueFromMapping(data, key) {
         if (!key) return undefined;
+        if (key === "__none__") return undefined;
         return data[key];
+    }
+
+    #coerceDate(value) {
+        if (!value) return "";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "";
+        return date.toISOString();
     }
 
     #coerceString(value) {
