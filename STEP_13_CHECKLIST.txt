@@ -1,0 +1,191 @@
+╔════════════════════════════════════════════════════════════════╗
+║    STEP 13 — CLOUDFLARE PAGES (Project B: jr-articles)         ║
+║    Manual Setup Checklist                                      ║
+╚════════════════════════════════════════════════════════════════╝
+
+📋 OVERVIEW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Purpose: Create a SECOND Cloudflare Pages project specifically for
+         CMS-managed articles (separate from your main portfolio site)
+
+Project A: jeremyrobards-site ✅ (main portfolio - already deployed)
+Project B: jr-articles ⏳ (CMS articles - follow steps below)
+
+═══════════════════════════════════════════════════════════════════
+  PART 1: CREATE CLOUDFLARE PAGES PROJECT
+═══════════════════════════════════════════════════════════════════
+
+□ STEP 1: Navigate to Cloudflare Pages
+  ────────────────────────────────────────
+  1. Open: https://dash.cloudflare.com/
+  2. Click: "Workers & Pages" in left sidebar
+  3. Click: "Create application" button (blue, top right)
+  4. Click: "Pages" tab
+  5. Click: "Upload assets" (NOT "Connect to Git")
+
+□ STEP 2: Create Project with Exact Name
+  ────────────────────────────────────────
+  1. Project name: jr-articles
+     ⚠️  IMPORTANT: Must be exactly "jr-articles" (no caps, with hyphen)
+     ⚠️  This matches CF_PAGES_PROJECT in your .env file
+  
+  2. Click: "Create project" button
+  
+  3. You'll see an upload area with drag-and-drop zone
+
+═══════════════════════════════════════════════════════════════════
+  PART 2: INITIALIZE WITH PLACEHOLDER
+═══════════════════════════════════════════════════════════════════
+
+□ STEP 3: Upload Placeholder File
+  ────────────────────────────────────────
+  1. In the upload area, drag and drop THIS folder:
+     J:\DEV\Coding Projects\PORTFOLIO\jeremyrobards-clean\dist
+  
+     OR click "Select from computer" and choose the dist folder
+  
+  2. You should see:
+     ✓ dist/index.html (placeholder file - already created for you)
+  
+  3. Click: "Deploy site" button
+  
+  4. Wait for deployment (usually 10-30 seconds)
+  
+  5. Look for success message:
+     ✨ Success! Deployment complete
+
+□ STEP 4: Confirm Deployment URL
+  ────────────────────────────────────────
+  1. After deployment completes, you'll see a URL like:
+     https://xxxxxxxx.jr-articles.pages.dev
+     OR
+     https://jr-articles.pages.dev
+  
+  2. Click the URL to open in browser
+  
+  3. You should see:
+     - Purple gradient background
+     - "📝 Articles Project" heading
+     - "Project B: jr-articles" badge
+     - Status: Initialized ✅
+  
+  4. Copy this URL for your records:
+     _________________________________________________
+
+═══════════════════════════════════════════════════════════════════
+  PART 3: VERIFY CMS CONFIGURATION
+═══════════════════════════════════════════════════════════════════
+
+□ STEP 5: Confirm .env Configuration
+  ────────────────────────────────────────
+  1. Open: .env file in VS Code (already open)
+  
+  2. Verify these lines exist:
+     CF_ACCOUNT_ID=<your_account_id>
+     CF_API_TOKEN=<your_token>
+     CF_PAGES_PROJECT=jr-articles
+  
+  3. The project name MUST match: jr-articles
+     ✓ Correct: jr-articles
+     ✗ Wrong: JR-Articles, jr_articles, jrarticles
+
+□ STEP 6: Verify CMS Publish Script
+  ────────────────────────────────────────
+  ✅ Already configured!
+  
+  The cms/publish.js script:
+  - Reads CF_PAGES_PROJECT from .env
+  - Deploys to the project name you specified
+  - No changes needed!
+
+═══════════════════════════════════════════════════════════════════
+  PART 4: TEST DEPLOYMENT (Optional but Recommended)
+═══════════════════════════════════════════════════════════════════
+
+□ STEP 7: Test CMS Publish Command
+  ────────────────────────────────────────
+  1. Ensure dist/index.html exists (already created ✓)
+  
+  2. Run test publish:
+     npm run cms:publish
+  
+  3. Expected output:
+     ✅ Published to Cloudflare Pages
+     URL: https://jr-articles.pages.dev
+     Files: 1 asset
+  
+  4. If successful, visit the URL - should show same placeholder
+
+═══════════════════════════════════════════════════════════════════
+  COMPLETION CHECKLIST
+═══════════════════════════════════════════════════════════════════
+
+□ Project "jr-articles" created in Cloudflare dashboard
+□ Initial placeholder deployed successfully
+□ *.pages.dev URL confirmed working
+□ .env has CF_PAGES_PROJECT=jr-articles
+□ cms/publish.js verified (no changes needed)
+□ Optional: Test publish command successful
+
+═══════════════════════════════════════════════════════════════════
+  WHAT'S NEXT?
+═══════════════════════════════════════════════════════════════════
+
+After completing this setup:
+
+1. CMS Editor (npm run cms:dev)
+   - Import/create articles
+   - Edit metadata and content blocks
+   - Preview live
+
+2. Export (in editor UI or npm run cms:export)
+   - Generates static HTML in /dist
+   - Creates /dist/article/YYYY/MM/slug/index.html
+
+3. Publish (in editor UI or npm run cms:publish)
+   - Deploys /dist to jr-articles project
+   - Articles live at: https://jr-articles.pages.dev/article/...
+
+4. Custom Domain (future step)
+   - Set up /article/* path routing
+   - Either via Cloudflare Worker or custom domain config
+
+═══════════════════════════════════════════════════════════════════
+  TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════
+
+❌ "Project not found" error when publishing?
+   → Ensure project name in dashboard matches .env exactly
+   → Check for typos: jr-articles (lowercase, with hyphen)
+
+❌ Upload fails in dashboard?
+   → Check dist/index.html exists: dir dist
+   → Try uploading just the index.html file
+   → Ensure file is not empty
+
+❌ Deployment succeeds but URL shows error?
+   → Wait 1-2 minutes for DNS propagation
+   → Try incognito/private browsing mode
+   → Check Cloudflare status: cloudflarestatus.com
+
+❌ cms:publish command fails?
+   → Run: npx wrangler whoami
+   → Verify: CF_API_TOKEN has "Edit Cloudflare Pages" permission
+   → Check .env file is saved with correct values
+
+═══════════════════════════════════════════════════════════════════
+  QUICK REFERENCE
+═══════════════════════════════════════════════════════════════════
+
+Dashboard: https://dash.cloudflare.com/
+Project name: jr-articles
+Placeholder file: dist/index.html (✓ created)
+Config file: .env (CF_PAGES_PROJECT=jr-articles)
+Publish script: cms/publish.js (✓ ready)
+Test command: npm run cms:publish
+
+═══════════════════════════════════════════════════════════════════
+
+✨ Ready to start? Follow the steps above in order.
+   Come back when complete and tell me: "STEP 13 DONE"
