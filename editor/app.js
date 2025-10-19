@@ -36,7 +36,11 @@ class EditorApp {
 			previewRoot: document.querySelector("[data-preview]"),
 			previewStatus: document.querySelector("[data-preview-status]"),
 			previewFrame: document.querySelector("[data-preview-frame]"),
-			modalRoot: document.querySelector("[data-modal-root]")
+			modalRoot: document.querySelector("[data-modal-root]"),
+			exportButton: document.querySelector('[data-action="export"]'),
+			publishButton: document.querySelector('[data-action="publish"]'),
+			exportStatus: document.querySelector('[data-export-status]'),
+			publishStatus: document.querySelector('[data-publish-status]')
 		};
 
 		this.state = {
@@ -46,7 +50,9 @@ class EditorApp {
 			assets: [],
 			additionalMetadata: {},
 			source: null,
-			warnings: []
+			warnings: [],
+			exportStatus: null, // { route, fileCount, timestamp }
+			publishStatus: null // { url, timestamp }
 		};
 
 		this.#hydrateFromStore();
@@ -67,6 +73,8 @@ class EditorApp {
 			this.state.additionalMetadata = cached.additionalMetadata || {};
 			this.state.source = cached.source || null;
 			this.state.warnings = cached.warnings || [];
+			this.state.exportStatus = cached.exportStatus || null;
+			this.state.publishStatus = cached.publishStatus || null;
 		}
 	}
 
@@ -77,6 +85,7 @@ class EditorApp {
 				this.state.metadataValidation = validation || { ...DEFAULT_VALIDATION };
 				this.#persist();
 				this.#renderPreview();
+				this.#updateButtonStates();
 			}
 		});
 		this.metadataPanel.setMetadata(this.state.metadata);
@@ -186,6 +195,9 @@ class EditorApp {
 
 	#render() {
 		this.#renderPreview();
+		this.#updateButtonStates();
+		this.#renderExportStatus();
+		this.#renderPublishStatus();
 	}
 
 	#renderPreview() {
@@ -342,6 +354,11 @@ class EditorApp {
 			return;
 		}
 
+		// Disable export button during operation
+		if (this.elements.exportButton) {
+			this.elements.exportButton.disabled = true;
+		}
+
 		const payload = {
 			metadata: { ...this.state.metadata, ...this.state.additionalMetadata },
 			blocks: this.state.blocks,
@@ -367,11 +384,36 @@ class EditorApp {
 				throw new Error(result.error || `Export failed: ${response.status}`);
 			}
 
-			this.toast.show(`✓ Exported to /dist/${result.data.path}`);
+			// Extract export details from response
+			const { path, fileCount } = result.data;
+			const route = path || result.data.route || 'unknown';
+			
+			// Update export status
+			this.state.exportStatus = {
+				route: route,
+				fileCount: fileCount || 1,
+				timestamp: new Date().toISOString()
+			};
+			
+			this.#persist();
+			this.#updateButtonStates();
+
+			// Show success message with details
+			const fileText = fileCount ? ` (${fileCount} file${fileCount !== 1 ? 's' : ''})` : '';
+			this.toast.show(`✅ Exported to /dist/${route}${fileText}`);
+			
+			// Update status UI
+			this.#renderExportStatus();
+			
 			console.log("Export result:", result);
 		} catch (error) {
 			console.error("Export error:", error);
-			this.toast.show(`✗ Export failed: ${error.message}`);
+			this.toast.show(`❌ Export failed: ${error.message}`);
+		} finally {
+			// Re-enable export button
+			if (this.elements.exportButton) {
+				this.elements.exportButton.disabled = false;
+			}
 		}
 	}
 
@@ -382,9 +424,20 @@ class EditorApp {
 			return;
 		}
 
+		// Check if export has been run
+		if (!this.state.exportStatus) {
+			this.toast.show("⚠️ Please export the article first before publishing.");
+			return;
+		}
+
 		// Confirm publish action
 		if (!confirm("Deploy to Cloudflare Pages? This will make your article live.")) {
 			return;
+		}
+
+		// Disable publish button during operation
+		if (this.elements.publishButton) {
+			this.elements.publishButton.disabled = true;
 		}
 
 		this.toast.show("🚀 Publishing to Cloudflare Pages...");
@@ -406,7 +459,21 @@ class EditorApp {
 			const sizeKB = (size / 1024).toFixed(2);
 			const durationSec = (duration / 1000).toFixed(2);
 			
-			this.toast.show(`✓ Published! ${count} files (${sizeKB} KB) in ${durationSec}s`);
+			// Update publish status
+			this.state.publishStatus = {
+				url: url,
+				timestamp: new Date().toISOString()
+			};
+			
+			this.#persist();
+			this.#updateButtonStates();
+			
+			// Show success message
+			this.toast.show(`✅ Published! ${count} files (${sizeKB} KB) in ${durationSec}s`);
+			
+			// Update status UI and render "View live" link
+			this.#renderPublishStatus();
+			
 			console.log("Publish result:", result);
 
 			// Show deployment URL
@@ -419,14 +486,131 @@ class EditorApp {
 			}
 		} catch (error) {
 			console.error("Publish error:", error);
-			this.toast.show(`✗ Publish failed: ${error.message}`);
+			this.toast.show(`❌ Publish failed: ${error.message}`);
 
 			if (error.message.includes("wrangler")) {
 				setTimeout(() => {
 					this.toast.show("💡 Install wrangler: npm install -g wrangler");
 				}, 3000);
 			}
+		} finally {
+			// Re-enable publish button
+			if (this.elements.publishButton) {
+				this.elements.publishButton.disabled = false;
+			}
 		}
+	}
+
+	/**
+	 * Update button states based on validation and export status
+	 */
+	#updateButtonStates() {
+		const hasValidMetadata = this.state.metadataValidation.valid;
+		const hasExported = !!this.state.exportStatus;
+
+		// Export button: disabled if metadata invalid
+		if (this.elements.exportButton) {
+			this.elements.exportButton.disabled = !hasValidMetadata;
+			this.elements.exportButton.title = hasValidMetadata
+				? "Export article to /dist"
+				: "Fix validation errors first";
+		}
+
+		// Publish button: disabled if metadata invalid OR not exported yet
+		if (this.elements.publishButton) {
+			this.elements.publishButton.disabled = !hasValidMetadata || !hasExported;
+			
+			let title = "Publish to Cloudflare Pages";
+			if (!hasValidMetadata) {
+				title = "Fix validation errors first";
+			} else if (!hasExported) {
+				title = "Export article first";
+			}
+			this.elements.publishButton.title = title;
+		}
+	}
+
+	/**
+	 * Render export status UI
+	 */
+	#renderExportStatus() {
+		if (!this.elements.exportStatus) return;
+
+		if (this.state.exportStatus) {
+			const { route, fileCount, timestamp } = this.state.exportStatus;
+			const timeAgo = this.#formatTimeAgo(timestamp);
+			
+			const fileText = fileCount > 1 ? `${fileCount} files` : '1 file';
+			
+			this.elements.exportStatus.innerHTML = `
+				<div class="status-badge status-badge--success">
+					<span class="status-badge__icon">✅</span>
+					<div class="status-badge__content">
+						<strong>Exported ${timeAgo}</strong>
+						<small>${fileText} → /dist/${route}</small>
+					</div>
+				</div>
+			`;
+			this.elements.exportStatus.hidden = false;
+		} else {
+			this.elements.exportStatus.innerHTML = '';
+			this.elements.exportStatus.hidden = true;
+		}
+	}
+
+	/**
+	 * Render publish status UI with "View live" link
+	 */
+	#renderPublishStatus() {
+		if (!this.elements.publishStatus) return;
+
+		if (this.state.publishStatus && this.state.exportStatus) {
+			const { url, timestamp } = this.state.publishStatus;
+			const { route } = this.state.exportStatus;
+			const timeAgo = this.#formatTimeAgo(timestamp);
+			
+			// Build article URL based on route
+			const articlePath = route.replace(/^article\//, ''); // Remove 'article/' prefix if present
+			const articleUrl = url.includes('pages.dev') 
+				? `${url}/article/${articlePath}`
+				: `${url}/article/${articlePath}`;
+			
+			this.elements.publishStatus.innerHTML = `
+				<div class="status-badge status-badge--info">
+					<span class="status-badge__icon">🚀</span>
+					<div class="status-badge__content">
+						<strong>Published ${timeAgo}</strong>
+						<small>
+							<a href="${articleUrl}" target="_blank" rel="noopener noreferrer" class="status-badge__link">
+								View live article →
+							</a>
+						</small>
+					</div>
+				</div>
+			`;
+			this.elements.publishStatus.hidden = false;
+		} else {
+			this.elements.publishStatus.innerHTML = '';
+			this.elements.publishStatus.hidden = true;
+		}
+	}
+
+	/**
+	 * Format timestamp as relative time (e.g., "2 minutes ago")
+	 */
+	#formatTimeAgo(timestamp) {
+		const now = Date.now();
+		const time = new Date(timestamp).getTime();
+		const diffMs = now - time;
+		const diffSec = Math.floor(diffMs / 1000);
+		const diffMin = Math.floor(diffSec / 60);
+		const diffHour = Math.floor(diffMin / 60);
+		const diffDay = Math.floor(diffHour / 24);
+
+		if (diffSec < 60) return 'just now';
+		if (diffMin < 60) return `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;
+		if (diffHour < 24) return `${diffHour} hour${diffHour !== 1 ? 's' : ''} ago`;
+		return `${diffDay} day${diffDay !== 1 ? 's' : ''} ago`;
 	}
 }
 

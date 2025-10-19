@@ -1,0 +1,45 @@
+# Cloudflare Worker Configuration
+# Purpose: Proxy /article/* requests to jr-articles.pages.dev
+# https://developers.cloudflare.com/workers/
+
+# Worker name (must be unique in your account)
+name = "jr-articles-mount"
+
+# Entry point for the worker
+main = "src/proxy.ts"
+
+# Account ID (read from environment variable)
+# Set CF_ACCOUNT_ID in your .env file
+# Do NOT commit account_id directly to version control
+account_id = "${CF_ACCOUNT_ID}"
+
+# Compatibility settings
+compatibility_date = "2024-01-01"
+
+# Routes: Define which URLs this worker handles
+# Pattern: Match /article/* on your custom domain
+# Zone: Your domain name
+[[routes]]
+pattern = "www.jeremyrobards.com/article/*"
+zone_name = "jeremyrobards.com"
+
+# Optional: Add route for apex domain (without www)
+# Uncomment if you want jeremyrobards.com/article/* to also work
+# [[routes]]
+# pattern = "jeremyrobards.com/article/*"
+# zone_name = "jeremyrobards.com"
+
+# Environment variables (optional)
+# You can define worker-specific env vars here
+# [vars]
+# UPSTREAM_URL = "https://jr-articles.pages.dev"
+
+# Build configuration (for TypeScript)
+[build]
+command = "npm install && npm run build"
+# Output will be in dist/ after build
+
+# No build output directory specified - wrangler will use main directly
+# If you want to build TypeScript first, add:
+# [build.upload]
+# format = "service-worker"

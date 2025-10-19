@@ -13,8 +13,14 @@
             <p>Create and publish long-form features from markdown, JSON, or PDF sources.</p>
         </div>
         <div class="app-header__actions">
-            <button type="button" data-action="export" class="button button--ghost">Export Draft</button>
-            <button type="button" data-action="publish" class="button button--primary">Publish</button>
+            <div class="app-header__status">
+                <div data-export-status hidden></div>
+                <div data-publish-status hidden></div>
+            </div>
+            <div class="app-header__buttons">
+                <button type="button" data-action="export" class="button button--ghost">Export Draft</button>
+                <button type="button" data-action="publish" class="button button--primary">Publish</button>
+            </div>
         </div>
     </header>
 

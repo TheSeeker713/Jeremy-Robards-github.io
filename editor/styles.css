@@ -65,8 +65,89 @@ body {
 
 .app-header__actions {
     display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-sm);
+}
+
+.app-header__status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-xs);
+    min-height: 48px;
+}
+
+.app-header__buttons {
+    display: flex;
     align-items: center;
     gap: var(--space-sm);
+}
+
+/* Status Badge Styles */
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.status-badge--success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #065f46;
+}
+
+.status-badge--info {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #1e40af;
+}
+
+.status-badge__icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.status-badge__content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.status-badge__content strong {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.status-badge__content small {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.status-badge__link {
+    color: inherit;
+    text-decoration: underline;
+    transition: opacity var(--transition);
+}
+
+.status-badge__link:hover {
+    opacity: 0.7;
 }
 
 .button {
@@ -76,7 +157,13 @@ body {
     padding: 0.55rem 1.2rem;
     font-size: 0.95rem;
     font-weight: 600;
-    transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+    transition: transform var(--transition), box-shadow var(--transition), background var(--transition), opacity var(--transition);
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .button--primary {
@@ -84,7 +171,7 @@ body {
     color: #ffffff;
 }
 
-.button--primary:hover {
+.button--primary:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: 0 14px 24px -16px rgba(13, 148, 136, 0.8);
 }
@@ -93,6 +180,10 @@ body {
     background: transparent;
     border-color: var(--border);
     color: var(--text);
+}
+
+.button--ghost:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.03);
 }
 
 .button--sm {
