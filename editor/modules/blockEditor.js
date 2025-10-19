@@ -13,11 +13,12 @@ const QUICK_FORMATS = [
 ];
 
 export default class BlockEditor {
-    constructor(listEl, { onChange, toast, imageTools }) {
+    constructor(listEl, { onChange, toast, imageTools, getMetadata }) {
         this.listEl = listEl;
         this.onChange = onChange;
         this.toast = toast;
         this.imageTools = imageTools;
+        this.getMetadata = getMetadata; // Function to get current metadata (for slug)
         this.blocks = [];
 
         this.#bindEvents();
@@ -494,21 +495,39 @@ export default class BlockEditor {
     async #replaceImageFromPicker(id) {
         if (!this.imageTools) return;
         try {
-            const picked = await this.imageTools.pickImage();
-            const processed = await this.#processImage(picked.src);
+            // Get current slug from metadata (with fallback)
+            const metadata = this.getMetadata ? this.getMetadata() : {};
+            const slug = metadata.slug || "image";
+            
+            // Pick and process image with slug for filename generation
+            const picked = await this.imageTools.pickImage(slug);
+            
             const block = this.blocks.find((item) => item.id === id);
             if (!block) return;
+            
+            // Store all the processed image data
             Object.assign(block, {
-                src: processed.dataUrl,
-                width: processed.width,
-                height: processed.height,
-                originalFilename: picked.filename,
-                size: picked.size,
+                src: picked.src, // data URL
+                width: picked.processedDimensions?.width || 0,
+                height: picked.processedDimensions?.height || 0,
+                originalFilename: picked.filename, // slug-shortid.ext
+                originalSize: picked.originalSize,
+                processedSize: picked.processedSize,
+                reduction: picked.reduction,
+                format: picked.format,
                 type: "image",
                 layout: block.layout || "full"
             });
+            
             this.#render();
             this.#notify();
+            
+            // Show processing feedback
+            if (picked.reduction > 0) {
+                this.toast?.show(`✅ Image optimized (${picked.reduction}% smaller, ${picked.processedDimensions.width}×${picked.processedDimensions.height})`);
+            } else {
+                this.toast?.show(`✅ Image loaded (${picked.processedDimensions.width}×${picked.processedDimensions.height})`);
+            }
         } catch (error) {
             this.toast?.show(error.message || "Image selection cancelled.");
         }

@@ -102,7 +102,8 @@ class EditorApp {
 				this.#renderPreview();
 			},
 			toast: this.toast,
-			imageTools: this.imageTools
+			imageTools: this.imageTools,
+			getMetadata: () => this.state.metadata
 		});
 		this.blockEditor.loadBlocks(this.state.blocks);
 
