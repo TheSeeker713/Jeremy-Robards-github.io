@@ -114,11 +114,18 @@ body {
   align-items: center;
   gap: var(--space-lg);
   box-shadow: var(--shadow);
+  flex-wrap: wrap;
+  min-height: 80px;
+}
+
+.app-header__details {
+  flex: 1 1 300px;
 }
 
 .app-header__details h1 {
   margin: 0 0 var(--space-xs);
   font-size: 1.6rem;
+  white-space: nowrap;
 }
 
 .app-header__details p {
@@ -131,6 +138,7 @@ body {
   flex-direction: column;
   align-items: flex-end;
   gap: var(--space-sm);
+  flex: 0 1 auto;
 }
 
 .app-header__status {
@@ -145,6 +153,7 @@ body {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  flex-wrap: wrap;
 }
 
 /* Status Badge Styles */
@@ -274,7 +283,10 @@ body {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: minmax(320px, auto) minmax(420px, auto);
-  gap: var(--space-md);
+  gap: var(--space-lg);
+  padding: var(--space-md);
+  max-width: 1920px;
+  margin: 0 auto;
 }
 
 .panel {
@@ -294,17 +306,22 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
+  flex-wrap: wrap;
+  min-height: 60px;
 }
 
 .panel__header h2 {
   margin: 0;
   font-size: 1.15rem;
+  white-space: nowrap;
 }
 
 .panel__header-actions {
   display: flex;
   gap: var(--space-xs);
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .panel__body {
@@ -610,6 +627,12 @@ body {
   gap: var(--space-xs);
   flex-wrap: wrap;
   justify-content: flex-end;
+  align-items: center;
+}
+
+.block-item__controls .button {
+  white-space: nowrap;
+  min-width: fit-content;
 }
 
 .block-item__type-select {
@@ -921,6 +944,49 @@ body {
   cursor: pointer;
 }
 
+@media (max-width: 1440px) {
+  .layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(280px, auto);
+    gap: var(--space-md);
+  }
+
+  #import-panel {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  #block-panel {
+    grid-column: 2;
+    grid-row: 1 / 3;
+  }
+
+  #metadata-panel {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .panel--preview {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+
+  /* Improve button sizing on medium screens */
+  .panel__header-actions .button--sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    min-height: 32px;
+  }
+
+  .app-header__details h1 {
+    font-size: 1.4rem;
+  }
+
+  .app-header__details p {
+    font-size: 0.9rem;
+  }
+}
+
 @media (max-width: 1180px) {
   body {
     padding: var(--space-md);
@@ -944,14 +1010,53 @@ body {
   .app-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .app-header__details h1 {
+    font-size: 1.3rem;
+  }
+
+  .app-header__actions {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .app-header__buttons {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .app-header__buttons .button {
+    flex: 1;
   }
 
   .layout {
     grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-sm);
+    padding: var(--space-sm);
   }
 
   .panel--preview {
     grid-column: span 1;
+  }
+
+  .panel__header-actions .button--sm {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.7rem;
+    min-height: 32px;
+  }
+
+  .metadata-form__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .block-item__controls {
+    width: 100%;
+  }
+
+  .block-item__controls .button {
+    flex: 1;
   }
 }
 

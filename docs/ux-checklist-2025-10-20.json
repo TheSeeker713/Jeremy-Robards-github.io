@@ -1,0 +1,66 @@
+{
+  "timestamp": "2025-10-20T21:15:03.245Z",
+  "url": "http://localhost:5173/",
+  "heuristics": [
+    {
+      "id": 1,
+      "title": "Visibility of system status",
+      "status": "pass",
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "title": "Match between system and real world",
+      "status": "fail",
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "title": "User control and freedom",
+      "status": "fail",
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "title": "Consistency and standards",
+      "status": "fail",
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "title": "Error prevention",
+      "status": "fail",
+      "notes": ""
+    },
+    {
+      "id": 6,
+      "title": "Recognition rather than recall",
+      "status": "fail",
+      "notes": ""
+    },
+    {
+      "id": 7,
+      "title": "Flexibility and efficiency of use",
+      "status": "fail",
+      "notes": ""
+    },
+    {
+      "id": 8,
+      "title": "Aesthetic and minimalist design",
+      "status": "pass",
+      "notes": ""
+    },
+    {
+      "id": 9,
+      "title": "Help users recognize, diagnose, and recover from errors",
+      "status": "fail",
+      "notes": ""
+    },
+    {
+      "id": 10,
+      "title": "Help and documentation",
+      "status": "fail",
+      "notes": ""
+    }
+  ]
+}
