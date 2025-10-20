@@ -1,85 +1,108 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jeremy Robards — Portfolio</title>
-    <meta name="description" content="Welcome to Jeremy Robards Portfolio - AI Development, Motion Picture & Design, and more.">
-    
+    <meta
+      name="description"
+      content="Welcome to Jeremy Robards Portfolio - AI Development, Motion Picture & Design, and more."
+    />
+
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@700;800&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="./css/tailwind.css">
-    <link rel="stylesheet" href="./css/style.css">
-    
+    <link rel="stylesheet" href="./css/tailwind.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+
     <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-</head>
-<body class="min-h-screen bg-gradient-to-b from-black to-neutral-900 text-white flex flex-col">
+  </head>
+  <body class="min-h-screen bg-gradient-to-b from-black to-neutral-900 text-white flex flex-col">
     <main class="flex-1 flex flex-col items-center justify-center px-4 py-8">
-        <!-- Welcome Heading -->
-        <h1 class="font-orbitron font-black text-6xl md:text-8xl lg:text-9xl tracking-wide text-white mb-12 md:mb-16 text-center">
-            WELCOME
-        </h1>
-        
-        <!-- Portfolio Navigation -->
-        <nav class="flex flex-col sm:flex-row gap-6 md:gap-8 lg:gap-12 items-center justify-center" 
-             role="navigation" 
-             aria-label="Portfolio sections">
-            
-            <!-- Motion Picture & Design -->
-            <a href="./mpd.html" 
-               class="group relative rounded-xl shadow-2xl ring-offset-4 ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-emerald-500/20 hover:shadow-3xl transform"
-               data-action="navigate" 
-               aria-label="Motion Picture & Design Portfolio">
-                <img src="./assets/mpd_button.webp" 
-                     alt="Motion Picture & Design" 
-                     class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-cover rounded-xl transition-all duration-300 ease-out group-hover:brightness-110" />
-            </a>
-            
-            <!-- AI Development -->
-            <a href="./aidev.html" 
-               class="group relative rounded-xl shadow-2xl ring-offset-4 ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-emerald-500/20 hover:shadow-3xl transform"
-               data-action="navigate" 
-               aria-label="AI Development Portfolio">
-                <img src="./assets/aidev_button.webp" 
-                     alt="AI Development" 
-                     class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-cover rounded-xl transition-all duration-300 ease-out group-hover:brightness-110" />
-            </a>
-            
-            <!-- Innovative Interactive Systems -->
-            <a href="./iis.html" 
-               class="group relative rounded-xl shadow-2xl ring-offset-4 ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-emerald-500/20 hover:shadow-3xl transform"
-               data-action="navigate" 
-               aria-label="Innovative Interactive Systems Portfolio">
-                <img src="./assets/IIS_button.webp" 
-                     alt="Innovative Interactive Systems" 
-                     class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-cover rounded-xl transition-all duration-300 ease-out group-hover:brightness-110" />
-            </a>
-            
-            <!-- Writing Samples -->
-            <a href="./writing.html" 
-               class="group relative rounded-xl shadow-2xl ring-offset-4 ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-emerald-500/20 hover:shadow-3xl transform"
-               data-action="navigate" 
-               aria-label="Writing Samples Portfolio">
-                <img src="./assets/article_button.webp" 
-                     alt="Writing Samples" 
-                     class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-cover rounded-xl transition-all duration-300 ease-out group-hover:brightness-110" />
-            </a>
-        </nav>
+      <!-- Welcome Heading -->
+      <h1
+        class="font-orbitron font-black text-6xl md:text-8xl lg:text-9xl tracking-wide text-white mb-12 md:mb-16 text-center"
+      >
+        WELCOME
+      </h1>
+
+      <!-- Portfolio Navigation -->
+      <nav
+        class="flex flex-col sm:flex-row gap-6 md:gap-8 lg:gap-12 items-center justify-center"
+        role="navigation"
+        aria-label="Portfolio sections"
+      >
+        <!-- Motion Picture & Design -->
+        <a
+          href="./mpd.html"
+          class="group relative rounded-xl shadow-2xl ring-offset-4 ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-emerald-500/20 hover:shadow-3xl transform"
+          data-action="navigate"
+          aria-label="Motion Picture & Design Portfolio"
+        >
+          <img
+            src="./assets/mpd_button.webp"
+            alt="Motion Picture & Design"
+            class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-cover rounded-xl transition-all duration-300 ease-out group-hover:brightness-110"
+          />
+        </a>
+
+        <!-- AI Development -->
+        <a
+          href="./aidev.html"
+          class="group relative rounded-xl shadow-2xl ring-offset-4 ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-emerald-500/20 hover:shadow-3xl transform"
+          data-action="navigate"
+          aria-label="AI Development Portfolio"
+        >
+          <img
+            src="./assets/aidev_button.webp"
+            alt="AI Development"
+            class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-cover rounded-xl transition-all duration-300 ease-out group-hover:brightness-110"
+          />
+        </a>
+
+        <!-- Innovative Interactive Systems -->
+        <a
+          href="./iis.html"
+          class="group relative rounded-xl shadow-2xl ring-offset-4 ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-emerald-500/20 hover:shadow-3xl transform"
+          data-action="navigate"
+          aria-label="Innovative Interactive Systems Portfolio"
+        >
+          <img
+            src="./assets/IIS_button.webp"
+            alt="Innovative Interactive Systems"
+            class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-cover rounded-xl transition-all duration-300 ease-out group-hover:brightness-110"
+          />
+        </a>
+
+        <!-- Writing Samples -->
+        <a
+          href="./writing.html"
+          class="group relative rounded-xl shadow-2xl ring-offset-4 ring-offset-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-2 hover:shadow-emerald-500/20 hover:shadow-3xl transform"
+          data-action="navigate"
+          aria-label="Writing Samples Portfolio"
+        >
+          <img
+            src="./assets/article_button.webp"
+            alt="Writing Samples"
+            class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-cover rounded-xl transition-all duration-300 ease-out group-hover:brightness-110"
+          />
+        </a>
+      </nav>
     </main>
-    
+
     <!-- Footer -->
     <footer class="flex items-center justify-center py-6">
-        <p class="text-neutral-400 text-sm md:text-base">
-            &copy; Copyright 2025 Jeremy Robards
-        </p>
+      <p class="text-neutral-400 text-sm md:text-base">&copy; Copyright 2025 Jeremy Robards</p>
     </footer>
-    
+
     <!-- Scripts -->
     <script src="./js/main.js" defer></script>
-</body>
+  </body>
 </html>

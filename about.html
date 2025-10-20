@@ -1,124 +1,156 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About - Jeremy Robards</title>
-    <meta name="description" content="About Jeremy Robards - Full-Stack Developer and AI Engineer">
-    
+    <meta
+      name="description"
+      content="About Jeremy Robards - Full-Stack Developer and AI Engineer"
+    />
+
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@700;800&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="./css/tailwind.css">
-    <link rel="stylesheet" href="./css/style.css">
-    
+    <link rel="stylesheet" href="./css/tailwind.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+
     <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-</head>
-<body class="min-h-screen bg-gradient-to-b from-black to-neutral-900 text-white flex flex-col">
+  </head>
+  <body class="min-h-screen bg-gradient-to-b from-black to-neutral-900 text-white flex flex-col">
     <main class="flex-1 flex flex-col items-center justify-center px-4 py-8">
-        <!-- Dynamic Back Link -->
-        <nav class="mb-8">
-            <a href="./index.html" 
-               id="backLink"
-               class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors duration-200 group"
-               data-action="navigate"
-               aria-label="Back to Home">
-                <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                <span id="backText">Back to Home</span>
+      <!-- Dynamic Back Link -->
+      <nav class="mb-8">
+        <a
+          href="./index.html"
+          id="backLink"
+          class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors duration-200 group"
+          data-action="navigate"
+          aria-label="Back to Home"
+        >
+          <svg
+            class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform duration-200"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          <span id="backText">Back to Home</span>
+        </a>
+      </nav>
+
+      <!-- Portfolio Navigation Menu -->
+      <nav class="mb-8">
+        <div class="bg-neutral-800 rounded-xl p-6 shadow-lg max-w-2xl">
+          <h2 class="font-orbitron font-bold text-xl mb-4 text-emerald-400 text-center">
+            Portfolio Navigation
+          </h2>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a
+              href="./mpd.html"
+              class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
+              data-action="navigate"
+            >
+              Motion Picture & Design
             </a>
-        </nav>
-
-        <!-- Portfolio Navigation Menu -->
-        <nav class="mb-8">
-            <div class="bg-neutral-800 rounded-xl p-6 shadow-lg max-w-2xl">
-                <h2 class="font-orbitron font-bold text-xl mb-4 text-emerald-400 text-center">Portfolio Navigation</h2>
-                <div class="flex flex-wrap justify-center gap-4">
-                    <a href="./mpd.html" 
-                       class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
-                       data-action="navigate">
-                        Motion Picture & Design
-                    </a>
-                    <a href="./aidev.html" 
-                       class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
-                       data-action="navigate">
-                        AI Development
-                    </a>
-                    <a href="./iis.html" 
-                       class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
-                       data-action="navigate">
-                        Interactive Systems
-                    </a>
-                    <a href="./writing.html" 
-                       class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
-                       data-action="navigate">
-                        Writing Samples
-                    </a>
-                    <a href="./index.html" 
-                       class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200"
-                       data-action="navigate">
-                        Home
-                    </a>
-                </div>
-            </div>
-        </nav>
-
-        <!-- About Content -->
-        <div class="text-center max-w-2xl mx-auto">
-            <h1 class="font-orbitron font-black text-4xl md:text-6xl lg:text-7xl tracking-wide text-white mb-8">
-                About
-            </h1>
-            
-            <p class="text-neutral-300 text-lg md:text-xl leading-relaxed">
-                Contact information will be available soon. Please check back later.
-            </p>
+            <a
+              href="./aidev.html"
+              class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
+              data-action="navigate"
+            >
+              AI Development
+            </a>
+            <a
+              href="./iis.html"
+              class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
+              data-action="navigate"
+            >
+              Interactive Systems
+            </a>
+            <a
+              href="./writing.html"
+              class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
+              data-action="navigate"
+            >
+              Writing Samples
+            </a>
+            <a
+              href="./index.html"
+              class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200"
+              data-action="navigate"
+            >
+              Home
+            </a>
+          </div>
         </div>
+      </nav>
+
+      <!-- About Content -->
+      <div class="text-center max-w-2xl mx-auto">
+        <h1
+          class="font-orbitron font-black text-4xl md:text-6xl lg:text-7xl tracking-wide text-white mb-8"
+        >
+          About
+        </h1>
+
+        <p class="text-neutral-300 text-lg md:text-xl leading-relaxed">
+          Contact information will be available soon. Please check back later.
+        </p>
+      </div>
     </main>
-    
+
     <!-- Dynamic Navigation Script -->
     <script>
-        // Handle dynamic back navigation based on 'from' parameter
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const fromPage = urlParams.get('from');
-            const backLink = document.getElementById('backLink');
-            const backText = document.getElementById('backText');
-            
-            if (fromPage) {
-                const pageMap = {
-                    'mpd': {
-                        url: './mpd.html',
-                        text: 'Back to Motion Picture & Design'
-                    },
-                    'aidev': {
-                        url: './aidev.html',
-                        text: 'Back to AI Development'
-                    },
-                    'iis': {
-                        url: './iis.html',
-                        text: 'Back to Interactive Systems'
-                    },
-                    'writing': {
-                        url: './writing.html',
-                        text: 'Back to Writing Samples'
-                    }
-                };
-                
-                if (pageMap[fromPage]) {
-                    backLink.href = pageMap[fromPage].url;
-                    backText.textContent = pageMap[fromPage].text;
-                    backLink.setAttribute('aria-label', pageMap[fromPage].text);
-                }
-            }
-        });
+      // Handle dynamic back navigation based on 'from' parameter
+      document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromPage = urlParams.get('from');
+        const backLink = document.getElementById('backLink');
+        const backText = document.getElementById('backText');
+
+        if (fromPage) {
+          const pageMap = {
+            mpd: {
+              url: './mpd.html',
+              text: 'Back to Motion Picture & Design',
+            },
+            aidev: {
+              url: './aidev.html',
+              text: 'Back to AI Development',
+            },
+            iis: {
+              url: './iis.html',
+              text: 'Back to Interactive Systems',
+            },
+            writing: {
+              url: './writing.html',
+              text: 'Back to Writing Samples',
+            },
+          };
+
+          if (pageMap[fromPage]) {
+            backLink.href = pageMap[fromPage].url;
+            backText.textContent = pageMap[fromPage].text;
+            backLink.setAttribute('aria-label', pageMap[fromPage].text);
+          }
+        }
+      });
     </script>
-    
+
     <!-- Scripts -->
     <script src="./js/main.js" defer></script>
-</body>
+  </body>
 </html>

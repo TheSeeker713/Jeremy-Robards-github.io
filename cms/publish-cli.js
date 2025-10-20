@@ -5,12 +5,12 @@
  * Provides a simpler command-line interface with better error messages
  */
 
-import { publish } from "./publish.js";
+import { publish } from './publish.js';
 
 const args = process.argv.slice(2);
-const verbose = args.includes("--verbose") || args.includes("-v");
-const help = args.includes("--help") || args.includes("-h");
-const outDir = args.find((arg) => !arg.startsWith("-")) || "./dist";
+const verbose = args.includes('--verbose') || args.includes('-v');
+const help = args.includes('--help') || args.includes('-h');
+const outDir = args.find((arg) => !arg.startsWith('-')) || './dist';
 
 if (help) {
   console.log(`
@@ -48,32 +48,32 @@ Documentation: cms/PUBLISH_README.md
   process.exit(0);
 }
 
-console.log("📦 Cloudflare Pages Publisher\n");
+console.log('📦 Cloudflare Pages Publisher\n');
 
 publish(outDir, { verbose, maxRetries: 3, initialBackoff: 1000 })
   .then((result) => {
-    console.log("\n✅ Deployment successful!\n");
-    console.log("📊 Results:");
-    console.log(`   URL:      ${result.url || "N/A"}`);
+    console.log('\n✅ Deployment successful!\n');
+    console.log('📊 Results:');
+    console.log(`   URL:      ${result.url || 'N/A'}`);
     console.log(`   Files:    ${result.count}`);
     console.log(`   Size:     ${(result.size / 1024).toFixed(2)} KB`);
     console.log(`   Duration: ${(result.duration / 1000).toFixed(2)}s`);
     process.exit(0);
   })
   .catch((error) => {
-    console.error("\n❌ Deployment failed\n");
+    console.error('\n❌ Deployment failed\n');
     console.error(`Error: ${error.message}`);
-    
-    if (error.code === "ENOENT") {
-      console.error("\n💡 Install wrangler CLI:");
-      console.error("   npm install -g wrangler");
+
+    if (error.code === 'ENOENT') {
+      console.error('\n💡 Install wrangler CLI:');
+      console.error('   npm install -g wrangler');
     } else {
-      console.error("\n💡 Troubleshooting:");
-      console.error("   • Check .env file has correct credentials");
-      console.error("   • Ensure dist/ directory exists and has content");
-      console.error("   • Review log file for details");
-      console.error("   • Run: node cms/test-publish.js");
+      console.error('\n💡 Troubleshooting:');
+      console.error('   • Check .env file has correct credentials');
+      console.error('   • Ensure dist/ directory exists and has content');
+      console.error('   • Review log file for details');
+      console.error('   • Run: node cms/test-publish.js');
     }
-    
+
     process.exit(1);
   });

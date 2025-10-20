@@ -1,10 +1,13 @@
 # Article Proxy Worker
 
-This Cloudflare Worker proxies `/article/*` requests from your main domain (`www.jeremyrobards.com`) to your separate articles project (`jr-articles.pages.dev`).
+This Cloudflare Worker proxies `/article/*` requests from your main domain
+(`www.jeremyrobards.com`) to your separate articles project
+(`jr-articles.pages.dev`).
 
 ## 🎯 Purpose
 
 Allows you to:
+
 - Keep articles in a separate Cloudflare Pages project (`jr-articles`)
 - Serve them from your main domain at `/article/*` path
 - Cache article content for better performance
@@ -25,12 +28,14 @@ worker/
 ### Prerequisites
 
 1. **Environment Variables:** Ensure `.env` file (in root directory) has:
+
    ```bash
    CF_ACCOUNT_ID=your_account_id_here
    CF_API_TOKEN=your_api_token_here
    ```
 
-2. **Custom Domain:** Your domain must be active on Cloudflare with zones configured.
+2. **Custom Domain:** Your domain must be active on Cloudflare with zones
+   configured.
 
 ### Deploy the Worker
 
@@ -77,6 +82,7 @@ Visit: http://localhost:8787/article/test
 After deploying, test these URLs:
 
 1. **Direct worker URL:**
+
    ```
    https://jr-articles-mount.YOUR_SUBDOMAIN.workers.dev/article/test
    ```
@@ -89,6 +95,7 @@ After deploying, test these URLs:
 ### Test 404 Handling
 
 Visit a non-existent article:
+
 ```
 https://www.jeremyrobards.com/article/does-not-exist
 ```
@@ -136,6 +143,7 @@ This tells Cloudflare to route all `/article/*` requests to this worker.
 ### Cache Settings
 
 Articles are cached with:
+
 - **Browser cache:** 5 minutes (`max-age=300`)
 - **Edge cache:** 24 hours (`s-maxage=86400`)
 - **404 responses:** 1 minute (`max-age=60`)
@@ -149,7 +157,10 @@ Currently hardcoded to `https://jr-articles.pages.dev`
 To change the upstream URL, edit `src/proxy.ts`:
 
 ```typescript
-const upstreamUrl = new URL(url.pathname + url.search, 'https://jr-articles.pages.dev');
+const upstreamUrl = new URL(
+  url.pathname + url.search,
+  'https://jr-articles.pages.dev'
+);
 ```
 
 ## 🔍 How It Works
@@ -184,7 +195,8 @@ www.jeremyrobards.com/article/2025/10/my-post
 ### Worker deployed but route not working
 
 - Wait 1-2 minutes for route propagation
-- Check Worker dashboard: https://dash.cloudflare.com/ → Workers & Pages → jr-articles-mount
+- Check Worker dashboard: https://dash.cloudflare.com/ → Workers & Pages →
+  jr-articles-mount
 - Verify route is listed under "Routes" tab
 
 ### 503 errors
@@ -202,7 +214,8 @@ www.jeremyrobards.com/article/2025/10/my-post
 
 ## 🔐 Security Notes
 
-- ❌ **Never commit** `CF_ACCOUNT_ID` or `CF_API_TOKEN` directly in `wrangler.toml`
+- ❌ **Never commit** `CF_ACCOUNT_ID` or `CF_API_TOKEN` directly in
+  `wrangler.toml`
 - ✅ **Always use** environment variables: `${CF_ACCOUNT_ID}`
 - ✅ `.env` file is in `.gitignore` (safe from commits)
 - ✅ Worker validates paths (only proxies `/article/*`)
@@ -241,7 +254,8 @@ const upstreamBase = env.UPSTREAM_URL || 'https://jr-articles.pages.dev';
 
 ### Custom 404 Page
 
-Modify `createNotFoundResponse()` in `src/proxy.ts` to customize the 404 page design.
+Modify `createNotFoundResponse()` in `src/proxy.ts` to customize the 404 page
+design.
 
 ---
 

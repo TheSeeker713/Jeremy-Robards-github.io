@@ -52,12 +52,14 @@ npm run cms:dev
 ## 🎯 Command Details
 
 ### `npm run cms:dev`
+
 **What**: Starts the CMS development server  
 **Port**: `http://localhost:5173`  
 **Requires**: TypeScript must be compiled first (`npm run cms:compile`)  
 **Usage**: Open browser, import/create articles, export, publish
 
 **Features**:
+
 - Browser-based editor UI
 - Live preview with template parity
 - REST API endpoints (`/api/export`, `/api/publish`)
@@ -66,12 +68,14 @@ npm run cms:dev
 ---
 
 ### `npm run cms:compile`
+
 **What**: Compiles TypeScript files to JavaScript  
 **Input**: `cms/**/*.ts`  
 **Output**: `.build/cms/**/*.js`  
 **Required**: Before running `cms:dev` or `cms:publish`
 
 **When needed**:
+
 - After cloning the repo
 - After modifying `.ts` files in `cms/`
 - After running `npm run clean`
@@ -79,11 +83,13 @@ npm run cms:dev
 ---
 
 ### `npm run cms:export`
+
 **What**: CLI export tool (bypasses editor UI)  
 **Input**: JSON draft from file or stdin  
 **Output**: Static HTML + Markdown to `dist/`
 
 **Example**:
+
 ```bash
 # Export from file
 npm run cms:export < drafts/my-article.json
@@ -95,13 +101,16 @@ node --loader ts-node/esm cms/export.ts drafts/my-article.json
 ---
 
 ### `npm run cms:publish`
+
 **What**: Deploys `dist/` to Cloudflare Pages  
-**Requires**: 
+**Requires**:
+
 - `.env` with CF credentials (run `cms:setup`)
 - `wrangler` CLI installed globally
 - `dist/` directory with content
 
 **Features**:
+
 - Retry logic (3 attempts, exponential backoff)
 - Structured logging to `cms/logs/`
 - Deployment URL in output
@@ -109,8 +118,10 @@ node --loader ts-node/esm cms/export.ts drafts/my-article.json
 ---
 
 ### `npm run cms:setup`
+
 **What**: Interactive configuration wizard  
 **Collects**:
+
 - Cloudflare Account ID
 - Cloudflare API Token
 - Pages Project Name
@@ -118,6 +129,7 @@ node --loader ts-node/esm cms/export.ts drafts/my-article.json
 **Creates**: `.env` file with credentials
 
 **When to run**:
+
 - First time using the CMS
 - Updating Cloudflare credentials
 - Setting up on new machine
@@ -125,12 +137,15 @@ node --loader ts-node/esm cms/export.ts drafts/my-article.json
 ---
 
 ### `npm run clean`
+
 **What**: Removes build artifacts  
 **Deletes**:
+
 - `dist/` - Exported static files
 - `.build/` - Compiled TypeScript
 
 **When to use**:
+
 - Before fresh export
 - Troubleshooting build issues
 - Cleaning repo before commit
@@ -140,6 +155,7 @@ node --loader ts-node/esm cms/export.ts drafts/my-article.json
 ## 🔥 Common Workflows
 
 ### First Time Setup
+
 ```bash
 # 1. Install dependencies
 npm install
@@ -155,6 +171,7 @@ npm run cms:dev
 ```
 
 ### Daily Writing Session
+
 ```bash
 # Start server (compiles if needed)
 npm run cms:compile && npm run cms:dev
@@ -165,6 +182,7 @@ npm run cms:compile && npm run cms:dev
 ```
 
 ### Clean Build + Deploy
+
 ```bash
 # Remove old artifacts
 npm run clean
@@ -186,6 +204,7 @@ npm run cms:publish
 ## 🐛 Troubleshooting
 
 ### Error: "TypeScript files not compiled"
+
 ```bash
 # Fix: Compile first
 npm run cms:compile
@@ -193,18 +212,21 @@ npm run cms:dev
 ```
 
 ### Error: "wrangler not found"
+
 ```bash
 # Fix: Install globally
 npm install -g wrangler
 ```
 
 ### Error: "CF_ACCOUNT_ID not set"
+
 ```bash
 # Fix: Run setup wizard
 npm run cms:setup
 ```
 
 ### Port 5173 already in use
+
 ```bash
 # Fix: Set custom port
 CMS_PORT=5174 npm run cms:dev
@@ -214,8 +236,10 @@ CMS_PORT=5174 npm run cms:dev
 
 ## 📚 More Documentation
 
-- **`CMS_README.md`** - Complete documentation with architecture, API, troubleshooting
-- **`cms/SERVER_README.md`** - API endpoint specifications and integration patterns
+- **`CMS_README.md`** - Complete documentation with architecture, API,
+  troubleshooting
+- **`cms/SERVER_README.md`** - API endpoint specifications and integration
+  patterns
 - **`WRITING_WORKFLOW.md`** - Content creation guidelines
 - **`MAGAZINE_WRITING_GUIDE.md`** - Editorial style guide
 

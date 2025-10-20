@@ -1,0 +1,41 @@
+[
+  {
+    "file": "\\cms\\export.ts:96 - exportArticle (used in module)"
+  },
+  {
+    "file": "\\shared\\articleTemplate.d.ts:1 - ParagraphBlock (used in module)"
+  },
+  {
+    "file": "\\shared\\articleTemplate.d.ts:2 - HeadingBlock (used in module)"
+  },
+  {
+    "file": "\\shared\\articleTemplate.d.ts:3 - ListBlock (used in module)"
+  },
+  {
+    "file": "\\shared\\articleTemplate.d.ts:4 - QuoteBlock (used in module)"
+  },
+  {
+    "file": "\\shared\\articleTemplate.d.ts:5 - CodeBlock (used in module)"
+  },
+  {
+    "file": "\\shared\\articleTemplate.d.ts:6 - ImageBlock (used in module)"
+  },
+  {
+    "file": "\\shared\\articleTemplate.d.ts:15 - EmbedBlock (used in module)"
+  },
+  {
+    "file": "\\shared\\articleTemplate.d.ts:16 - NoteBlock (used in module)"
+  },
+  {
+    "file": "\\shared\\articleTemplate.d.ts:18 - ArticleBlock (used in module)"
+  },
+  {
+    "file": "\\shared\\articleTemplate.d.ts:28 - ArticleLink (used in module)"
+  },
+  {
+    "file": "\\shared\\articleTemplate.d.ts:30 - ArticleMetadata (used in module)"
+  },
+  {
+    "file": "\\worker\\src\\proxy.ts:13 - Env (used in module)"
+  }
+]

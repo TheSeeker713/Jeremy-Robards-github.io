@@ -1,6 +1,7 @@
 # CMS Publish Module
 
-Automated deployment helper for Cloudflare Pages with retry logic and structured logging.
+Automated deployment helper for Cloudflare Pages with retry logic and structured
+logging.
 
 ## Features
 
@@ -14,16 +15,19 @@ Automated deployment helper for Cloudflare Pages with retry logic and structured
 ## Setup
 
 1. **Install Wrangler CLI globally:**
+
    ```bash
    npm install -g wrangler
    ```
 
 2. **Create `.env` file** (copy from `.env.example`):
+
    ```bash
    cp .env.example .env
    ```
 
 3. **Configure environment variables:**
+
    ```env
    CF_ACCOUNT_ID=your-account-id
    CF_API_TOKEN=your-api-token
@@ -62,21 +66,21 @@ npm run cms:publish
 ### Programmatic API
 
 ```javascript
-import { publish } from "./cms/publish.js";
+import { publish } from './cms/publish.js';
 
 try {
-  const result = await publish("./dist", {
+  const result = await publish('./dist', {
     maxRetries: 3,
     initialBackoff: 1000,
-    verbose: true
+    verbose: true,
   });
 
-  console.log("Deployment URL:", result.url);
-  console.log("Files deployed:", result.count);
-  console.log("Total size:", result.size, "bytes");
-  console.log("Duration:", result.duration, "ms");
+  console.log('Deployment URL:', result.url);
+  console.log('Files deployed:', result.count);
+  console.log('Total size:', result.size, 'bytes');
+  console.log('Duration:', result.duration, 'ms');
 } catch (error) {
-  console.error("Deployment failed:", error.message);
+  console.error('Deployment failed:', error.message);
 }
 ```
 
@@ -84,9 +88,9 @@ try {
 
 ```typescript
 {
-  url: string;      // Deployment URL (e.g., https://abc123.pages.dev)
-  count: number;    // Number of files deployed
-  size: number;     // Total size in bytes
+  url: string; // Deployment URL (e.g., https://abc123.pages.dev)
+  count: number; // Number of files deployed
+  size: number; // Total size in bytes
   duration: number; // Deployment duration in milliseconds
 }
 ```
@@ -94,19 +98,25 @@ try {
 ## Error Handling
 
 ### Wrangler Not Found (ENOENT)
+
 If `wrangler` is not installed, the script will:
+
 - Print installation instructions
 - Exit with code `1`
 - **Not retry** (manual fix required)
 
 ### Retryable Errors (5xx, Network Issues)
+
 For server errors or network failures, the script will:
+
 - Retry up to 3 times (configurable)
 - Use exponential backoff with jitter
 - Log each attempt to the log file
 
 ### Non-Retryable Errors
+
 For client errors (4xx) or other issues:
+
 - Fail immediately
 - Log error details
 - Return meaningful error message
@@ -114,11 +124,13 @@ For client errors (4xx) or other issues:
 ## Logs
 
 All deployments are logged to:
+
 ```
 cms/logs/YYYYMMDD-HHMMSS-publish.log
 ```
 
 **Log contents:**
+
 - Timestamp for each action
 - Environment validation results
 - Wrangler command executed
@@ -147,19 +159,17 @@ The `publish()` function can be called from the editor UI via:
 
 ## Troubleshooting
 
-**"Missing required environment variables"**
-→ Create `.env` file with CF_ACCOUNT_ID, CF_API_TOKEN, CF_PAGES_PROJECT
+**"Missing required environment variables"** → Create `.env` file with
+CF_ACCOUNT_ID, CF_API_TOKEN, CF_PAGES_PROJECT
 
-**"Wrangler CLI not found"**
-→ Install globally: `npm install -g wrangler`
+**"Wrangler CLI not found"** → Install globally: `npm install -g wrangler`
 
-**"Directory ./dist does not exist"**
-→ Build your site first or check output directory path
+**"Directory ./dist does not exist"** → Build your site first or check output
+directory path
 
-**"Deployment failed after 3 attempts"**
-→ Check the log file for detailed error messages
-→ Verify Cloudflare credentials and project name
-→ Ensure network connectivity
+**"Deployment failed after 3 attempts"** → Check the log file for detailed error
+messages → Verify Cloudflare credentials and project name → Ensure network
+connectivity
 
 ## Next Steps
 

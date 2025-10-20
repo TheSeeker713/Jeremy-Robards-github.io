@@ -1,6 +1,8 @@
 # Portfolio CMS Documentation
 
-A lightweight, offline-first content management system for the portfolio website. The CMS provides a browser-based editor for creating articles, with Node.js-powered export and deployment to Cloudflare Pages.
+A lightweight, offline-first content management system for the portfolio
+website. The CMS provides a browser-based editor for creating articles, with
+Node.js-powered export and deployment to Cloudflare Pages.
 
 ---
 
@@ -8,13 +10,17 @@ A lightweight, offline-first content management system for the portfolio website
 
 The CMS consists of three main components:
 
-1. **Browser-based Editor** (`editor/`) - Visual editing interface with block editor, metadata panel, and live preview
-2. **Node.js Backend** (`cms/`) - TypeScript modules for exporting static HTML/Markdown and publishing to Cloudflare
-3. **Dev Server** (`cms/serve.js`) - Express server bridging the browser editor with Node.js functions via REST API
+1. **Browser-based Editor** (`editor/`) - Visual editing interface with block
+   editor, metadata panel, and live preview
+2. **Node.js Backend** (`cms/`) - TypeScript modules for exporting static
+   HTML/Markdown and publishing to Cloudflare
+3. **Dev Server** (`cms/serve.js`) - Express server bridging the browser editor
+   with Node.js functions via REST API
 
 ### Technology Stack
 
-- **Frontend**: Vanilla JavaScript ES2025+, Eta templating (browser bundle), localStorage persistence
+- **Frontend**: Vanilla JavaScript ES2025+, Eta templating (browser bundle),
+  localStorage persistence
 - **Backend**: TypeScript compiled to ES2020, Node.js with Express
 - **Deployment**: Cloudflare Pages Direct Upload via Wrangler CLI
 - **Styling**: Tailwind CSS with custom properties design system
@@ -26,20 +32,25 @@ The CMS consists of three main components:
 ### Core CMS Commands
 
 #### `npm run cms:dev`
+
 ```bash
 npm run cms:dev
 ```
+
 **Purpose**: Start the CMS development server
 
 **What it does**:
+
 - Compiles TypeScript files from `cms/` to `.build/`
 - Starts Express server on `http://localhost:5173`
 - Serves the editor UI with live API endpoints
 - Enables CORS for localhost only
 
-**When to use**: This is your main command for working with the CMS. Run it whenever you want to create, edit, or publish articles.
+**When to use**: This is your main command for working with the CMS. Run it
+whenever you want to create, edit, or publish articles.
 
 **Output**:
+
 ```
 🚀 CMS Development Server
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -51,23 +62,29 @@ npm run cms:dev
 ---
 
 #### `npm run cms:export`
+
 ```bash
 npm run cms:export
 ```
-**Purpose**: Directly export an article from the command line (bypasses editor UI)
+
+**Purpose**: Directly export an article from the command line (bypasses editor
+UI)
 
 **What it does**:
+
 - Runs `cms/export.ts` via ts-node
 - Reads article draft from a JSON file or stdin
 - Generates static HTML, Markdown archive, and updates feed.json
 - Outputs to `dist/` directory
 
-**When to use**: 
+**When to use**:
+
 - Scripting/automation workflows
 - Batch processing multiple articles
 - CI/CD pipeline integration
 
 **Example**:
+
 ```bash
 # Export a specific draft file
 npm run cms:export < drafts/my-article.json
@@ -79,28 +96,36 @@ node --loader ts-node/esm cms/export.ts drafts/my-article.json
 ---
 
 #### `npm run cms:publish`
+
 ```bash
 npm run cms:publish
 ```
+
 **Purpose**: Deploy the `dist/` directory to Cloudflare Pages
 
 **What it does**:
-- Validates Cloudflare environment variables (CF_ACCOUNT_ID, CF_API_TOKEN, CF_PAGES_PROJECT)
-- Spawns `wrangler pages deploy` with retry logic (3 attempts, exponential backoff)
+
+- Validates Cloudflare environment variables (CF_ACCOUNT_ID, CF_API_TOKEN,
+  CF_PAGES_PROJECT)
+- Spawns `wrangler pages deploy` with retry logic (3 attempts, exponential
+  backoff)
 - Parses deployment output for URL, file count, size, and duration
 - Writes structured logs to `cms/logs/YYYYMMDD-HHMMSS-publish.log`
 
 **When to use**:
+
 - After exporting articles via the editor or `cms:export`
 - When you're ready to deploy changes to production
 - Can be called from the editor UI "Publish" button or directly from CLI
 
 **Prerequisites**:
+
 - `.env` file with Cloudflare credentials (see Setup section)
 - `wrangler` CLI installed globally: `npm install -g wrangler`
 - `dist/` directory exists with exported content
 
 **Example output**:
+
 ```
 ✅ Published to Cloudflare Pages
    URL: https://your-project.pages.dev
@@ -112,23 +137,28 @@ npm run cms:publish
 ---
 
 #### `npm run cms:setup`
+
 ```bash
 npm run cms:setup
 ```
+
 **Purpose**: One-time setup for Cloudflare credentials
 
 **What it does**:
+
 - Prompts for Cloudflare Account ID and API Token (inquirer)
 - Writes `.env` with CF_ACCOUNT_ID, CF_API_TOKEN, CF_PAGES_PROJECT=jr-articles
 - Optionally verifies credentials using `wrangler whoami`
 - Supports a `--dry-run` flag to print the .env content without writing
 
 **When to use**:
+
 - First time setting up the CMS on a new machine
 - Updating Cloudflare credentials
 - Troubleshooting authentication issues
 
 **Interactive prompts**:
+
 ```
 ? Cloudflare Account ID: abc123...
 ? Cloudflare API Token: ••••••••
@@ -137,6 +167,7 @@ npm run cms:setup
 ```
 
 **Dry run example**:
+
 ```bash
 npm run cms:setup -- --dry-run
 # or
@@ -148,17 +179,21 @@ node cms/setup.js --dry-run
 ### Utility Commands
 
 #### `npm run clean`
+
 ```bash
 npm run clean
 ```
+
 **Purpose**: Remove generated files and build artifacts
 
 **What it does**:
+
 - Deletes `dist/` directory (exported static files)
 - Deletes `.build/` directory (compiled TypeScript output)
 - Uses `rimraf` for cross-platform compatibility
 
 **When to use**:
+
 - Before a fresh export to ensure no stale files
 - Troubleshooting build issues
 - Cleaning up before committing to git
@@ -166,17 +201,21 @@ npm run clean
 ---
 
 #### `npm run cms:compile`
+
 ```bash
 npm run cms:compile
 ```
+
 **Purpose**: Compile TypeScript files without starting the server
 
 **What it does**:
+
 - Runs `tsc` to compile `cms/**/*.ts` to `.build/cms/**/*.js`
 - Uses configuration from `tsconfig.json`
 - Target: ES2020 modules
 
 **When to use**:
+
 - Checking for TypeScript errors without running the server
 - Pre-compiling before running `cms:publish` directly
 - CI/CD build steps
@@ -186,24 +225,30 @@ npm run cms:compile
 ### Legacy/Testing Commands
 
 #### `npm run cms:proxy`
+
 ```bash
 npm run cms:proxy
 ```
+
 **Purpose**: Run Decap CMS proxy server (legacy, for Git-based workflow)
 
-**What it does**: Starts `decap-server` for local preview of Decap CMS (formerly Netlify CMS)
+**What it does**: Starts `decap-server` for local preview of Decap CMS (formerly
+Netlify CMS)
 
 **Status**: Not actively used in current offline-first workflow
 
 ---
 
 #### `npm run cms:test`
+
 ```bash
 npm run cms:test
 ```
+
 **Purpose**: Run publish module tests
 
-**What it does**: Executes `cms/test-publish.js` to verify deployment logic without actually deploying
+**What it does**: Executes `cms/test-publish.js` to verify deployment logic
+without actually deploying
 
 ---
 
@@ -264,7 +309,7 @@ CF_PAGES_PROJECT=your_project_name
 
 **How to get these values**:
 
-1. **CF_ACCOUNT_ID**: 
+1. **CF_ACCOUNT_ID**:
    - Log in to Cloudflare Dashboard
    - Account ID is in the URL: `dash.cloudflare.com/<ACCOUNT_ID>/`
 
@@ -365,6 +410,7 @@ npm run cms:dev
 **Error**: `Cannot find module './export.js'`
 
 **Solution**: Compile TypeScript first
+
 ```bash
 npm run cms:compile
 npm run cms:dev
@@ -377,6 +423,7 @@ npm run cms:dev
 **Error**: `Error: spawn wrangler ENOENT`
 
 **Solution**: Install wrangler globally
+
 ```bash
 npm install -g wrangler
 ```
@@ -388,6 +435,7 @@ npm install -g wrangler
 **Issue**: No files generated after export
 
 **Solution**: Check browser console for validation errors. Ensure:
+
 - Title and description are filled
 - At least one content block exists
 - Date is valid
@@ -399,7 +447,8 @@ npm install -g wrangler
 
 **Issue**: `Access-Control-Allow-Origin` errors
 
-**Solution**: 
+**Solution**:
+
 - Ensure dev server is running on `localhost:5173`
 - Don't access via `127.0.0.1` (use `localhost`)
 - Check that CORS middleware is enabled in `cms/serve.js`
@@ -410,7 +459,8 @@ npm install -g wrangler
 
 **Error**: `Authentication error` or `Forbidden`
 
-**Solution**: 
+**Solution**:
+
 1. Verify `.env` credentials are correct
 2. Check API token has "Edit Cloudflare Pages" permissions
 3. Confirm Account ID matches the project owner
@@ -423,9 +473,11 @@ npm install -g wrangler
 When `npm run cms:dev` is running, the following endpoints are available:
 
 ### POST /api/export
+
 Export a draft to static HTML/Markdown
 
 **Request body**:
+
 ```json
 {
   "metadata": {
@@ -445,6 +497,7 @@ Export a draft to static HTML/Markdown
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -460,9 +513,11 @@ Export a draft to static HTML/Markdown
 ---
 
 ### POST /api/publish
+
 Deploy dist/ to Cloudflare Pages
 
 **Request body**:
+
 ```json
 {
   "outDir": "./dist"
@@ -470,6 +525,7 @@ Deploy dist/ to Cloudflare Pages
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -486,19 +542,17 @@ Deploy dist/ to Cloudflare Pages
 ---
 
 ### GET /api/health
+
 Server status check
 
 **Response**:
+
 ```json
 {
   "status": "ok",
   "service": "cms-dev-server",
   "port": 5173,
-  "endpoints": [
-    "POST /api/export",
-    "POST /api/publish",
-    "GET  /api/health"
-  ]
+  "endpoints": ["POST /api/export", "POST /api/publish", "GET  /api/health"]
 }
 ```
 
@@ -506,7 +560,8 @@ Server status check
 
 ## 📚 Additional Documentation
 
-- **`cms/SERVER_README.md`** - Detailed API documentation and integration patterns
+- **`cms/SERVER_README.md`** - Detailed API documentation and integration
+  patterns
 - **`WRITING_WORKFLOW.md`** - Content creation guidelines
 - **`MAGAZINE_WRITING_GUIDE.md`** - Editorial style guide
 
@@ -515,6 +570,7 @@ Server status check
 ## 🛣️ Roadmap
 
 ### ✅ Completed (STEP 0-11)
+
 - Scaffolding and directory structure
 - TypeScript toolchain with Eta templating
 - Browser-based editor with import pipeline
@@ -527,6 +583,7 @@ Server status check
 - Package scripts and documentation
 
 ### 🔮 Future Enhancements
+
 - WebSocket/SSE for real-time export progress
 - Authentication for multi-user editing
 - Draft versioning and auto-save

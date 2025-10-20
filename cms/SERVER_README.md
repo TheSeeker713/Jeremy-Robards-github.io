@@ -1,6 +1,7 @@
 # CMS Development Server
 
-Local development server that bridges the browser-based editor with Node.js export/publish functions.
+Local development server that bridges the browser-based editor with Node.js
+export/publish functions.
 
 ## Quick Start
 
@@ -13,6 +14,7 @@ http://localhost:5173
 ```
 
 The server will:
+
 - ✅ Serve editor UI on `http://localhost:5173`
 - ✅ Provide `/api/export` endpoint (calls `exportArticle()`)
 - ✅ Provide `/api/publish` endpoint (calls `publish()`)
@@ -40,6 +42,7 @@ Browser (Editor)          Node.js Server              Cloudflare
 Converts draft to static HTML and writes to `/dist`.
 
 **Request:**
+
 ```json
 {
   "metadata": {
@@ -57,6 +60,7 @@ Converts draft to static HTML and writes to `/dist`.
 ```
 
 **Response (Success):**
+
 ```json
 {
   "success": true,
@@ -70,6 +74,7 @@ Converts draft to static HTML and writes to `/dist`.
 ```
 
 **Response (Error):**
+
 ```json
 {
   "success": false,
@@ -83,6 +88,7 @@ Converts draft to static HTML and writes to `/dist`.
 Deploys `/dist` to Cloudflare Pages.
 
 **Request:**
+
 ```json
 {
   "outDir": "./dist"
@@ -90,6 +96,7 @@ Deploys `/dist` to Cloudflare Pages.
 ```
 
 **Response (Success):**
+
 ```json
 {
   "success": true,
@@ -104,6 +111,7 @@ Deploys `/dist` to Cloudflare Pages.
 ```
 
 **Response (Error):**
+
 ```json
 {
   "success": false,
@@ -117,16 +125,13 @@ Deploys `/dist` to Cloudflare Pages.
 Server health check.
 
 **Response:**
+
 ```json
 {
   "status": "ok",
   "service": "cms-dev-server",
   "port": 5173,
-  "endpoints": [
-    "POST /api/export",
-    "POST /api/publish",
-    "GET  /api/health"
-  ]
+  "endpoints": ["POST /api/export", "POST /api/publish", "GET  /api/health"]
 }
 ```
 
@@ -135,6 +140,7 @@ Server health check.
 The editor (`editor/app.js`) now calls these endpoints:
 
 ### Export Flow
+
 ```javascript
 async #exportDraft() {
   // Validate metadata
@@ -159,6 +165,7 @@ async #exportDraft() {
 ```
 
 ### Publish Flow
+
 ```javascript
 async #publishDraft() {
   // Confirm deployment
@@ -179,12 +186,14 @@ async #publishDraft() {
 ## Static File Serving
 
 The server serves these directories:
+
 - `/` → `editor/` (UI files)
 - `/shared` → `shared/` (preview helpers)
 - `/templates` → `templates/` (Eta template)
 - `/css` → `css/` (stylesheets for preview iframe)
 
 This allows the preview iframe to fetch:
+
 - `../templates/article.eta`
 - `../shared/articleTemplate.js`
 - `../css/style.css`
@@ -192,14 +201,12 @@ This allows the preview iframe to fetch:
 ## CORS Configuration
 
 CORS is restricted to localhost:
+
 ```javascript
 cors({
-  origin: [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173"
-  ],
-  credentials: true
-})
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  credentials: true,
+});
 ```
 
 ## Error Handling
@@ -207,6 +214,7 @@ cors({
 All endpoints return structured JSON errors:
 
 **400 Bad Request** - Invalid input
+
 ```json
 {
   "success": false,
@@ -215,6 +223,7 @@ All endpoints return structured JSON errors:
 ```
 
 **500 Internal Server Error** - Export/publish failed
+
 ```json
 {
   "success": false,
@@ -224,6 +233,7 @@ All endpoints return structured JSON errors:
 ```
 
 **503 Service Unavailable** - Wrangler not installed
+
 ```json
 {
   "success": false,
@@ -236,11 +246,13 @@ All endpoints return structured JSON errors:
 ## Development Workflow
 
 1. **Start dev server:**
+
    ```bash
    npm run cms:dev
    ```
 
 2. **Open editor:**
+
    ```
    http://localhost:5173
    ```
@@ -264,22 +276,18 @@ All endpoints return structured JSON errors:
 
 ## Troubleshooting
 
-**"Port 5173 already in use"**
-→ Change port: `CMS_PORT=5174 npm run cms:dev`
+**"Port 5173 already in use"** → Change port: `CMS_PORT=5174 npm run cms:dev`
 
-**"Export failed: Cannot find module 'export.js'"**
-→ Ensure TypeScript is compiled or use ts-node
+**"Export failed: Cannot find module 'export.js'"** → Ensure TypeScript is
+compiled or use ts-node
 
-**"Publish failed: wrangler not found"**
-→ Install: `npm install -g wrangler`
+**"Publish failed: wrangler not found"** → Install: `npm install -g wrangler`
 
-**Preview iframe not loading**
-→ Check browser console for CORS/404 errors
-→ Verify `/shared` and `/templates` routes
+**Preview iframe not loading** → Check browser console for CORS/404 errors →
+Verify `/shared` and `/templates` routes
 
-**"Invalid draft format"**
-→ Check metadata and blocks structure
-→ Ensure required fields are present
+**"Invalid draft format"** → Check metadata and blocks structure → Ensure
+required fields are present
 
 ## Environment Variables
 

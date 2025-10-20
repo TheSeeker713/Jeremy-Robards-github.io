@@ -1,0 +1,33 @@
+# Ignore build outputs
+.build/
+dist/
+.wrangler/
+node_modules/
+
+# Ignore vendor libraries
+editor/vendor/
+
+# Ignore archived docs
+docs-archive/
+
+# Ignore minified files
+*.min.js
+*.min.css
+
+# Ignore generated CSS
+css/tailwind.css
+
+# Ignore assets
+assets/
+
+# Ignore public
+public/
+
+# Ignore config files that don't need formatting
+package-lock.json
+*.lock
+*.log
+
+# Ignore environment files
+.env
+.env.*

@@ -1,8 +1,8 @@
 /**
  * Cloudflare Worker: Article Proxy
- * 
+ *
  * Purpose: Proxy /article/* requests from www.jeremyrobards.com to jr-articles.pages.dev
- * 
+ *
  * This worker allows you to:
  * - Serve CMS articles from a separate Pages project
  * - Keep /article/* path structure on your main domain
@@ -18,15 +18,15 @@ export interface Env {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    
+
     // Only handle /article/* paths
     if (!url.pathname.startsWith('/article/')) {
       return new Response('Not Found', { status: 404 });
     }
-    
+
     // Build upstream URL (jr-articles.pages.dev)
     const upstreamUrl = new URL(url.pathname + url.search, 'https://jr-articles.pages.dev');
-    
+
     try {
       // Fetch from upstream (jr-articles project)
       const upstreamResponse = await fetch(upstreamUrl.toString(), {
@@ -34,25 +34,24 @@ export default {
         headers: request.headers,
         redirect: 'follow',
       });
-      
+
       // Handle 404 from upstream with friendly error page
       if (upstreamResponse.status === 404) {
         return createNotFoundResponse(url.pathname);
       }
-      
+
       // Clone response to modify headers
       const response = new Response(upstreamResponse.body, upstreamResponse);
-      
+
       // Set cache headers
       // - Browser cache: 5 minutes (max-age=300)
       // - Cloudflare edge cache: 24 hours (s-maxage=86400)
       response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=86400');
-      
+
       // Add CORS headers if needed
       response.headers.set('Access-Control-Allow-Origin', '*');
-      
+
       return response;
-      
     } catch (error) {
       // Handle fetch errors (network issues, etc.)
       console.error('Proxy error:', error);
@@ -132,7 +131,7 @@ function createNotFoundResponse(requestedPath: string): Response {
 </body>
 </html>
   `.trim();
-  
+
   return new Response(html, {
     status: 404,
     headers: {
@@ -147,7 +146,7 @@ function createNotFoundResponse(requestedPath: string): Response {
  */
 function createErrorResponse(error: unknown): Response {
   const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-  
+
   const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -206,7 +205,7 @@ function createErrorResponse(error: unknown): Response {
 </body>
 </html>
   `.trim();
-  
+
   return new Response(html, {
     status: 503,
     headers: {

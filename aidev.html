@@ -1,276 +1,319 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Development - Jeremy Robards</title>
-    <meta name="description" content="AI Development projects and innovations by Jeremy Robards">
-    
+    <meta name="description" content="AI Development projects and innovations by Jeremy Robards" />
+
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@700;800&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="./css/tailwind.css">
-    <link rel="stylesheet" href="./css/style.css">
-    
+    <link rel="stylesheet" href="./css/tailwind.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+
     <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-</head>
-<body class="min-h-screen bg-gradient-to-b from-black to-neutral-900 text-white flex flex-col">
+  </head>
+  <body class="min-h-screen bg-gradient-to-b from-black to-neutral-900 text-white flex flex-col">
     <main class="flex-1 px-4 py-8">
-        <div class="container mx-auto max-w-6xl">
-            <!-- Back to Home Link -->
+      <div class="container mx-auto max-w-6xl">
+        <!-- Back to Home Link -->
         <nav class="mb-8">
-            <a href="./index.html" 
-               class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors duration-200 group"
-               data-action="navigate"
-               aria-label="Back to Home">
-                <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                Back to Home
-            </a>
+          <a
+            href="./index.html"
+            class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors duration-200 group"
+            data-action="navigate"
+            aria-label="Back to Home"
+          >
+            <svg
+              class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Back to Home
+          </a>
         </nav>
 
         <!-- Navigation Menu -->
         <nav class="mb-12">
-            <div class="bg-neutral-800 rounded-xl p-6 shadow-lg">
-                <h2 class="font-orbitron font-bold text-xl mb-4 text-emerald-400 text-center">Portfolio Navigation</h2>
-                <div class="flex flex-wrap justify-center gap-4">
-                    <a href="./mpd.html" 
-                       class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
-                       data-action="navigate">
-                        Motion Picture & Design
-                    </a>
-                    <span class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium">
-                        AI Development
-                    </span>
-                    <a href="./iis.html" 
-                       class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
-                       data-action="navigate">
-                        Interactive Systems
-                    </a>
-                    <a href="./about.html?from=aidev" 
-                       class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
-                       data-action="navigate">
-                        About
-                    </a>
-                </div>
+          <div class="bg-neutral-800 rounded-xl p-6 shadow-lg">
+            <h2 class="font-orbitron font-bold text-xl mb-4 text-emerald-400 text-center">
+              Portfolio Navigation
+            </h2>
+            <div class="flex flex-wrap justify-center gap-4">
+              <a
+                href="./mpd.html"
+                class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
+                data-action="navigate"
+              >
+                Motion Picture & Design
+              </a>
+              <span class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium">
+                AI Development
+              </span>
+              <a
+                href="./iis.html"
+                class="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors duration-200"
+                data-action="navigate"
+              >
+                Interactive Systems
+              </a>
+              <a
+                href="./about.html?from=aidev"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
+                data-action="navigate"
+              >
+                About
+              </a>
             </div>
+          </div>
         </nav>
 
         <!-- Hero Section -->
         <header class="text-center mb-12">
-            <h1 class="font-orbitron font-black text-4xl md:text-6xl lg:text-7xl tracking-wide text-white mb-6">
-                AI Development
-            </h1>
-            <p class="text-neutral-300 text-lg md:text-xl max-w-3xl mx-auto">
-                Building intelligent systems with modern JavaScript, machine learning, and cutting-edge AI technologies.
-            </p>
+          <h1
+            class="font-orbitron font-black text-4xl md:text-6xl lg:text-7xl tracking-wide text-white mb-6"
+          >
+            AI Development
+          </h1>
+          <p class="text-neutral-300 text-lg md:text-xl max-w-3xl mx-auto">
+            Building intelligent systems with modern JavaScript, machine learning, and cutting-edge
+            AI technologies.
+          </p>
         </header>
 
         <!-- Demo Section -->
         <section class="max-w-4xl mx-auto mb-12">
-            <div class="bg-neutral-800 rounded-xl p-8 shadow-2xl">
-                <h2 class="font-orbitron font-bold text-2xl md:text-3xl mb-6 text-center">
-                    ES2025+ Iterator Helpers Demo
-                </h2>
-                
-                <!-- Interactive Demo -->
-                <div class="bg-black rounded-lg p-6 mb-6">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Input Section -->
-                        <div>
-                            <h3 class="text-emerald-400 font-semibold mb-3">Data Processing Pipeline</h3>
-                            <div class="space-y-3">
-                                <input type="text" 
-                                       id="dataInput" 
-                                       placeholder="Enter numbers (comma separated)"
-                                       class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded text-white focus:border-emerald-500 focus:outline-none"
-                                       value="1,2,3,4,5,6,7,8,9,10">
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button id="filterBtn" 
-                                            class="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm transition-colors"
-                                            data-action="filter-demo">
-                                        Filter Evens
-                                    </button>
-                                    <button id="mapBtn" 
-                                            class="px-3 py-2 bg-purple-600 hover:bg-purple-700 rounded text-sm transition-colors"
-                                            data-action="map-demo">
-                                        Square Values
-                                    </button>
-                                    <button id="reduceBtn" 
-                                            class="px-3 py-2 bg-green-600 hover:bg-green-700 rounded text-sm transition-colors"
-                                            data-action="reduce-demo">
-                                        Sum All
-                                    </button>
-                                    <button id="resetBtn" 
-                                            class="px-3 py-2 bg-neutral-600 hover:bg-neutral-700 rounded text-sm transition-colors"
-                                            data-action="reset-demo">
-                                        Reset
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Output Section -->
-                        <div>
-                            <h3 class="text-emerald-400 font-semibold mb-3">Real-time Results</h3>
-                            <div class="bg-neutral-900 rounded p-4 min-h-32">
-                                <div id="outputDisplay" class="font-mono text-sm text-green-400">
-                                    Ready for processing...
-                                </div>
-                            </div>
-                        </div>
+          <div class="bg-neutral-800 rounded-xl p-8 shadow-2xl">
+            <h2 class="font-orbitron font-bold text-2xl md:text-3xl mb-6 text-center">
+              ES2025+ Iterator Helpers Demo
+            </h2>
+
+            <!-- Interactive Demo -->
+            <div class="bg-black rounded-lg p-6 mb-6">
+              <div class="grid md:grid-cols-2 gap-6">
+                <!-- Input Section -->
+                <div>
+                  <h3 class="text-emerald-400 font-semibold mb-3">Data Processing Pipeline</h3>
+                  <div class="space-y-3">
+                    <input
+                      type="text"
+                      id="dataInput"
+                      placeholder="Enter numbers (comma separated)"
+                      class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded text-white focus:border-emerald-500 focus:outline-none"
+                      value="1,2,3,4,5,6,7,8,9,10"
+                    />
+                    <div class="grid grid-cols-2 gap-2">
+                      <button
+                        id="filterBtn"
+                        class="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm transition-colors"
+                        data-action="filter-demo"
+                      >
+                        Filter Evens
+                      </button>
+                      <button
+                        id="mapBtn"
+                        class="px-3 py-2 bg-purple-600 hover:bg-purple-700 rounded text-sm transition-colors"
+                        data-action="map-demo"
+                      >
+                        Square Values
+                      </button>
+                      <button
+                        id="reduceBtn"
+                        class="px-3 py-2 bg-green-600 hover:bg-green-700 rounded text-sm transition-colors"
+                        data-action="reduce-demo"
+                      >
+                        Sum All
+                      </button>
+                      <button
+                        id="resetBtn"
+                        class="px-3 py-2 bg-neutral-600 hover:bg-neutral-700 rounded text-sm transition-colors"
+                        data-action="reset-demo"
+                      >
+                        Reset
+                      </button>
                     </div>
+                  </div>
                 </div>
 
-                <!-- Algorithm Visualization -->
-                <div class="grid md:grid-cols-3 gap-4">
-                    <div class="bg-neutral-700 rounded-lg p-4">
-                        <h4 class="font-semibold text-blue-400 mb-2">Filter Operation</h4>
-                        <p class="text-xs text-neutral-300">ES2025+ iterator helpers for efficient data filtering</p>
+                <!-- Output Section -->
+                <div>
+                  <h3 class="text-emerald-400 font-semibold mb-3">Real-time Results</h3>
+                  <div class="bg-neutral-900 rounded p-4 min-h-32">
+                    <div id="outputDisplay" class="font-mono text-sm text-green-400">
+                      Ready for processing...
                     </div>
-                    <div class="bg-neutral-700 rounded-lg p-4">
-                        <h4 class="font-semibold text-purple-400 mb-2">Map Transform</h4>
-                        <p class="text-xs text-neutral-300">Functional programming with modern syntax</p>
-                    </div>
-                    <div class="bg-neutral-700 rounded-lg p-4">
-                        <h4 class="font-semibold text-green-400 mb-2">Reduce Aggregate</h4>
-                        <p class="text-xs text-neutral-300">Advanced array processing techniques</p>
-                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
+
+            <!-- Algorithm Visualization -->
+            <div class="grid md:grid-cols-3 gap-4">
+              <div class="bg-neutral-700 rounded-lg p-4">
+                <h4 class="font-semibold text-blue-400 mb-2">Filter Operation</h4>
+                <p class="text-xs text-neutral-300">
+                  ES2025+ iterator helpers for efficient data filtering
+                </p>
+              </div>
+              <div class="bg-neutral-700 rounded-lg p-4">
+                <h4 class="font-semibold text-purple-400 mb-2">Map Transform</h4>
+                <p class="text-xs text-neutral-300">Functional programming with modern syntax</p>
+              </div>
+              <div class="bg-neutral-700 rounded-lg p-4">
+                <h4 class="font-semibold text-green-400 mb-2">Reduce Aggregate</h4>
+                <p class="text-xs text-neutral-300">Advanced array processing techniques</p>
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- AI Technologies -->
         <section class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div class="bg-neutral-800 rounded-xl p-6 shadow-lg">
-                <h3 class="font-orbitron font-bold text-xl mb-3 text-emerald-400">Machine Learning</h3>
-                <p class="text-neutral-300">
-                    Building intelligent models with TensorFlow.js, neural networks, and modern ML frameworks.
-                </p>
-            </div>
-            <div class="bg-neutral-800 rounded-xl p-6 shadow-lg">
-                <h3 class="font-orbitron font-bold text-xl mb-3 text-emerald-400">Natural Language Processing</h3>
-                <p class="text-neutral-300">
-                    Advanced text processing, sentiment analysis, and language understanding systems.
-                </p>
-            </div>
-            <div class="bg-neutral-800 rounded-xl p-6 shadow-lg">
-                <h3 class="font-orbitron font-bold text-xl mb-3 text-emerald-400">Computer Vision</h3>
-                <p class="text-neutral-300">
-                    Image recognition, object detection, and visual AI applications using modern frameworks.
-                </p>
-            </div>
+          <div class="bg-neutral-800 rounded-xl p-6 shadow-lg">
+            <h3 class="font-orbitron font-bold text-xl mb-3 text-emerald-400">Machine Learning</h3>
+            <p class="text-neutral-300">
+              Building intelligent models with TensorFlow.js, neural networks, and modern ML
+              frameworks.
+            </p>
+          </div>
+          <div class="bg-neutral-800 rounded-xl p-6 shadow-lg">
+            <h3 class="font-orbitron font-bold text-xl mb-3 text-emerald-400">
+              Natural Language Processing
+            </h3>
+            <p class="text-neutral-300">
+              Advanced text processing, sentiment analysis, and language understanding systems.
+            </p>
+          </div>
+          <div class="bg-neutral-800 rounded-xl p-6 shadow-lg">
+            <h3 class="font-orbitron font-bold text-xl mb-3 text-emerald-400">Computer Vision</h3>
+            <p class="text-neutral-300">
+              Image recognition, object detection, and visual AI applications using modern
+              frameworks.
+            </p>
+          </div>
         </section>
-        </div>
+      </div>
     </main>
-    
+
     <!-- Scripts -->
     <script>
-        // ES2025+ Iterator Helpers Demo
-        class AIDevDemo {
-            constructor() {
-                this.originalData = [];
-                this.currentData = [];
-                this.operations = [];
-                
-                this.setupEventListeners();
-                this.initializeData();
-            }
-            
-            setupEventListeners() {
-                document.getElementById('filterBtn').addEventListener('click', () => this.filterDemo());
-                document.getElementById('mapBtn').addEventListener('click', () => this.mapDemo());
-                document.getElementById('reduceBtn').addEventListener('click', () => this.reduceDemo());
-                document.getElementById('resetBtn').addEventListener('click', () => this.resetDemo());
-                document.getElementById('dataInput').addEventListener('input', () => this.updateData());
-            }
-            
-            initializeData() {
-                this.updateData();
-            }
-            
-            updateData() {
-                const input = document.getElementById('dataInput').value;
-                this.originalData = input.split(',')
-                    .map(n => parseInt(n.trim()))
-                    .filter(n => !isNaN(n));
-                this.currentData = [...this.originalData];
-                this.operations = [];
-                this.updateDisplay();
-            }
-            
-            filterDemo() {
-                // ES2025+ Iterator helpers simulation
-                this.currentData = this.currentData.filter(n => n % 2 === 0);
-                this.operations.push('Filter: Keep even numbers');
-                this.updateDisplay();
-                this.animateOperation('filter');
-            }
-            
-            mapDemo() {
-                this.currentData = this.currentData.map(n => n * n);
-                this.operations.push('Map: Square each number');
-                this.updateDisplay();
-                this.animateOperation('map');
-            }
-            
-            reduceDemo() {
-                const sum = this.currentData.reduce((acc, n) => acc + n, 0);
-                this.currentData = [sum];
-                this.operations.push('Reduce: Sum all numbers');
-                this.updateDisplay();
-                this.animateOperation('reduce');
-            }
-            
-            resetDemo() {
-                this.currentData = [...this.originalData];
-                this.operations = [];
-                this.updateDisplay();
-            }
-            
-            updateDisplay() {
-                const output = document.getElementById('outputDisplay');
-                let displayText = `Original: [${this.originalData.join(', ')}]\n\n`;
-                
-                if (this.operations.length > 0) {
-                    displayText += 'Operations:\n';
-                    this.operations.forEach((op, i) => {
-                        displayText += `${i + 1}. ${op}\n`;
-                    });
-                    displayText += `\nResult: [${this.currentData.join(', ')}]`;
-                } else {
-                    displayText += 'Current: [' + this.currentData.join(', ') + ']';
-                }
-                
-                output.textContent = displayText;
-            }
-            
-            animateOperation(type) {
-                const colors = {
-                    filter: '#3b82f6',
-                    map: '#8b5cf6',
-                    reduce: '#10b981'
-                };
-                
-                const output = document.getElementById('outputDisplay');
-                output.style.borderLeft = `3px solid ${colors[type]}`;
-                
-                setTimeout(() => {
-                    output.style.borderLeft = 'none';
-                }, 1000);
-            }
+      // ES2025+ Iterator Helpers Demo
+      class AIDevDemo {
+        constructor() {
+          this.originalData = [];
+          this.currentData = [];
+          this.operations = [];
+
+          this.setupEventListeners();
+          this.initializeData();
         }
-        
-        // Initialize demo when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            new AIDevDemo();
-        });
+
+        setupEventListeners() {
+          document.getElementById('filterBtn').addEventListener('click', () => this.filterDemo());
+          document.getElementById('mapBtn').addEventListener('click', () => this.mapDemo());
+          document.getElementById('reduceBtn').addEventListener('click', () => this.reduceDemo());
+          document.getElementById('resetBtn').addEventListener('click', () => this.resetDemo());
+          document.getElementById('dataInput').addEventListener('input', () => this.updateData());
+        }
+
+        initializeData() {
+          this.updateData();
+        }
+
+        updateData() {
+          const input = document.getElementById('dataInput').value;
+          this.originalData = input
+            .split(',')
+            .map((n) => parseInt(n.trim()))
+            .filter((n) => !isNaN(n));
+          this.currentData = [...this.originalData];
+          this.operations = [];
+          this.updateDisplay();
+        }
+
+        filterDemo() {
+          // ES2025+ Iterator helpers simulation
+          this.currentData = this.currentData.filter((n) => n % 2 === 0);
+          this.operations.push('Filter: Keep even numbers');
+          this.updateDisplay();
+          this.animateOperation('filter');
+        }
+
+        mapDemo() {
+          this.currentData = this.currentData.map((n) => n * n);
+          this.operations.push('Map: Square each number');
+          this.updateDisplay();
+          this.animateOperation('map');
+        }
+
+        reduceDemo() {
+          const sum = this.currentData.reduce((acc, n) => acc + n, 0);
+          this.currentData = [sum];
+          this.operations.push('Reduce: Sum all numbers');
+          this.updateDisplay();
+          this.animateOperation('reduce');
+        }
+
+        resetDemo() {
+          this.currentData = [...this.originalData];
+          this.operations = [];
+          this.updateDisplay();
+        }
+
+        updateDisplay() {
+          const output = document.getElementById('outputDisplay');
+          let displayText = `Original: [${this.originalData.join(', ')}]\n\n`;
+
+          if (this.operations.length > 0) {
+            displayText += 'Operations:\n';
+            this.operations.forEach((op, i) => {
+              displayText += `${i + 1}. ${op}\n`;
+            });
+            displayText += `\nResult: [${this.currentData.join(', ')}]`;
+          } else {
+            displayText += 'Current: [' + this.currentData.join(', ') + ']';
+          }
+
+          output.textContent = displayText;
+        }
+
+        animateOperation(type) {
+          const colors = {
+            filter: '#3b82f6',
+            map: '#8b5cf6',
+            reduce: '#10b981',
+          };
+
+          const output = document.getElementById('outputDisplay');
+          output.style.borderLeft = `3px solid ${colors[type]}`;
+
+          setTimeout(() => {
+            output.style.borderLeft = 'none';
+          }, 1000);
+        }
+      }
+
+      // Initialize demo when page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        new AIDevDemo();
+      });
     </script>
     <script src="./js/main.js" defer></script>
-</body>
+  </body>
 </html>

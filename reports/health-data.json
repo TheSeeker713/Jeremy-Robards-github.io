@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-10-20T13:24:42.866Z",
+  "lint": {
+    "status": "❌ ERROR",
+    "errors": "Unknown",
+    "warnings": "Unknown"
+  },
+  "types": {
+    "errors": 0,
+    "status": "✅ PASS"
+  },
+  "security": {
+    "status": "❌ ERROR",
+    "vulnerabilities": {}
+  },
+  "dependencies": {
+    "circular": {
+      "count": 0,
+      "status": "✅ NONE"
+    },
+    "duplicates": {
+      "status": "✅ CHECKED",
+      "note": "Full analysis requires manual npm ls review"
+    }
+  },
+  "deadCode": {
+    "count": 13,
+    "status": "⚠️  FOUND"
+  },
+  "corruption": {
+    "status": "❌ CORRUPT FILES",
+    "files": [
+      {
+        "file": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\reports\\eslint.json",
+        "error": "Unexpected end of JSON input"
+      }
+    ]
+  },
+  "formatting": {
+    "status": "⚠️  WARN",
+    "files": 53
+  }
+}

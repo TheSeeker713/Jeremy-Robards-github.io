@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const frontmatterBlock = match[1];
     const body = text.substring(match[0].length);
     const frontmatter = {};
-    
+
     const lines = frontmatterBlock.split('\n');
     let currentKey = null;
     let arrayValues = [];
-    
+
     lines.forEach((line, index) => {
       // Check if line starts a YAML list item
       if (line.trim().startsWith('- ')) {
@@ -35,13 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
           frontmatter[currentKey] = arrayValues.join(', ');
           arrayValues = [];
         }
-        
+
         // Parse key-value pair
         const [key, ...valueParts] = line.split(':');
         if (key && key.trim()) {
           currentKey = key.trim();
           const value = valueParts.join(':').trim();
-          
+
           if (value) {
             // Has inline value
             frontmatter[currentKey] = value.replace(/^["']|["']$/g, '');
@@ -51,12 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     });
-    
+
     // Save last array if exists
     if (currentKey && arrayValues.length > 0) {
       frontmatter[currentKey] = arrayValues.join(', ');
     }
-    
+
     return { frontmatter, body };
   }
 
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadArticle() {
     try {
       const response = await fetch(`./articles/${slug}.md`);
-      if (!response.ok) throw new Error('Article not found');
+      if (!response.ok) {throw new Error('Article not found');}
 
       const markdown = await response.text();
       const { frontmatter, body } = parseFrontmatter(markdown);
@@ -96,36 +96,41 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
         
-        ${frontmatter.thumbnail ? `
+        ${
+          frontmatter.thumbnail
+            ? `
           <div class="article-hero-image">
             <img src="${frontmatter.thumbnail}" alt="${frontmatter.title}" />
           </div>
           ${frontmatter.thumbnail_caption ? `<p class="article-hero-caption">${frontmatter.thumbnail_caption}</p>` : ''}
-        ` : ''}
+        `
+            : ''
+        }
       `;
       document.getElementById('article-header').innerHTML = headerHtml;
 
       // Display article body with magazine styling
       const htmlBody = marked.parse(body);
-      
+
       // Add tags at the end if they exist (clean display, no hashtags)
       let tagsHtml = '';
       if (frontmatter.tags) {
-        const tagList = typeof frontmatter.tags === 'string' 
-          ? frontmatter.tags.split(',').map(t => t.trim().replace(/^#+/, '')) 
-          : Array.isArray(frontmatter.tags) 
-          ? frontmatter.tags.map(t => String(t).trim().replace(/^#+/, ''))
-          : [];
-        
+        const tagList =
+          typeof frontmatter.tags === 'string'
+            ? frontmatter.tags.split(',').map((t) => t.trim().replace(/^#+/, ''))
+            : Array.isArray(frontmatter.tags)
+              ? frontmatter.tags.map((t) => String(t).trim().replace(/^#+/, ''))
+              : [];
+
         if (tagList.length > 0 && tagList[0]) {
           tagsHtml = `
             <div class="article-tags">
-              ${tagList.map(tag => `<span class="article-tag">${tag}</span>`).join('')}
+              ${tagList.map((tag) => `<span class="article-tag">${tag}</span>`).join('')}
             </div>
           `;
         }
       }
-      
+
       document.getElementById('article-body').innerHTML = htmlBody + tagsHtml;
       document.getElementById('article-body').classList.add('article-body-magazine');
 
@@ -137,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
       initializeLikeDislike(slug);
       initializeShare(frontmatter.title);
       initializeComments(slug);
-
     } catch (error) {
       console.error('Error loading article:', error);
       showError();
@@ -171,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userId = getAnonymousUserId();
     const storageKey = `article_${articleSlug}_reactions`;
     const userVoteKey = `article_${articleSlug}_user_${userId}_vote`;
-    
+
     // Get global counts and user's specific vote
     const reactions = JSON.parse(localStorage.getItem(storageKey) || '{"likes": 0, "dislikes": 0}');
     let userVote = localStorage.getItem(userVoteKey); // 'like', 'dislike', or null
@@ -182,8 +186,18 @@ document.addEventListener('DOMContentLoaded', () => {
       dislikeCount.textContent = reactions.dislikes;
 
       // Reset both buttons
-      likeBtn.classList.remove('bg-blue-600', 'border-blue-400', 'opacity-50', 'cursor-not-allowed');
-      dislikeBtn.classList.remove('bg-red-600', 'border-red-400', 'opacity-50', 'cursor-not-allowed');
+      likeBtn.classList.remove(
+        'bg-blue-600',
+        'border-blue-400',
+        'opacity-50',
+        'cursor-not-allowed'
+      );
+      dislikeBtn.classList.remove(
+        'bg-red-600',
+        'border-red-400',
+        'opacity-50',
+        'cursor-not-allowed'
+      );
       likeBtn.disabled = false;
       dislikeBtn.disabled = false;
 
@@ -217,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(userVoteKey, 'like');
       }
       // If userVote === 'dislike', button is disabled, so this won't run
-      
+
       localStorage.setItem(storageKey, JSON.stringify(reactions));
       updateButtonStates();
     });
@@ -236,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(userVoteKey, 'dislike');
       }
       // If userVote === 'like', button is disabled, so this won't run
-      
+
       localStorage.setItem(storageKey, JSON.stringify(reactions));
       updateButtonStates();
     });
@@ -245,12 +259,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Share functionality
   function initializeShare(articleTitle) {
     const shareBtn = document.getElementById('share-btn');
-    
+
     shareBtn.addEventListener('click', async () => {
       const shareData = {
         title: articleTitle || 'Check out this article',
         text: 'I found this article interesting!',
-        url: window.location.href
+        url: window.location.href,
       };
 
       // Try Web Share API first (mobile/modern browsers)
@@ -273,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function showShareMenu(shareData) {
     const encodedUrl = encodeURIComponent(shareData.url);
     const encodedTitle = encodeURIComponent(shareData.title);
-    
+
     const shareOptions = `
       <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" id="share-modal">
         <div class="bg-gray-800 rounded-lg p-6 max-w-sm w-full mx-4">
@@ -313,13 +327,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load existing comments
     function loadComments() {
       const comments = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      
+
       if (comments.length === 0) {
-        commentsList.innerHTML = '<p class="text-gray-400">No comments yet. Be the first to comment!</p>';
+        commentsList.innerHTML =
+          '<p class="text-gray-400">No comments yet. Be the first to comment!</p>';
         return;
       }
 
-      commentsList.innerHTML = comments.map(comment => `
+      commentsList.innerHTML = comments
+        .map(
+          (comment) => `
         <div class="bg-gray-800 bg-opacity-50 rounded-lg p-4 border border-gray-700">
           <div class="flex items-center justify-between mb-2">
             <span class="font-semibold text-emerald-400">${comment.name}</span>
@@ -327,7 +344,9 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <p class="text-gray-300">${comment.text}</p>
         </div>
-      `).join('');
+      `
+        )
+        .join('');
     }
 
     // Submit comment
@@ -344,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
       comments.push({
         name,
         text,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
       });
       localStorage.setItem(storageKey, JSON.stringify(comments));
 
