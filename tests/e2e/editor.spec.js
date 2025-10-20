@@ -99,7 +99,10 @@ test.describe('Editor - Metadata Panel', () => {
 test.describe('Editor - Block Editor', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/editor/');
-    await page.waitForSelector('[data-block-list]');
+    // Wait for block list to be attached to DOM (not necessarily visible when empty)
+    await page.waitForSelector('[data-block-list]', { state: 'attached' });
+    // Give app time to fully initialize
+    await page.waitForTimeout(500);
   });
 
   test('should add paragraph block', async ({ page }) => {
@@ -115,7 +118,8 @@ test.describe('Editor - Block Editor', () => {
     await page.click('[data-action="add-heading"]');
 
     const lastBlock = page.locator('.block-item').last();
-    await expect(lastBlock).toHaveAttribute('data-label', 'Heading');
+    // Label format is "01. Heading" (zero-padded index + type)
+    await expect(lastBlock).toHaveAttribute('data-label', /\d{2}\.\s+Heading/);
   });
 
   test('should add and edit paragraph text', async ({ page }) => {
@@ -131,10 +135,10 @@ test.describe('Editor - Block Editor', () => {
     await page.click('[data-action="add-paragraph"]');
     const initialBlocks = await page.locator('.block-item').count();
 
-    // Find and click delete button on last block
+    // Find and click remove button on last block (button text is "Remove" not "Delete")
     const lastBlock = page.locator('.block-item').last();
-    const deleteButton = lastBlock.locator('button', { hasText: 'Delete' });
-    await deleteButton.click();
+    const removeButton = lastBlock.locator('button[data-action="remove-block"]');
+    await removeButton.click();
 
     const newBlocks = await page.locator('.block-item').count();
     expect(newBlocks).toBe(initialBlocks - 1);
