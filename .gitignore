@@ -28,3 +28,7 @@ dist-ssr
 .wrangler/
 .build/
 cms/logs/
+
+# UX Feedback (contains screenshots and user data)
+feedback/local/*.json
+feedback/local/screenshots/*.png

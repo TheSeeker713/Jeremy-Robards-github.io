@@ -5,6 +5,10 @@ import Preview from './modules/preview.js';
 import Store from './modules/store.js';
 import Toast from './modules/toast.js';
 import ImageTools from './modules/imageTools.js';
+import ReviewMode from './modules/reviewMode.js';
+import FeedbackDrawer from './modules/feedbackDrawer.js';
+import UXChecklist from './modules/uxChecklist.js';
+import AccessibilityChecker from './modules/accessibilityChecker.js';
 
 const DEFAULT_METADATA = {
   title: '',
@@ -27,6 +31,15 @@ class EditorApp {
     this.store = new Store();
     this.toast = new Toast(document.querySelector('[data-toast]'));
     this.imageTools = new ImageTools();
+
+    // UX Review tools
+    this.reviewMode = new ReviewMode();
+    this.feedbackDrawer = new FeedbackDrawer({
+      onSubmit: (feedback) => this.#handleFeedbackSubmit(feedback),
+      getAppState: () => this.#getAppStateForFeedback(),
+    });
+    this.uxChecklist = new UXChecklist();
+    this.a11yChecker = new AccessibilityChecker();
 
     this.elements = {
       dropzone: document.querySelector('[data-dropzone]'),
@@ -130,6 +143,42 @@ class EditorApp {
       this.#handleAction(action);
     });
 
+    // Keyboard shortcuts for UX review tools
+    document.addEventListener('keydown', (event) => {
+      // Only trigger if Ctrl/Cmd is pressed
+      if (!event.ctrlKey && !event.metaKey) {return;}
+
+      // Don't trigger in input fields
+      if (
+        event.target.tagName === 'INPUT' ||
+        event.target.tagName === 'TEXTAREA' ||
+        event.target.isContentEditable
+      ) {
+        return;
+      }
+
+      switch (event.key.toLowerCase()) {
+        case 'r':
+          event.preventDefault();
+          this.#handleAction('toggle-review-mode');
+          break;
+        case 'a':
+          event.preventDefault();
+          this.#handleAction('run-a11y-check');
+          break;
+        case 'u':
+          event.preventDefault();
+          this.#handleAction('toggle-ux-checklist');
+          break;
+        case 'f':
+          event.preventDefault();
+          this.#handleAction('toggle-feedback');
+          break;
+        default:
+          break;
+      }
+    });
+
     window.addEventListener('beforeunload', () => this.#persist());
   }
 
@@ -161,6 +210,18 @@ class EditorApp {
         break;
       case 'publish':
         this.#publishDraft();
+        break;
+      case 'toggle-review-mode':
+        this.#toggleReviewMode();
+        break;
+      case 'toggle-feedback':
+        this.feedbackDrawer.toggle();
+        break;
+      case 'toggle-ux-checklist':
+        this.uxChecklist.toggle();
+        break;
+      case 'run-a11y-check':
+        this.#runAccessibilityCheck();
         break;
       default:
         break;
@@ -620,6 +681,68 @@ class EditorApp {
     if (diffMin < 60) {return `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;}
     if (diffHour < 24) {return `${diffHour} hour${diffHour !== 1 ? 's' : ''} ago`;}
     return `${diffDay} day${diffDay !== 1 ? 's' : ''} ago`;
+  }
+
+  /**
+   * Toggle Review Mode overlay
+   */
+  #toggleReviewMode() {
+    const isActive = this.reviewMode.toggle();
+    const button = document.querySelector('[data-action="toggle-review-mode"]');
+    if (button) {
+      button.classList.toggle('review-control-btn--active', isActive);
+      button.setAttribute('aria-pressed', isActive);
+    }
+    this.toast.show(isActive ? '🎨 Review Mode: ON' : '🎨 Review Mode: OFF');
+  }
+
+  /**
+   * Run accessibility check
+   */
+  async #runAccessibilityCheck() {
+    this.toast.show('♿ Running accessibility audit...');
+    const results = await this.a11yChecker.run();
+    if (results) {
+      const count = results.violations.length;
+      this.toast.show(
+        count === 0 ? '✅ No accessibility violations!' : `⚠️ Found ${count} violations (see console)`
+      );
+    }
+  }
+
+  /**
+   * Handle feedback submission
+   */
+  async #handleFeedbackSubmit(feedback) {
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(feedback),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit feedback');
+      }
+
+      console.log('Feedback submitted:', feedback);
+    } catch (error) {
+      console.error('Feedback submission error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get app state for feedback context
+   */
+  #getAppStateForFeedback() {
+    return {
+      metadata: this.state.metadata,
+      blockCount: this.state.blocks.length,
+      hasExported: !!this.state.exportStatus,
+      hasPublished: !!this.state.publishStatus,
+      validationStatus: this.state.metadataValidation.valid ? 'valid' : 'invalid',
+    };
   }
 }
 

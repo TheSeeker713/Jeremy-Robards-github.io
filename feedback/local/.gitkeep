@@ -1,0 +1,2 @@
+# This file ensures the feedback/local directory is tracked by git
+# Actual feedback JSON files are ignored via .gitignore

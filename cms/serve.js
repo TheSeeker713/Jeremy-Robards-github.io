@@ -69,8 +69,55 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     service: 'cms-dev-server',
     port: PORT,
-    endpoints: ['POST /api/export', 'POST /api/publish', 'GET  /api/health'],
+    endpoints: [
+      'POST /api/export',
+      'POST /api/publish',
+      'POST /api/feedback',
+      'GET  /api/health',
+    ],
   });
+});
+
+// Feedback endpoint - saves UX feedback with screenshots
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const feedback = req.body;
+
+    if (!feedback || !feedback.comment) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid feedback format. Expected { comment, type, priority, screenshot, ... }',
+      });
+    }
+
+    const feedbackDir = path.join(ROOT_DIR, 'feedback', 'local');
+    await fs.mkdir(feedbackDir, { recursive: true });
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `feedback-${timestamp}.json`;
+    const filepath = path.join(feedbackDir, filename);
+
+    await fs.writeFile(filepath, JSON.stringify(feedback, null, 2), 'utf-8');
+
+    console.log(`→ Feedback saved: ${filename}`);
+    console.log(`   Type: ${feedback.type}, Priority: ${feedback.priority}`);
+
+    res.json({
+      success: true,
+      message: 'Feedback submitted successfully',
+      data: {
+        filename,
+        timestamp: feedback.timestamp,
+      },
+    });
+  } catch (error) {
+    console.error('Feedback error:', error);
+
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
 });
 
 // Export endpoint - converts draft to static HTML/Markdown
