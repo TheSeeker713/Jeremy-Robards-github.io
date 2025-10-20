@@ -5,10 +5,6 @@ import Preview from './modules/preview.js';
 import Store from './modules/store.js';
 import Toast from './modules/toast.js';
 import ImageTools from './modules/imageTools.js';
-import ReviewMode from './modules/reviewMode.js';
-import FeedbackDrawer from './modules/feedbackDrawer.js';
-import UXChecklist from './modules/uxChecklist.js';
-import AccessibilityChecker from './modules/accessibilityChecker.js';
 
 const DEFAULT_METADATA = {
   title: '',
@@ -31,15 +27,6 @@ class EditorApp {
     this.store = new Store();
     this.toast = new Toast(document.querySelector('[data-toast]'));
     this.imageTools = new ImageTools();
-
-    // UX Review tools
-    this.reviewMode = new ReviewMode();
-    this.feedbackDrawer = new FeedbackDrawer({
-      onSubmit: (feedback) => this.#handleFeedbackSubmit(feedback),
-      getAppState: () => this.#getAppStateForFeedback(),
-    });
-    this.uxChecklist = new UXChecklist();
-    this.a11yChecker = new AccessibilityChecker();
 
     this.elements = {
       dropzone: document.querySelector('[data-dropzone]'),
@@ -205,23 +192,14 @@ class EditorApp {
       case 'add-image':
         this.blockEditor.addImageBlock();
         break;
+      case 'clear-draft':
+        this.#clearDraft();
+        break;
       case 'export':
         this.#exportDraft();
         break;
       case 'publish':
         this.#publishDraft();
-        break;
-      case 'toggle-review-mode':
-        this.#toggleReviewMode();
-        break;
-      case 'toggle-feedback':
-        this.feedbackDrawer.toggle();
-        break;
-      case 'toggle-ux-checklist':
-        this.uxChecklist.toggle();
-        break;
-      case 'run-a11y-check':
-        this.#runAccessibilityCheck();
         break;
       default:
         break;
@@ -415,6 +393,51 @@ class EditorApp {
 
   #persist() {
     this.store.save(this.state);
+    this.#scheduleAutoSave();
+  }
+
+  #scheduleAutoSave() {
+    // Clear existing timeout
+    if (this.autoSaveTimeout) {
+      clearTimeout(this.autoSaveTimeout);
+    }
+
+    // Auto-save after 2 seconds of inactivity
+    this.autoSaveTimeout = setTimeout(() => {
+      this.toast.show('💾 Draft auto-saved', 2000);
+    }, 2000);
+  }
+
+  #clearDraft() {
+    if (!confirm('Clear all draft data? This cannot be undone.')) {
+      return;
+    }
+
+    // Clear localStorage
+    this.store.clear();
+
+    // Reset state to defaults
+    this.state = {
+      metadata: { ...DEFAULT_METADATA },
+      metadataValidation: { ...DEFAULT_VALIDATION },
+      blocks: [],
+      assets: [],
+      additionalMetadata: {},
+      source: null,
+      warnings: [],
+      exportStatus: null,
+      publishStatus: null,
+    };
+
+    // Clear UI
+    this.metadataPanel.setMetadata(this.state.metadata);
+    this.blockEditor.loadBlocks([]);
+    this.#renderPreview();
+    this.#updateButtonStates();
+    this.#renderExportStatus();
+    this.#renderPublishStatus();
+
+    this.toast.show('✅ Draft cleared successfully');
   }
 
   async #exportDraft() {
@@ -681,68 +704,6 @@ class EditorApp {
     if (diffMin < 60) {return `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;}
     if (diffHour < 24) {return `${diffHour} hour${diffHour !== 1 ? 's' : ''} ago`;}
     return `${diffDay} day${diffDay !== 1 ? 's' : ''} ago`;
-  }
-
-  /**
-   * Toggle Review Mode overlay
-   */
-  #toggleReviewMode() {
-    const isActive = this.reviewMode.toggle();
-    const button = document.querySelector('[data-action="toggle-review-mode"]');
-    if (button) {
-      button.classList.toggle('review-control-btn--active', isActive);
-      button.setAttribute('aria-pressed', isActive);
-    }
-    this.toast.show(isActive ? '🎨 Review Mode: ON' : '🎨 Review Mode: OFF');
-  }
-
-  /**
-   * Run accessibility check
-   */
-  async #runAccessibilityCheck() {
-    this.toast.show('♿ Running accessibility audit...');
-    const results = await this.a11yChecker.run();
-    if (results) {
-      const count = results.violations.length;
-      this.toast.show(
-        count === 0 ? '✅ No accessibility violations!' : `⚠️ Found ${count} violations (see console)`
-      );
-    }
-  }
-
-  /**
-   * Handle feedback submission
-   */
-  async #handleFeedbackSubmit(feedback) {
-    try {
-      const response = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(feedback),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit feedback');
-      }
-
-      console.log('Feedback submitted:', feedback);
-    } catch (error) {
-      console.error('Feedback submission error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get app state for feedback context
-   */
-  #getAppStateForFeedback() {
-    return {
-      metadata: this.state.metadata,
-      blockCount: this.state.blocks.length,
-      hasExported: !!this.state.exportStatus,
-      hasPublished: !!this.state.publishStatus,
-      validationStatus: this.state.metadataValidation.valid ? 'valid' : 'invalid',
-    };
   }
 }
 

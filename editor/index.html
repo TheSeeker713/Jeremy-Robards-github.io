@@ -19,6 +19,9 @@
           <div data-publish-status hidden></div>
         </div>
         <div class="app-header__buttons">
+          <button type="button" data-action="clear-draft" class="button button--ghost button--sm" title="Clear all draft data">
+            Clear Draft
+          </button>
           <button type="button" data-action="export" class="button button--ghost">
             Export Draft
           </button>
@@ -172,47 +175,6 @@
 
     <div class="modal-root" data-modal-root hidden></div>
     <div class="toast" data-toast hidden role="status" aria-live="polite"></div>
-
-    <!-- UX Review Controls -->
-    <div class="review-controls" role="toolbar" aria-label="UX review tools">
-      <button
-        type="button"
-        class="review-control-btn"
-        data-action="toggle-review-mode"
-        aria-label="Toggle review mode"
-        aria-pressed="false"
-        title="Review Mode (Ctrl+R)"
-      >
-        🎨
-      </button>
-      <button
-        type="button"
-        class="review-control-btn"
-        data-action="run-a11y-check"
-        aria-label="Run accessibility check"
-        title="Accessibility Check (Ctrl+A)"
-      >
-        ♿
-      </button>
-      <button
-        type="button"
-        class="review-control-btn"
-        data-action="toggle-ux-checklist"
-        aria-label="Toggle UX checklist"
-        title="UX Checklist (Ctrl+U)"
-      >
-        ✓
-      </button>
-      <button
-        type="button"
-        class="review-control-btn"
-        data-action="toggle-feedback"
-        aria-label="Open feedback drawer"
-        title="Submit Feedback (Ctrl+F)"
-      >
-        💬
-      </button>
-    </div>
 
     <script src="./app.js" type="module"></script>
   </body>
