@@ -1,0 +1,211 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Portfolio Article Studio" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Create and publish long-form features from markdown, JSON, or PDF sources.
+    - generic [ref=e8]:
+      - button "Export Draft" [disabled]
+      - button "Publish" [disabled]
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - heading "Import" [level=2] [ref=e12]
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - button "browse" [ref=e15] [cursor=pointer]
+          - generic [ref=e16]:
+            - paragraph [ref=e17]: Drop files here or browse
+            - text: Supports Markdown, JSON, and PDF.
+        - list
+    - generic [ref=e18]:
+      - generic [ref=e19]:
+        - heading "Blocks" [level=2] [ref=e20]
+        - generic [ref=e21]:
+          - button "+ Paragraph" [ref=e22] [cursor=pointer]
+          - button "+ Heading" [ref=e23] [cursor=pointer]
+          - button "+ List" [ref=e24] [cursor=pointer]
+          - button "+ Quote" [ref=e25] [cursor=pointer]
+          - button "+ Image" [ref=e26] [cursor=pointer]
+          - button "+ Code" [ref=e27] [cursor=pointer]
+          - button "+ Embed" [ref=e28] [cursor=pointer]
+      - generic [ref=e29]:
+        - list
+    - generic [ref=e30]:
+      - heading "Metadata" [level=2] [ref=e32]
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - generic [ref=e37]: Title
+            - textbox "Title Add a title." [ref=e38]:
+              - /placeholder: Feature headline
+            - generic [ref=e39]: Add a title.
+          - generic [ref=e40]:
+            - generic [ref=e41]: Subtitle
+            - textbox "Subtitle" [ref=e42]:
+              - /placeholder: Optional kicker
+          - generic [ref=e44]:
+            - generic [ref=e45]: Author
+            - textbox "Author" [ref=e46]:
+              - /placeholder: Byline
+          - generic [ref=e48]:
+            - generic [ref=e49]: Category
+            - textbox "Category" [ref=e50]:
+              - /placeholder: Discipline or section
+          - generic [ref=e52]:
+            - generic [ref=e53]: Tags
+            - generic [ref=e54]: No tags yet
+            - textbox "Add a tag and press Enter" [ref=e55]
+            - generic [ref=e56]: Add at least one tag.
+          - generic [ref=e57]:
+            - generic [ref=e58]: Published
+            - textbox "Published" [ref=e59]: 2025-10-20T09:09
+          - generic [ref=e61]:
+            - generic [ref=e62]: Excerpt
+            - textbox "Excerpt Add an excerpt." [ref=e63]:
+              - /placeholder: One-sentence standfirst
+            - generic [ref=e64]: Add an excerpt.
+          - generic [ref=e65]:
+            - generic [ref=e66]: Hero Image URL
+            - textbox "Hero Image URL" [ref=e67]:
+              - /placeholder: https://
+          - generic [ref=e69]:
+            - generic [ref=e70]: Hero Caption
+            - textbox "Hero Caption" [ref=e71]:
+              - /placeholder: Photo credit or context
+        - generic [ref=e73]:
+          - paragraph [ref=e74]: "Slug preview: draft"
+          - generic [ref=e75]:
+            - generic [ref=e77]:
+              - textbox "Label" [ref=e78]
+              - textbox "https://" [ref=e79]
+              - button "Remove link" [ref=e80] [cursor=pointer]: ×
+            - button "+ Resource Link" [ref=e81] [cursor=pointer]
+    - generic [ref=e82]:
+      - heading "Preview" [level=2] [ref=e84]
+      - iframe [ref=e87]:
+        - article [ref=f1e2]:
+          - generic [ref=f1e3]:
+            - heading "Untitled Feature Story" [level=1] [ref=f1e4]
+            - paragraph [ref=f1e5]: October 20, 2025
+            - paragraph [ref=f1e6]: Add an excerpt to see the standfirst.
+  - toolbar "UX review tools" [ref=e88]:
+    - button "Toggle review mode" [ref=e89] [cursor=pointer]: 🎨
+    - button "Run accessibility check" [ref=e90] [cursor=pointer]: ♿
+    - button "Toggle UX checklist" [ref=e91] [cursor=pointer]: ✓
+    - button "Open feedback drawer" [ref=e92] [cursor=pointer]: 💬
+  - complementary [ref=e93]:
+    - generic [ref=e94]:
+      - heading [level=3] [ref=e95]: UX Feedback
+      - button [ref=e96] [cursor=pointer]: ×
+    - generic [ref=e97]:
+      - paragraph [ref=e99]: Describe any usability issues, confusion, or suggestions you have about this screen.
+      - generic [ref=e101]:
+        - generic [ref=e102]: Feedback Type
+        - combobox [ref=e103]
+      - generic [ref=e105]:
+        - generic [ref=e106]: Priority
+        - combobox [ref=e107]
+      - generic [ref=e109]:
+        - generic [ref=e110]: Description
+        - textbox [ref=e111]:
+          - /placeholder: What happened? What did you expect?
+      - generic [ref=e114]: 📸 Screenshot will be captured when submitted
+      - generic [ref=e115]:
+        - button [ref=e116] [cursor=pointer]: Cancel
+        - button [ref=e117] [cursor=pointer]: Submit Feedback
+  - complementary [ref=e118]:
+    - generic [ref=e119]:
+      - generic [ref=e120]:
+        - heading [level=3] [ref=e121]: UX Checklist
+        - paragraph [ref=e122]: Nielsen's 10 Usability Heuristics
+      - button [ref=e123] [cursor=pointer]: ×
+    - generic [ref=e124]:
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - strong [ref=e128]: "0"
+          - generic [ref=e129]: Pass
+        - generic [ref=e130]:
+          - strong [ref=e131]: "0"
+          - generic [ref=e132]: Fail
+        - generic [ref=e133]:
+          - strong [ref=e134]: 0%
+          - generic [ref=e135]: Reviewed
+      - generic [ref=e136]:
+        - generic [ref=e138] [cursor=pointer]:
+          - generic [ref=e139]:
+            - strong [ref=e140]: "#1"
+            - generic [ref=e141]: Visibility of system status
+          - generic [ref=e142]:
+            - button [ref=e143]: ✓
+            - button [ref=e144]: ✗
+        - generic [ref=e146] [cursor=pointer]:
+          - generic [ref=e147]:
+            - strong [ref=e148]: "#2"
+            - generic [ref=e149]: Match between system and real world
+          - generic [ref=e150]:
+            - button [ref=e151]: ✓
+            - button [ref=e152]: ✗
+        - generic [ref=e154] [cursor=pointer]:
+          - generic [ref=e155]:
+            - strong [ref=e156]: "#3"
+            - generic [ref=e157]: User control and freedom
+          - generic [ref=e158]:
+            - button [ref=e159]: ✓
+            - button [ref=e160]: ✗
+        - generic [ref=e162] [cursor=pointer]:
+          - generic [ref=e163]:
+            - strong [ref=e164]: "#4"
+            - generic [ref=e165]: Consistency and standards
+          - generic [ref=e166]:
+            - button [ref=e167]: ✓
+            - button [ref=e168]: ✗
+        - generic [ref=e170] [cursor=pointer]:
+          - generic [ref=e171]:
+            - strong [ref=e172]: "#5"
+            - generic [ref=e173]: Error prevention
+          - generic [ref=e174]:
+            - button [ref=e175]: ✓
+            - button [ref=e176]: ✗
+        - generic [ref=e178] [cursor=pointer]:
+          - generic [ref=e179]:
+            - strong [ref=e180]: "#6"
+            - generic [ref=e181]: Recognition rather than recall
+          - generic [ref=e182]:
+            - button [ref=e183]: ✓
+            - button [ref=e184]: ✗
+        - generic [ref=e186] [cursor=pointer]:
+          - generic [ref=e187]:
+            - strong [ref=e188]: "#7"
+            - generic [ref=e189]: Flexibility and efficiency of use
+          - generic [ref=e190]:
+            - button [ref=e191]: ✓
+            - button [ref=e192]: ✗
+        - generic [ref=e194] [cursor=pointer]:
+          - generic [ref=e195]:
+            - strong [ref=e196]: "#8"
+            - generic [ref=e197]: Aesthetic and minimalist design
+          - generic [ref=e198]:
+            - button [ref=e199]: ✓
+            - button [ref=e200]: ✗
+        - generic [ref=e202] [cursor=pointer]:
+          - generic [ref=e203]:
+            - strong [ref=e204]: "#9"
+            - generic [ref=e205]: Help users recognize, diagnose, and recover from errors
+          - generic [ref=e206]:
+            - button [ref=e207]: ✓
+            - button [ref=e208]: ✗
+        - generic [ref=e210] [cursor=pointer]:
+          - generic [ref=e211]:
+            - strong [ref=e212]: "#10"
+            - generic [ref=e213]: Help and documentation
+          - generic [ref=e214]:
+            - button [ref=e215]: ✓
+            - button [ref=e216]: ✗
+    - generic [ref=e217]:
+      - button [ref=e218] [cursor=pointer]: Reset All
+      - button [ref=e219] [cursor=pointer]: Export Results
+```

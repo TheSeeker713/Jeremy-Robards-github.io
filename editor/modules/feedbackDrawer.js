@@ -3,7 +3,8 @@
  * Captures user feedback with context (screenshot, page state, timestamp)
  */
 
-import html2canvas from '../../node_modules/html2canvas/dist/html2canvas.esm.js';
+// html2canvas is loaded via CDN in index.html
+// Access it via window.html2canvas
 
 export default class FeedbackDrawer {
   constructor({ onSubmit, getAppState }) {
@@ -12,9 +13,35 @@ export default class FeedbackDrawer {
     this.isOpen = false;
     this.drawer = null;
     this.screenshot = null;
+    this.html2canvas = null;
 
     this.render();
     this.bindEvents();
+  }
+
+  /**
+   * Initialize html2canvas (lazy load from window)
+   */
+  async #initHtml2Canvas() {
+    if (this.html2canvas) return this.html2canvas;
+
+    // Check if html2canvas is available on window
+    if (typeof window.html2canvas !== 'undefined') {
+      this.html2canvas = window.html2canvas;
+      return this.html2canvas;
+    }
+
+    // Dynamically load html2canvas from CDN
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+      script.onload = () => {
+        this.html2canvas = window.html2canvas;
+        resolve(this.html2canvas);
+      };
+      script.onerror = () => reject(new Error('Failed to load html2canvas'));
+      document.head.appendChild(script);
+    });
   }
 
   render() {
@@ -169,9 +196,12 @@ export default class FeedbackDrawer {
     submitButton.textContent = 'Capturing screenshot...';
 
     try {
+      // Ensure html2canvas is loaded
+      await this.#initHtml2Canvas();
+
       // Capture screenshot (hide drawer temporarily)
       this.drawer.style.display = 'none';
-      const canvas = await html2canvas(document.body, {
+      const canvas = await this.html2canvas(document.body, {
         allowTaint: true,
         useCORS: true,
         logging: false,

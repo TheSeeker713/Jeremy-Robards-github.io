@@ -3,18 +3,48 @@
  * Runs accessibility audits and reports violations
  */
 
-import axe from '../../node_modules/axe-core/axe.min.js';
+// axe-core is loaded via CDN in index.html
+// Access it via window.axe
 
 export default class AccessibilityChecker {
   constructor() {
     this.violations = [];
     this.lastRunTimestamp = null;
+    this.axe = null;
+  }
+
+  /**
+   * Initialize axe-core (lazy load from window)
+   */
+  async #initAxe() {
+    if (this.axe) return this.axe;
+
+    // Check if axe is available on window
+    if (typeof window.axe !== 'undefined') {
+      this.axe = window.axe;
+      return this.axe;
+    }
+
+    // Dynamically load axe-core from CDN
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/axe-core@4.10.2/axe.min.js';
+      script.onload = () => {
+        this.axe = window.axe;
+        resolve(this.axe);
+      };
+      script.onerror = () => reject(new Error('Failed to load axe-core'));
+      document.head.appendChild(script);
+    });
   }
 
   /**
    * Run accessibility audit on current page
    */
   async run(options = {}) {
+    // Ensure axe is loaded
+    await this.#initAxe();
+
     const config = {
       runOnly: {
         type: 'tag',
@@ -24,7 +54,7 @@ export default class AccessibilityChecker {
     };
 
     try {
-      const results = await axe.run(document.body, config);
+      const results = await this.axe.run(document.body, config);
       this.violations = results.violations;
       this.lastRunTimestamp = new Date().toISOString();
 
