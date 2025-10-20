@@ -2,26 +2,34 @@ let pdfjsLibPromise = null;
 
 export async function ensurePdfJs() {
     if (typeof window !== "undefined" && window.pdfjsLib) {
+        // Configure worker if not already set
+        if (window.pdfjsLib.GlobalWorkerOptions && !window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = './vendor/pdfjs/pdf.worker.min.js';
+        }
         return window.pdfjsLib;
     }
 
     if (!pdfjsLibPromise) {
-        pdfjsLibPromise = import('./pdf.min.js')
-            .then((module) => {
-                const lib = module?.default || module?.pdfjsLib || window.pdfjsLib;
-                if (!lib) {
-                    throw new Error("PDF.js library missing. Place the pdf.js build in /editor/vendor/pdfjs");
+        pdfjsLibPromise = new Promise((resolve, reject) => {
+            // Load pdf.min.js as a script tag since it's not an ES module
+            const script = document.createElement('script');
+            script.src = './vendor/pdfjs/pdf.min.js';
+            script.onload = () => {
+                if (window.pdfjsLib) {
+                    // Configure the worker
+                    if (window.pdfjsLib.GlobalWorkerOptions) {
+                        window.pdfjsLib.GlobalWorkerOptions.workerSrc = './vendor/pdfjs/pdf.worker.min.js';
+                    }
+                    resolve(window.pdfjsLib);
+                } else {
+                    reject(new Error("PDF.js library failed to load. window.pdfjsLib is undefined."));
                 }
-                if (lib.GlobalWorkerOptions && !lib.GlobalWorkerOptions.workerSrc) {
-                    lib.GlobalWorkerOptions.workerSrc = './vendor/pdfjs/pdf.worker.min.js';
-                }
-                return lib;
-            })
-            .catch((error) => {
-                throw new Error(
-                    `Unable to load pdf.js build. Ensure pdf.min.js and pdf.worker.min.js exist in /editor/vendor/pdfjs. (${error.message})`
-                );
-            });
+            };
+            script.onerror = () => {
+                reject(new Error("Failed to load pdf.min.js. Ensure the file exists in /editor/vendor/pdfjs/"));
+            };
+            document.head.appendChild(script);
+        });
     }
 
     return pdfjsLibPromise;
