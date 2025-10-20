@@ -1,0 +1,113 @@
+name: 🎨 UX Issue
+description: Report a user experience or usability problem
+title: "[UX] "
+labels: ["ux", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the UX! Please describe the issue below.
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How much does this impact usability?
+      options:
+        - Critical - Unusable or extremely confusing
+        - High - Significant friction or confusion
+        - Medium - Minor annoyance or inconsistency
+        - Low - Polish or nice-to-have
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected Area
+      description: Where in the interface is this issue?
+      options:
+        - Editor - Main editing interface
+        - Import - File upload/import flow
+        - Metadata - Metadata form
+        - Blocks - Block editor
+        - Preview - Article preview
+        - Review Tools - UX review controls
+        - Export/Publish - Publishing flow
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: heuristic
+    attributes:
+      label: Nielsen Heuristic (if applicable)
+      description: Which usability heuristic does this relate to?
+      options:
+        - N/A
+        - Visibility of system status
+        - Match between system and real world
+        - User control and freedom
+        - Consistency and standards
+        - Error prevention
+        - Recognition rather than recall
+        - Flexibility and efficiency of use
+        - Aesthetic and minimalist design
+        - Help users recognize, diagnose, and recover from errors
+        - Help and documentation
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: UX Issue
+      description: Describe the usability problem
+      placeholder: What makes this confusing or difficult to use?
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-impact
+    attributes:
+      label: User Impact
+      description: How does this affect the user experience?
+      placeholder: |
+        - What task were you trying to accomplish?
+        - What made it difficult?
+        - How does this impact workflow?
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current Behavior
+      description: How does it work now?
+      placeholder: Describe the current UX
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested-improvement
+    attributes:
+      label: Suggested Improvement
+      description: How could this be better?
+      placeholder: Describe your proposed solution or alternative design
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshots / Recordings
+      description: Visual examples help a lot!
+      placeholder: Drag and drop images or screen recordings here
+
+  - type: textarea
+    id: devices
+    attributes:
+      label: Device & Context
+      description: Where/when did you encounter this?
+      placeholder: |
+        - Device: Desktop / Mobile
+        - Screen size: 1920x1080
+        - Using keyboard/mouse/touch?
+        - Time of day / workflow context

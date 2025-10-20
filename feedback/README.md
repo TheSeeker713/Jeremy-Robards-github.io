@@ -1,173 +1,290 @@
-# Feedback System
+# Human Feedback Loop & Triage System
 
-This directory stores UX feedback collected via the in-app feedback drawer.
+**OPT STEP 5 Implementation**
 
-## Directory Structure
+This directory contains the human-in-the-loop feedback and triage system for the Portfolio Article Studio.
 
-```
-feedback/
-├── local/              # Feedback JSON files
-│   ├── feedback-2025-10-20T10-30-00-000Z.json
-│   ├── feedback-2025-10-20T14-15-22-123Z.json
-│   └── screenshots/    # Extracted screenshot images
-│       ├── 2025-10-20T10-30-00-000Z.png
-│       └── 2025-10-20T14-15-22-123Z.png
-└── README.md          # This file
-```
+---
 
-## Feedback Format
+## Quick Start
 
-Each feedback file contains:
-
-```json
-{
-  "timestamp": "2025-10-20T10:30:00.000Z",
-  "type": "confusion",
-  "priority": "p1",
-  "comment": "The export button label is unclear...",
-  "screenshot": "data:image/png;base64,...",
-  "appState": {
-    "metadata": { ... },
-    "blockCount": 5,
-    "hasExported": true,
-    "hasPublished": false,
-    "validationStatus": "valid"
-  },
-  "url": "http://localhost:5173/",
-  "viewport": {
-    "width": 1920,
-    "height": 1080
-  },
-  "userAgent": "Mozilla/5.0..."
-}
-```
-
-## Feedback Types
-
-- **🐛 Bug / Issue** - Functional problems or errors
-- **❓ Confusing / Unclear** - UX clarity issues
-- **💡 Suggestion** - Enhancement ideas
-- **♿ Accessibility** - A11y barriers or improvements
-- **💬 Other** - General feedback
-
-## Priority Levels
-
-- **P0 - Critical** 🔴 - Blocks core functionality, immediate action required
-- **P1 - High** 🟠 - Major usability issue, address in next sprint
-- **P2 - Medium** 🟡 - Minor issue or enhancement, add to backlog
-
-## Collecting Feedback
-
-### In Editor
-1. Click the 💬 feedback button (or press `Ctrl+F`)
-2. Select type and priority
-3. Write detailed description
-4. Click "Submit Feedback"
-5. Screenshot auto-captured and saved
-
-### Via API
+### Submit Feedback During Development
 ```bash
-curl -X POST http://localhost:5173/api/feedback \
-  -H "Content-Type: application/json" \
-  -d '{
-    "timestamp": "2025-10-20T10:30:00.000Z",
-    "type": "bug",
-    "priority": "p1",
-    "comment": "Issue description...",
-    "screenshot": "data:image/png;base64,...",
-    "appState": {},
-    "url": "http://localhost:5173/",
-    "viewport": { "width": 1920, "height": 1080 },
-    "userAgent": "Mozilla/5.0..."
-  }'
+# 1. Open editor
+npm run cms:dev
+
+# 2. Navigate to http://localhost:5173/editor/
+
+# 3. Use review tools while testing
+Ctrl+R  # Review Mode (spacing/contrast)
+Ctrl+A  # Accessibility Check
+Ctrl+U  # UX Checklist
+Ctrl+F  # Feedback Drawer ← Submit feedback here
 ```
 
-## Generating Reports
-
-Generate a markdown report with all feedback:
-
+### Generate Feedback Digest
 ```bash
-npm run ux:report
+npm run feedback:digest
+
+# View generated report
+cat reports/feedback-digest.md
 ```
 
-Output: `reports/ux-findings.md`
-
-The report includes:
-- Summary table by priority
-- Detailed findings with screenshots
-- Recommendations by priority
-- Context and metadata for each issue
-
-## Best Practices
-
-1. **Be Specific** - Describe what you expected vs. what happened
-2. **Include Steps** - How to reproduce the issue
-3. **Choose Correct Priority**:
-   - P0 = Can't complete task
-   - P1 = Task is difficult or confusing
-   - P2 = Task works but could be better
-4. **Review Screenshots** - Ensure sensitive data isn't captured
-
-## Privacy
-
-⚠️ **Warning:** Screenshots may contain sensitive metadata or content.
-
-- Store feedback locally only (`feedback/local/`)
-- Do NOT commit screenshots to git (added to `.gitignore`)
-- Review feedback before sharing externally
-- Clear old feedback periodically
-
-## Git Ignore
-
-The `.gitignore` includes:
-
-```
-feedback/local/*.json
-feedback/local/screenshots/*.png
-```
-
-## Maintenance
-
-**Clear old feedback:**
+### Run Dogfood Cycle
 ```bash
-# Windows
-del feedback\local\*.json
-del feedback\local\screenshots\*.png
+# Automated testing workflow
+npm run dogfood
 
-# Unix/Mac
-rm feedback/local/*.json
-rm feedback/local/screenshots/*.png
+# Follow on-screen checklist
+# Submit feedback for any issues found (Ctrl+F)
 ```
 
-**Archive feedback:**
+---
+
+## System Overview
+
+### 1. Feedback Collection
+**Tool:** Feedback Drawer (Ctrl+F in editor)
+
+**Captures:**
+- Title and description
+- Priority (P0/P1/P2)
+- Tags (ux, perf, a11y, correctness, bug, feature, docs, security)
+- Screenshot (auto-captured)
+- Context (page, viewport, user agent)
+- App state (metadata, block count)
+
+**Storage:** `/feedback/local/*.json`
+
+**When to use:**
+- During dogfood sessions
+- While developing features
+- When discovering bugs
+- For UX improvement ideas
+
+### 2. Feedback Aggregation
+**Script:** `scripts/generate-feedback-digest.mjs`
+
+**Command:** `npm run feedback:digest`
+
+**Output:** `reports/feedback-digest.md`
+
+**Features:**
+- Groups by priority (P0/P1/P2/Unassigned)
+- Categorizes by tag
+- Shows statistics (total, by category, recent 7-day)
+- Generates actionable recommendations
+- Identifies blocker situations
+
+**When to run:**
+- After dogfood sessions
+- Daily morning standup
+- Before sprint planning
+- Weekly triage meetings
+
+### 3. Issue Creation
+**Templates:** `.github/ISSUE_TEMPLATE/`
+
+**Available Templates:**
+1. **Bug Report** (`bug_report.yml`)
+   - Priority, area, repro steps, expected/actual
+   - Screenshots, logs, environment
+
+2. **UX Issue** (`ux_issue.yml`)
+   - Severity, Nielsen heuristics, user impact
+   - Current vs suggested behavior
+
+3. **Performance Issue** (`performance_issue.yml`)
+   - Metrics (FCP, LCP, TTI, etc.)
+   - Lighthouse reports, profiler data
+   - Optimization suggestions
+
+4. **Security Issue** (`security_issue.yml`)
+   - Vulnerability category (XSS, injection, etc.)
+   - Impact assessment, mitigation
+
+**When to create issues:**
+- For all P0 and P1 feedback items
+- For recurring P2 items
+- For feature requests
+- For security concerns
+
+### 4. Label & Triage
+**Labels:** `.github/LABELS.md` (36 labels)
+
+**Categories:**
+- **Priority:** P0 (blocker), P1 (high), P2 (medium), P3 (low)
+- **Area:** editor, exporter, publisher, worker, cms-server, review-tools, build, docs
+- **Type:** bug, feature, ux, performance, a11y, security, correctness, testing, refactor
+- **Status:** needs-triage, ready, in-progress, in-review, blocked, needs-info, resolved, wontfix, duplicate
+
+**Triage Workflow:**
+1. New issue auto-labeled `needs-triage`
+2. Review within 24 hours
+3. Add priority (P0-P3), area, type labels
+4. Move to `ready` (or `needs-info`)
+5. Assign to developer
+6. Move through workflow (in-progress → in-review → resolved)
+
+**SLAs:**
+- P0: Fix within 24 hours
+- P1: Start within 48h, fix within 1 week
+- P2: Fix within 1 month
+
+### 5. PR Review
+**Template:** `.github/PULL_REQUEST_TEMPLATE.md`
+
+**Required Sections:**
+- Type of change
+- Testing checklist (tests added, E2E pass)
+- Documentation updates
+- UI/UX changes (screenshots, responsive, a11y)
+- **Performance impact (Lighthouse diff)** ← Required
+- Code quality (linter, formatter)
+- Security considerations
+- Accessibility (WCAG AA)
+- Review tools usage
+
+**When submitting PRs:**
+- Fill out all applicable sections
+- Attach Lighthouse before/after
+- Include screenshots for UI changes
+- Reference feedback items resolved
+- Check all testing boxes
+
+### 6. Dogfooding
+**Guide:** `docs/DOGFOOD_GUIDE.md`
+
+**Script:** `scripts/dogfood-cycle.mjs`
+
+**Command:** `npm run dogfood`
+
+**Workflow:**
+1. Start CMS server
+2. Open editor with debug mode
+3. Follow 5-phase testing checklist:
+   - Phase 1: Import flow (8 min)
+   - Phase 2: Editing (10 min)
+   - Phase 3: Metadata & preview (7 min)
+   - Phase 4: Export & publish (5 min)
+   - Phase 5: Review tools (5 min)
+4. Submit feedback for all issues (Ctrl+F)
+5. Generate digest
+6. Triage and create issues
+
+**Frequency:**
+- Weekly: 30min quick smoke test
+- Before release: 60min full workflow
+- After major feature: 45min focused test
+- Monthly: 90min deep dive
+
+---
+
+## Example Workflows
+
+### Daily Workflow
+
+**Morning (5 min):**
 ```bash
-# Create archive directory
-mkdir feedback/archive/2025-10
+# Check overnight feedback
+npm run feedback:digest
 
-# Move files
-move feedback\local\*.json feedback\archive\2025-10\
+# Review P0 blockers
+cat reports/feedback-digest.md | findstr "Priority 0"
+
+# Triage new items
+# Create GitHub issues as needed
 ```
 
-## Integration
+### Weekly Dogfood (45 min)
 
-The feedback system integrates with:
+**Friday 2pm:**
+```bash
+# Run full dogfood cycle
+npm run dogfood
 
-- **Editor UI** - Feedback drawer component
-- **CMS Server** - `/api/feedback` endpoint
-- **Report Generator** - `scripts/generate-ux-report.mjs`
-- **Review Tools** - Context capture from app state
+# Follow checklist in terminal
+# Test all 5 phases
+# Submit feedback via Ctrl+F
 
-## Support
+# After testing:
+npm run feedback:digest
 
-For questions or issues with the feedback system:
+# Triage findings
+# Create issues for P0/P1
+# Schedule fixes for next week
+```
 
-1. Check `reports/OPT-STEP-3-SUMMARY.md` for documentation
-2. Review `editor/modules/feedbackDrawer.js` source code
-3. Test the `/api/feedback` endpoint with curl
-4. Run `npm run ux:report` to verify report generation
+### Before Release (60 min)
+
+**Release Day - 1:**
+```bash
+# Full dogfood with edge cases
+npm run dogfood
+
+# Run all tests
+npm run test:all
+
+# Check E2E coverage
+npm run test:e2e
+
+# Generate feedback digest
+npm run feedback:digest
+
+# Verify 0 P0 blockers
+# Address any P1 items
+# Document known P2 issues
+```
+
+---
+
+## Integration with Review Tools
+
+The feedback system seamlessly integrates with OPT STEP 3 review tools:
+
+| Review Tool | Keyboard | Purpose | Feeds Into |
+|-------------|----------|---------|------------|
+| Review Mode | Ctrl+R | Spacing/contrast/hit-areas | UX feedback |
+| A11y Checker | Ctrl+A | WCAG violations | A11y feedback |
+| UX Checklist | Ctrl+U | Nielsen heuristics | UX feedback |
+| **Feedback Drawer** | **Ctrl+F** | **Submit findings** | **Digest** |
+
+**Workflow:**
+1. Use Ctrl+R/A/U to **discover** issues
+2. Use Ctrl+F to **document** findings
+3. Run digest to **aggregate**
+4. Create issues to **track**
+5. Submit PRs to **fix**
+6. Dogfood to **verify**
+
+---
+
+## Related Documentation
+
+- **OPT STEP 3:** Review Tools (`reports/OPT-STEP-3-SUMMARY.md`)
+- **OPT STEP 4:** Testing (`reports/OPT-STEP-4-PROGRESS.md`)
+- **OPT STEP 5:** Complete Summary (`reports/OPT-STEP-5-SUMMARY.md`)
+- **Dogfood Guide:** Testing workflow (`docs/DOGFOOD_GUIDE.md`)
+- **Label Guide:** GitHub labels (`.github/LABELS.md`)
+
+---
+
+## Questions?
+
+**Setup:** See `docs/DOGFOOD_GUIDE.md`  
+**Triage:** See `.github/LABELS.md`  
+**Templates:** See `.github/ISSUE_TEMPLATE/`  
+**PR Process:** See `.github/PULL_REQUEST_TEMPLATE.md`
+
+**Quick Help:**
+```bash
+npm run dogfood        # Start testing session
+npm run feedback:digest # Generate report
+npm run test:all       # Run all tests
+```
 
 ---
 
 **Last Updated:** October 20, 2025  
-**Version:** 1.0.0  
-**Part of:** OPT STEP 3 - UI/UX Pass with Human-in-the-Loop
+**Version:** 2.0.0  
+**Part of:** OPT STEP 5 - Human Feedback Loop & Triage System

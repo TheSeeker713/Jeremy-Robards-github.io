@@ -1,0 +1,138 @@
+name: ⚡ Performance Issue
+description: Report slow performance, memory leaks, or optimization opportunities
+title: "[PERF] "
+labels: ["performance", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a performance issue! Please provide details below.
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How bad is the performance impact?
+      options:
+        - Critical - App unusable or crashes
+        - High - Significant lag or delays (>3s)
+        - Medium - Noticeable slowdown (1-3s)
+        - Low - Minor optimization opportunity (<1s)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected Component
+      description: Which part has the performance issue?
+      options:
+        - Editor - UI responsiveness
+        - Import - File parsing/upload
+        - Export - HTML generation
+        - Publish - Deployment to Cloudflare
+        - Preview - Live preview rendering
+        - Worker - Edge function performance
+        - Bundle Size - JavaScript/CSS payload
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: metric
+    attributes:
+      label: Performance Metric
+      description: Which metric is affected?
+      options:
+        - Load Time - Initial page load
+        - FCP - First Contentful Paint
+        - LCP - Largest Contentful Paint
+        - TTI - Time to Interactive
+        - TBT - Total Blocking Time
+        - CLS - Cumulative Layout Shift
+        - Memory Usage - RAM consumption
+        - CPU Usage - Processing overhead
+        - Network - Request count/size
+        - Other
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Performance Issue
+      description: Describe the slow or inefficient behavior
+      placeholder: What is slow or resource-intensive?
+    validations:
+      required: true
+
+  - type: textarea
+    id: measurements
+    attributes:
+      label: Performance Measurements
+      description: Include timing, profiler data, Lighthouse scores, etc.
+      placeholder: |
+        - Load time: 8.5s
+        - LCP: 4.2s
+        - Memory usage: 450MB
+        - Lighthouse Performance score: 42/100
+      render: shell
+
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Steps to Reproduce
+      description: How to trigger the performance issue
+      placeholder: |
+        1. Open editor with large article (1000+ blocks)
+        2. Type in block
+        3. Notice 2-3s lag per keystroke
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-performance
+    attributes:
+      label: Expected Performance
+      description: What would be acceptable performance?
+      placeholder: |
+        - Load time: <2s
+        - LCP: <2.5s
+        - Typing: <100ms latency
+
+  - type: textarea
+    id: lighthouse
+    attributes:
+      label: Lighthouse Report (if applicable)
+      description: Paste Lighthouse JSON or link to report
+      placeholder: Paste Lighthouse data or WebPageTest results
+      render: json
+
+  - type: textarea
+    id: profiler
+    attributes:
+      label: Chrome DevTools Profile (if available)
+      description: Include profiler screenshots or exported traces
+      placeholder: Attach profiler data or screenshots
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Device and connection details
+      placeholder: |
+        - Device: MacBook Pro M1
+        - Browser: Chrome 120
+        - Network: Fast 3G throttled
+        - CPU: 6x slowdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested-fix
+    attributes:
+      label: Suggested Optimization
+      description: Any ideas for improving performance?
+      placeholder: |
+        - Virtualize block list
+        - Debounce preview updates
+        - Code-split heavy dependencies

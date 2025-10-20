@@ -42,9 +42,17 @@
     "docs:links": "markdown-link-check README.md --config .markdown-link-check.json",
     "docs:spell": "cspell \"**/*.md\" --config .cspell.json",
     "ux:report": "node scripts/generate-ux-report.mjs",
+    "feedback:digest": "node scripts/generate-feedback-digest.mjs",
+    "dogfood": "node scripts/dogfood-cycle.mjs",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
     "check": "npm run lint && npm run types && npm run fmt",
     "fix": "npm run lint:fix && npm run fmt:write && npm run style:fix",
-    "test:all": "npm run check && npm run docs:test",
+    "test:all": "npm run check && npm run docs:test && npm test && npm run test:e2e",
     "precommit": "npm run check"
   },
   "devDependencies": {
