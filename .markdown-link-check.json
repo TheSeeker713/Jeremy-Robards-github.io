@@ -1,0 +1,19 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "^http://localhost"
+    },
+    {
+      "pattern": "^https://dash.cloudflare.com"
+    },
+    {
+      "pattern": "^https://github.com/TheSeeker713"
+    }
+  ],
+  "replacementPatterns": [],
+  "timeout": "10s",
+  "retryOn429": true,
+  "retryCount": 2,
+  "fallbackRetryDelay": "5s",
+  "aliveStatusCodes": [200, 206, 301, 302, 403]
+}

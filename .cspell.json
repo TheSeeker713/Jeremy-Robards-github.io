@@ -1,0 +1,51 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "aidev",
+    "cloudflare",
+    "decap",
+    "esbuild",
+    "eslint",
+    "frontmatter",
+    "gsap",
+    "giscus",
+    "jeremyrobards",
+    "madge",
+    "markdownlint",
+    "npmjs",
+    "pdfjs",
+    "stylelint",
+    "tailwindcss",
+    "tsconfig",
+    "wrangler",
+    "webp",
+    "mkdir",
+    "concat",
+    "deps",
+    "prune",
+    "depcheck",
+    "dotenv",
+    "unminified"
+  ],
+  "ignoreWords": [
+    "dont",
+    "wouldnt",
+    "shouldnt",
+    "couldnt",
+    "isnt",
+    "arent"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    ".build/**",
+    "dist/**",
+    ".wrangler/**",
+    "docs-archive/**",
+    "assets/**",
+    "public/**",
+    "*.min.js",
+    "*.lock",
+    "package-lock.json"
+  ]
+}

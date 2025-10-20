@@ -1,0 +1,1369 @@
+{
+  "generatedAt": "2025-10-20T14:03:31.004Z",
+  "totalFiles": 83,
+  "totalSize": 2208927,
+  "byType": {
+    "no-extension": 13,
+    ".example": 1,
+    ".html": 8,
+    ".js": 23,
+    ".md": 12,
+    ".ts": 3,
+    ".css": 5,
+    ".mjs": 5,
+    ".json": 9,
+    ".txt": 1,
+    ".eta": 1,
+    ".toml": 2
+  },
+  "files": [
+    {
+      "path": ".cfignore",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\.cfignore",
+      "name": ".cfignore",
+      "ext": "",
+      "size": 1120,
+      "lines": 0,
+      "lastModified": "2025-10-18T05:32:09.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": ".editorconfig",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\.editorconfig",
+      "name": ".editorconfig",
+      "ext": "",
+      "size": 635,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "configuration"
+    },
+    {
+      "path": ".env",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\.env",
+      "name": ".env",
+      "ext": "",
+      "size": 1278,
+      "lines": 0,
+      "lastModified": "2025-10-18T14:44:14.832Z",
+      "lastCommitAuthor": "",
+      "category": "other"
+    },
+    {
+      "path": ".env.example",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\.env.example",
+      "name": ".env.example",
+      "ext": ".example",
+      "size": 1134,
+      "lines": 0,
+      "lastModified": "2025-10-18T05:32:09.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": ".gitignore",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\.gitignore",
+      "name": ".gitignore",
+      "ext": "",
+      "size": 311,
+      "lines": 0,
+      "lastModified": "2025-10-17T17:17:25.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": ".nojekyll",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\.nojekyll",
+      "name": ".nojekyll",
+      "ext": "",
+      "size": 0,
+      "lines": 0,
+      "lastModified": "2025-10-16T23:20:57.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": ".prettierignore",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\.prettierignore",
+      "name": ".prettierignore",
+      "ext": "",
+      "size": 431,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": ".prettierrc",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\.prettierrc",
+      "name": ".prettierrc",
+      "ext": "",
+      "size": 488,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "configuration"
+    },
+    {
+      "path": ".stylelintrc",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\.stylelintrc",
+      "name": ".stylelintrc",
+      "ext": "",
+      "size": 697,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "configuration"
+    },
+    {
+      "path": "about.html",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\about.html",
+      "name": "about.html",
+      "ext": ".html",
+      "size": 5353,
+      "lines": 157,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "html-pages"
+    },
+    {
+      "path": "aidev.html",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\aidev.html",
+      "name": "aidev.html",
+      "ext": ".html",
+      "size": 12314,
+      "lines": 320,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "html-pages"
+    },
+    {
+      "path": "article.html",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\article.html",
+      "name": "article.html",
+      "ext": ".html",
+      "size": 10129,
+      "lines": 241,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "html-pages"
+    },
+    {
+      "path": "article.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\article.js",
+      "name": "article.js",
+      "ext": ".js",
+      "size": 15078,
+      "lines": 385,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [],
+      "hasImports": false,
+      "hasExports": false
+    },
+    {
+      "path": "CLEANUP_SUMMARY.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\CLEANUP_SUMMARY.md",
+      "name": "CLEANUP_SUMMARY.md",
+      "ext": ".md",
+      "size": 4781,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "documentation"
+    },
+    {
+      "path": "cms\\export.ts",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\export.ts",
+      "name": "export.ts",
+      "ext": ".ts",
+      "size": 14046,
+      "lines": 474,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "fs",
+        "path",
+        "crypto",
+        "eta",
+        "url"
+      ],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": true,
+      "hasExports": true
+    },
+    {
+      "path": "cms\\exporters\\.gitkeep",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\exporters\\.gitkeep",
+      "name": ".gitkeep",
+      "ext": "",
+      "size": 0,
+      "lines": 0,
+      "lastModified": "2025-10-17T17:17:25.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "cms\\logs\\.gitignore",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\logs\\.gitignore",
+      "name": ".gitignore",
+      "ext": "",
+      "size": 26,
+      "lines": 0,
+      "lastModified": "2025-10-18T02:55:55.094Z",
+      "lastCommitAuthor": "",
+      "category": "other"
+    },
+    {
+      "path": "cms\\logs\\.gitkeep",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\logs\\.gitkeep",
+      "name": ".gitkeep",
+      "ext": "",
+      "size": 0,
+      "lines": 0,
+      "lastModified": "2025-10-17T16:41:00.421Z",
+      "lastCommitAuthor": "",
+      "category": "other"
+    },
+    {
+      "path": "cms\\publish\\.gitkeep",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\publish\\.gitkeep",
+      "name": ".gitkeep",
+      "ext": "",
+      "size": 0,
+      "lines": 0,
+      "lastModified": "2025-10-17T17:17:25.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "cms\\publish-cli.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\publish-cli.js",
+      "name": "publish-cli.js",
+      "ext": ".js",
+      "size": 2355,
+      "lines": 80,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "./publish.js"
+      ],
+      "exports": [],
+      "hasImports": true,
+      "hasExports": false
+    },
+    {
+      "path": "cms\\publish.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\publish.js",
+      "name": "publish.js",
+      "ext": ".js",
+      "size": 13275,
+      "lines": 440,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "fs",
+        "child_process",
+        "path",
+        "url",
+        "dotenv"
+      ],
+      "exports": [],
+      "hasImports": true,
+      "hasExports": false
+    },
+    {
+      "path": "cms\\PUBLISH_README.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\PUBLISH_README.md",
+      "name": "PUBLISH_README.md",
+      "ext": ".md",
+      "size": 4294,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "documentation"
+    },
+    {
+      "path": "cms\\README.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\README.md",
+      "name": "README.md",
+      "ext": ".md",
+      "size": 422,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "documentation"
+    },
+    {
+      "path": "cms\\serve.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\serve.js",
+      "name": "serve.js",
+      "ext": ".js",
+      "size": 7177,
+      "lines": 234,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "express",
+        "cors",
+        "path",
+        "url",
+        "fs"
+      ],
+      "exports": [],
+      "hasImports": true,
+      "hasExports": false
+    },
+    {
+      "path": "cms\\server.example.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\server.example.js",
+      "name": "server.example.js",
+      "ext": ".js",
+      "size": 1587,
+      "lines": 63,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "express",
+        "cors",
+        "./publish.js"
+      ],
+      "exports": [],
+      "hasImports": true,
+      "hasExports": false
+    },
+    {
+      "path": "cms\\SERVER_README.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\SERVER_README.md",
+      "name": "SERVER_README.md",
+      "ext": ".md",
+      "size": 6472,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "documentation"
+    },
+    {
+      "path": "cms\\setup\\.gitkeep",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\setup\\.gitkeep",
+      "name": ".gitkeep",
+      "ext": "",
+      "size": 0,
+      "lines": 0,
+      "lastModified": "2025-10-17T17:17:25.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "cms\\setup.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\setup.js",
+      "name": "setup.js",
+      "ext": ".js",
+      "size": 4903,
+      "lines": 160,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "inquirer",
+        "fs/promises",
+        "fs",
+        "path",
+        "url",
+        "child_process"
+      ],
+      "exports": [],
+      "hasImports": true,
+      "hasExports": false
+    },
+    {
+      "path": "cms\\test-publish.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\cms\\test-publish.js",
+      "name": "test-publish.js",
+      "ext": ".js",
+      "size": 4124,
+      "lines": 135,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "fs",
+        "path",
+        "url",
+        "child_process"
+      ],
+      "exports": [],
+      "hasImports": true,
+      "hasExports": false
+    },
+    {
+      "path": "CMS_README.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\CMS_README.md",
+      "name": "CMS_README.md",
+      "ext": ".md",
+      "size": 13168,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "documentation"
+    },
+    {
+      "path": "CMS_SCRIPTS.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\CMS_SCRIPTS.md",
+      "name": "CMS_SCRIPTS.md",
+      "ext": ".md",
+      "size": 4796,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "documentation"
+    },
+    {
+      "path": "css\\style.css",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\css\\style.css",
+      "name": "style.css",
+      "ext": ".css",
+      "size": 10961,
+      "lines": 625,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "css\\tailwind.css",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\css\\tailwind.css",
+      "name": "tailwind.css",
+      "ext": ".css",
+      "size": 16772,
+      "lines": 1,
+      "lastModified": "2025-10-16T22:58:29.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "editor\\app.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\app.js",
+      "name": "app.js",
+      "ext": ".js",
+      "size": 19645,
+      "lines": 629,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "./modules/importManager.js",
+        "./modules/blockEditor.js",
+        "./modules/metadataPanel.js",
+        "./modules/preview.js",
+        "./modules/store.js",
+        "./modules/toast.js",
+        "./modules/imageTools.js"
+      ],
+      "exports": [],
+      "hasImports": true,
+      "hasExports": false
+    },
+    {
+      "path": "editor\\index.html",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\index.html",
+      "name": "index.html",
+      "ext": ".html",
+      "size": 7696,
+      "lines": 178,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "html-pages"
+    },
+    {
+      "path": "editor\\modules\\blockEditor.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\modules\\blockEditor.js",
+      "name": "blockEditor.js",
+      "ext": ".js",
+      "size": 21984,
+      "lines": 755,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": false,
+      "hasExports": true
+    },
+    {
+      "path": "editor\\modules\\imageTools.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\modules\\imageTools.js",
+      "name": "imageTools.js",
+      "ext": ".js",
+      "size": 7757,
+      "lines": 275,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": false,
+      "hasExports": true
+    },
+    {
+      "path": "editor\\modules\\importManager.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\modules\\importManager.js",
+      "name": "importManager.js",
+      "ext": ".js",
+      "size": 31752,
+      "lines": 1041,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "../vendor/gray-matter.js",
+        "../vendor/pdfjs/index.js"
+      ],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": true,
+      "hasExports": true
+    },
+    {
+      "path": "editor\\modules\\metadataPanel.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\modules\\metadataPanel.js",
+      "name": "metadataPanel.js",
+      "ext": ".js",
+      "size": 15594,
+      "lines": 519,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": false,
+      "hasExports": true
+    },
+    {
+      "path": "editor\\modules\\preview.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\modules\\preview.js",
+      "name": "preview.js",
+      "ext": ".js",
+      "size": 5554,
+      "lines": 191,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "../vendor/eta.browser.mjs"
+      ],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": true,
+      "hasExports": true
+    },
+    {
+      "path": "editor\\modules\\store.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\modules\\store.js",
+      "name": "store.js",
+      "ext": ".js",
+      "size": 657,
+      "lines": 31,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": false,
+      "hasExports": true
+    },
+    {
+      "path": "editor\\modules\\toast.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\modules\\toast.js",
+      "name": "toast.js",
+      "ext": ".js",
+      "size": 604,
+      "lines": 25,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": false,
+      "hasExports": true
+    },
+    {
+      "path": "editor\\style.css",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\style.css",
+      "name": "style.css",
+      "ext": ".css",
+      "size": 163,
+      "lines": 13,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "editor\\styles.css",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\styles.css",
+      "name": "styles.css",
+      "ext": ".css",
+      "size": 16311,
+      "lines": 880,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "editor\\vendor\\eta.browser.mjs",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\vendor\\eta.browser.mjs",
+      "name": "eta.browser.mjs",
+      "ext": ".mjs",
+      "size": 7365,
+      "lines": 3,
+      "lastModified": "2025-10-18T02:45:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [],
+      "hasImports": false,
+      "hasExports": false
+    },
+    {
+      "path": "editor\\vendor\\gray-matter.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\vendor\\gray-matter.js",
+      "name": "gray-matter.js",
+      "ext": ".js",
+      "size": 3080,
+      "lines": 111,
+      "lastModified": "2025-10-17T17:47:36.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": false,
+      "hasExports": true
+    },
+    {
+      "path": "editor\\vendor\\pdfjs\\index.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\vendor\\pdfjs\\index.js",
+      "name": "index.js",
+      "ext": ".js",
+      "size": 1515,
+      "lines": 37,
+      "lastModified": "2025-10-20T04:24:14.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [],
+      "hasImports": false,
+      "hasExports": false
+    },
+    {
+      "path": "editor\\vendor\\pdfjs\\pdf.min.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\vendor\\pdfjs\\pdf.min.js",
+      "name": "pdf.min.js",
+      "ext": ".js",
+      "size": 320004,
+      "lines": 22,
+      "lastModified": "2025-10-20T04:24:14.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "fs",
+        "canvas",
+        "url",
+        "http",
+        "https",
+        "http",
+        "https",
+        "fs",
+        "fs",
+        "zlib"
+      ],
+      "exports": [
+        "commonjs"
+      ],
+      "hasImports": true,
+      "hasExports": true
+    },
+    {
+      "path": "editor\\vendor\\pdfjs\\pdf.worker.min.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\editor\\vendor\\pdfjs\\pdf.worker.min.js",
+      "name": "pdf.worker.min.js",
+      "ext": ".js",
+      "size": 1087212,
+      "lines": 22,
+      "lastModified": "2025-10-20T04:24:14.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [
+        "commonjs"
+      ],
+      "hasImports": false,
+      "hasExports": true
+    },
+    {
+      "path": "eslint.config.mjs",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\eslint.config.mjs",
+      "name": "eslint.config.mjs",
+      "ext": ".mjs",
+      "size": 3981,
+      "lines": 149,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "configuration",
+      "imports": [
+        "@eslint/js",
+        "@typescript-eslint/parser",
+        "@typescript-eslint/eslint-plugin"
+      ],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": true,
+      "hasExports": true
+    },
+    {
+      "path": "iis.html",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\iis.html",
+      "name": "iis.html",
+      "ext": ".html",
+      "size": 14703,
+      "lines": 402,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "html-pages"
+    },
+    {
+      "path": "index.html",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\index.html",
+      "name": "index.html",
+      "ext": ".html",
+      "size": 4812,
+      "lines": 109,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "html-pages"
+    },
+    {
+      "path": "js\\main.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\js\\main.js",
+      "name": "main.js",
+      "ext": ".js",
+      "size": 8756,
+      "lines": 346,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [],
+      "hasImports": false,
+      "hasExports": false
+    },
+    {
+      "path": "mpd.html",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\mpd.html",
+      "name": "mpd.html",
+      "ext": ".html",
+      "size": 20223,
+      "lines": 538,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "html-pages"
+    },
+    {
+      "path": "package-lock.json",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\package-lock.json",
+      "name": "package-lock.json",
+      "ext": ".json",
+      "size": 324858,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "package.json",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\package.json",
+      "name": "package.json",
+      "ext": ".json",
+      "size": 2820,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "README.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\README.md",
+      "name": "README.md",
+      "ext": ".md",
+      "size": 12982,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "documentation"
+    },
+    {
+      "path": "reports\\circular-deps.json",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\reports\\circular-deps.json",
+      "name": "circular-deps.json",
+      "ext": ".json",
+      "size": 3,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "configuration"
+    },
+    {
+      "path": "reports\\corruption.json",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\reports\\corruption.json",
+      "name": "corruption.json",
+      "ext": ".json",
+      "size": 150,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "reports\\deadcode.json",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\reports\\deadcode.json",
+      "name": "deadcode.json",
+      "ext": ".json",
+      "size": 1114,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "reports\\eslint.json",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\reports\\eslint.json",
+      "name": "eslint.json",
+      "ext": ".json",
+      "size": 0,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "reports\\health-data.json",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\reports\\health-data.json",
+      "name": "health-data.json",
+      "ext": ".json",
+      "size": 865,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "reports\\HEALTH.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\reports\\HEALTH.md",
+      "name": "HEALTH.md",
+      "ext": ".md",
+      "size": 1446,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "documentation"
+    },
+    {
+      "path": "reports\\inventory-summary.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\reports\\inventory-summary.md",
+      "name": "inventory-summary.md",
+      "ext": ".md",
+      "size": 1135,
+      "lines": 0,
+      "lastModified": "2025-10-20T14:01:42.088Z",
+      "lastCommitAuthor": "",
+      "category": "documentation"
+    },
+    {
+      "path": "reports\\inventory.json",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\reports\\inventory.json",
+      "name": "inventory.json",
+      "ext": ".json",
+      "size": 39261,
+      "lines": 0,
+      "lastModified": "2025-10-20T14:01:42.075Z",
+      "lastCommitAuthor": "",
+      "category": "other"
+    },
+    {
+      "path": "reports\\OPT-STEP-1-SUMMARY.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\reports\\OPT-STEP-1-SUMMARY.md",
+      "name": "OPT-STEP-1-SUMMARY.md",
+      "ext": ".md",
+      "size": 7176,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "documentation"
+    },
+    {
+      "path": "reports\\typescript.txt",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\reports\\typescript.txt",
+      "name": "typescript.txt",
+      "ext": ".txt",
+      "size": 21,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "scripts\\generate-inventory.mjs",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\scripts\\generate-inventory.mjs",
+      "name": "generate-inventory.mjs",
+      "ext": ".mjs",
+      "size": 9702,
+      "lines": 382,
+      "lastModified": "2025-10-20T13:39:15.823Z",
+      "lastCommitAuthor": "",
+      "category": "other",
+      "imports": [
+        "fs",
+        "path",
+        "url",
+        "child_process"
+      ],
+      "exports": [
+        "default or named",
+        "commonjs"
+      ],
+      "hasImports": true,
+      "hasExports": true
+    },
+    {
+      "path": "scripts\\health-check.mjs",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\scripts\\health-check.mjs",
+      "name": "health-check.mjs",
+      "ext": ".mjs",
+      "size": 9688,
+      "lines": 300,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [
+        "child_process",
+        "fs",
+        "path",
+        "url"
+      ],
+      "exports": [],
+      "hasImports": true,
+      "hasExports": false
+    },
+    {
+      "path": "shared\\articleTemplate.d.ts",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\shared\\articleTemplate.d.ts",
+      "name": "articleTemplate.d.ts",
+      "ext": ".ts",
+      "size": 1831,
+      "lines": 58,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [],
+      "hasImports": false,
+      "hasExports": false
+    },
+    {
+      "path": "shared\\articleTemplate.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\shared\\articleTemplate.js",
+      "name": "articleTemplate.js",
+      "ext": ".js",
+      "size": 5608,
+      "lines": 182,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [],
+      "hasImports": false,
+      "hasExports": false
+    },
+    {
+      "path": "tailwind\\input.css",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\tailwind\\input.css",
+      "name": "input.css",
+      "ext": ".css",
+      "size": 59,
+      "lines": 4,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "tailwind.config.mjs",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\tailwind.config.mjs",
+      "name": "tailwind.config.mjs",
+      "ext": ".mjs",
+      "size": 401,
+      "lines": 17,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "configuration",
+      "imports": [],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": false,
+      "hasExports": true
+    },
+    {
+      "path": "templates\\article.eta",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\templates\\article.eta",
+      "name": "article.eta",
+      "ext": ".eta",
+      "size": 2937,
+      "lines": 0,
+      "lastModified": "2025-10-18T02:45:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "tsconfig.json",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\tsconfig.json",
+      "name": "tsconfig.json",
+      "ext": ".json",
+      "size": 403,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "configuration"
+    },
+    {
+      "path": "worker\\DEPLOY_NOW.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\worker\\DEPLOY_NOW.md",
+      "name": "DEPLOY_NOW.md",
+      "ext": ".md",
+      "size": 3015,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "documentation"
+    },
+    {
+      "path": "worker\\proxy-worker.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\worker\\proxy-worker.js",
+      "name": "proxy-worker.js",
+      "ext": ".js",
+      "size": 266,
+      "lines": 10,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": false,
+      "hasExports": true
+    },
+    {
+      "path": "worker\\README.md",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\worker\\README.md",
+      "name": "README.md",
+      "ext": ".md",
+      "size": 5617,
+      "lines": 0,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "documentation"
+    },
+    {
+      "path": "worker\\src\\proxy.ts",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\worker\\src\\proxy.ts",
+      "name": "proxy.ts",
+      "ext": ".ts",
+      "size": 6001,
+      "lines": 230,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "configuration",
+      "imports": [],
+      "exports": [
+        "default or named"
+      ],
+      "hasImports": false,
+      "hasExports": true
+    },
+    {
+      "path": "worker\\wrangler.toml",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\worker\\wrangler.toml",
+      "name": "wrangler.toml",
+      "ext": ".toml",
+      "size": 1395,
+      "lines": 0,
+      "lastModified": "2025-10-19T01:08:40.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "wrangler.toml",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\wrangler.toml",
+      "name": "wrangler.toml",
+      "ext": ".toml",
+      "size": 802,
+      "lines": 0,
+      "lastModified": "2025-10-18T14:48:30.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other"
+    },
+    {
+      "path": "writing.html",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\writing.html",
+      "name": "writing.html",
+      "ext": ".html",
+      "size": 4422,
+      "lines": 120,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "html-pages"
+    },
+    {
+      "path": "writing.js",
+      "fullPath": "J:\\DEV\\Coding Projects\\PORTFOLIO\\jeremyrobards-clean\\writing.js",
+      "name": "writing.js",
+      "ext": ".js",
+      "size": 7454,
+      "lines": 205,
+      "lastModified": "2025-10-20T13:36:22.000Z",
+      "lastCommitAuthor": "Jeremy Robards",
+      "category": "other",
+      "imports": [],
+      "exports": [],
+      "hasImports": false,
+      "hasExports": false
+    }
+  ],
+  "summary": {
+    "total": {
+      "files": 83,
+      "size": "2.11 MB",
+      "sizeBytes": 2208927
+    },
+    "byCategory": {
+      "other": {
+        "count": 55,
+        "size": 2051362,
+        "files": [
+          ".cfignore",
+          ".env",
+          ".env.example",
+          ".gitignore",
+          ".nojekyll",
+          ".prettierignore",
+          "article.js",
+          "cms\\export.ts",
+          "cms\\exporters\\.gitkeep",
+          "cms\\logs\\.gitignore",
+          "cms\\logs\\.gitkeep",
+          "cms\\publish\\.gitkeep",
+          "cms\\publish-cli.js",
+          "cms\\publish.js",
+          "cms\\serve.js",
+          "cms\\server.example.js",
+          "cms\\setup\\.gitkeep",
+          "cms\\setup.js",
+          "cms\\test-publish.js",
+          "css\\style.css",
+          "css\\tailwind.css",
+          "editor\\app.js",
+          "editor\\modules\\blockEditor.js",
+          "editor\\modules\\imageTools.js",
+          "editor\\modules\\importManager.js",
+          "editor\\modules\\metadataPanel.js",
+          "editor\\modules\\preview.js",
+          "editor\\modules\\store.js",
+          "editor\\modules\\toast.js",
+          "editor\\style.css",
+          "editor\\styles.css",
+          "editor\\vendor\\eta.browser.mjs",
+          "editor\\vendor\\gray-matter.js",
+          "editor\\vendor\\pdfjs\\index.js",
+          "editor\\vendor\\pdfjs\\pdf.min.js",
+          "editor\\vendor\\pdfjs\\pdf.worker.min.js",
+          "js\\main.js",
+          "package-lock.json",
+          "package.json",
+          "reports\\corruption.json",
+          "reports\\deadcode.json",
+          "reports\\eslint.json",
+          "reports\\health-data.json",
+          "reports\\inventory.json",
+          "reports\\typescript.txt",
+          "scripts\\generate-inventory.mjs",
+          "scripts\\health-check.mjs",
+          "shared\\articleTemplate.d.ts",
+          "shared\\articleTemplate.js",
+          "tailwind\\input.css",
+          "templates\\article.eta",
+          "worker\\proxy-worker.js",
+          "worker\\wrangler.toml",
+          "wrangler.toml",
+          "writing.js"
+        ],
+        "sizeFormatted": "1.96 MB"
+      },
+      "configuration": {
+        "count": 8,
+        "size": 12609,
+        "files": [
+          ".editorconfig",
+          ".prettierrc",
+          ".stylelintrc",
+          "eslint.config.mjs",
+          "reports\\circular-deps.json",
+          "tailwind.config.mjs",
+          "tsconfig.json",
+          "worker\\src\\proxy.ts"
+        ],
+        "sizeFormatted": "0.01 MB"
+      },
+      "html-pages": {
+        "count": 8,
+        "size": 79652,
+        "files": [
+          "about.html",
+          "aidev.html",
+          "article.html",
+          "editor\\index.html",
+          "iis.html",
+          "index.html",
+          "mpd.html",
+          "writing.html"
+        ],
+        "sizeFormatted": "0.08 MB"
+      },
+      "documentation": {
+        "count": 12,
+        "size": 65304,
+        "files": [
+          "CLEANUP_SUMMARY.md",
+          "cms\\PUBLISH_README.md",
+          "cms\\README.md",
+          "cms\\SERVER_README.md",
+          "CMS_README.md",
+          "CMS_SCRIPTS.md",
+          "README.md",
+          "reports\\HEALTH.md",
+          "reports\\inventory-summary.md",
+          "reports\\OPT-STEP-1-SUMMARY.md",
+          "worker\\DEPLOY_NOW.md",
+          "worker\\README.md"
+        ],
+        "sizeFormatted": "0.06 MB"
+      }
+    },
+    "byExtension": {
+      "no-extension": 13,
+      ".example": 1,
+      ".html": 8,
+      ".js": 23,
+      ".md": 12,
+      ".ts": 3,
+      ".css": 5,
+      ".mjs": 5,
+      ".json": 9,
+      ".txt": 1,
+      ".eta": 1,
+      ".toml": 2
+    }
+  },
+  "deadCode": {
+    "count": 8,
+    "files": [
+      {
+        "file": "cms\\export.ts",
+        "size": 14046,
+        "lines": 474,
+        "exports": [
+          "default or named"
+        ]
+      },
+      {
+        "file": "editor\\vendor\\pdfjs\\pdf.min.js",
+        "size": 320004,
+        "lines": 22,
+        "exports": [
+          "commonjs"
+        ]
+      },
+      {
+        "file": "editor\\vendor\\pdfjs\\pdf.worker.min.js",
+        "size": 1087212,
+        "lines": 22,
+        "exports": [
+          "commonjs"
+        ]
+      },
+      {
+        "file": "eslint.config.mjs",
+        "size": 3981,
+        "lines": 149,
+        "exports": [
+          "default or named"
+        ]
+      },
+      {
+        "file": "scripts\\generate-inventory.mjs",
+        "size": 9702,
+        "lines": 382,
+        "exports": [
+          "default or named",
+          "commonjs"
+        ]
+      },
+      {
+        "file": "tailwind.config.mjs",
+        "size": 401,
+        "lines": 17,
+        "exports": [
+          "default or named"
+        ]
+      },
+      {
+        "file": "worker\\proxy-worker.js",
+        "size": 266,
+        "lines": 10,
+        "exports": [
+          "default or named"
+        ]
+      },
+      {
+        "file": "worker\\src\\proxy.ts",
+        "size": 6001,
+        "lines": 230,
+        "exports": [
+          "default or named"
+        ]
+      }
+    ]
+  }
+}

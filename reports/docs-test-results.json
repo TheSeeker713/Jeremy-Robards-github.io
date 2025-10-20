@@ -1,0 +1,50 @@
+{
+  "timestamp": "2025-10-20T14:07:25.146Z",
+  "summary": {
+    "total": 21,
+    "passed": 15,
+    "failed": 6
+  },
+  "details": {
+    "linkCheck": {
+      "passed": 8,
+      "failed": 0,
+      "errors": []
+    },
+    "spellCheck": {
+      "passed": 2,
+      "failed": 6,
+      "errors": [
+        {
+          "file": "README.md",
+          "error": "Spelling errors found"
+        },
+        {
+          "file": "CMS_README.md",
+          "error": "Spelling errors found"
+        },
+        {
+          "file": "CLEANUP_SUMMARY.md",
+          "error": "Spelling errors found"
+        },
+        {
+          "file": "worker/README.md",
+          "error": "Spelling errors found"
+        },
+        {
+          "file": "cms/SERVER_README.md",
+          "error": "Spelling errors found"
+        },
+        {
+          "file": "cms/PUBLISH_README.md",
+          "error": "Spelling errors found"
+        }
+      ]
+    },
+    "commandCheck": {
+      "passed": 5,
+      "failed": 0,
+      "errors": []
+    }
+  }
+}
