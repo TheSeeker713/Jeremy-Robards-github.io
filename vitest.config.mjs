@@ -33,8 +33,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './'),
-      '@cms': path.resolve(__dirname, './cms'),
-      '@editor': path.resolve(__dirname, './editor'),
       '@shared': path.resolve(__dirname, './shared'),
     },
   },

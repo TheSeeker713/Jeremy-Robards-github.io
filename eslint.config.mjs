@@ -99,7 +99,7 @@ export default [
 
   // Node.js scripts
   {
-    files: ['cms/**/*.js', 'worker/**/*.js', '*.config.{js,mjs}', 'scripts/**/*.{js,mjs}'],
+    files: ['*.config.{js,mjs}', 'scripts/**/*.{js,mjs}'],
     languageOptions: {
       globals: {
         console: 'readonly',
@@ -117,8 +117,8 @@ export default [
 
   // Browser scripts
   {
-    files: ['js/**/*.js', 'editor/**/*.js', '*.js'],
-    ignores: ['cms/**', 'worker/**', 'scripts/**'],
+    files: ['js/**/*.js', '*.js'],
+    ignores: ['scripts/**'],
     languageOptions: {
       globals: {
         document: 'readonly',

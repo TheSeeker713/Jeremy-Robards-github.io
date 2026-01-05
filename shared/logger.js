@@ -210,4 +210,4 @@ export function createLogger(namespace, options) {
 }
 
 // Export default instance
-export default new Logger('portfolio-cms');
+export default new Logger('portfolio-site');

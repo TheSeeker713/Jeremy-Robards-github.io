@@ -11,6 +11,6 @@
     "outDir": "./.build",
     "rootDir": "."
   },
-  "include": ["cms/**/*.ts", "worker/**/*.ts"],
+  "include": [],
   "exclude": ["node_modules", "**/*.test.ts"]
 }

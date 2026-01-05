@@ -26,16 +26,7 @@ const results = {
 // ==========================================
 console.log('🔗 Checking markdown links...\n');
 
-const mdFiles = [
-  'README.md',
-  'CMS_README.md',
-  'CMS_SCRIPTS.md',
-  'CLEANUP_SUMMARY.md',
-  'worker/README.md',
-  'cms/README.md',
-  'cms/SERVER_README.md',
-  'cms/PUBLISH_README.md',
-];
+const mdFiles = ['README.md'];
 
 for (const file of mdFiles) {
   const filePath = path.join(ROOT, file);
