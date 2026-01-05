@@ -49,7 +49,6 @@ This portfolio uses a **dual-project architecture** on Cloudflare Pages:
 ├── 📄 Core Pages
 │   ├── index.html          # Main landing page
 │   ├── about.html          # About/contact page
-│   ├── aidev.html          # AI Development portfolio
 │   ├── mpd.html            # Motion Picture & Design
 │   ├── iis.html            # Interactive Systems
 │   ├── writing.html        # Article listing (loads feed.json)
@@ -326,7 +325,6 @@ npm run cms:proxy      # Start Decap CMS proxy (legacy, not used)
 
 - **index.html** - Main landing page with portfolio navigation
 - **about.html** - Personal info, skills, contact details
-- **aidev.html** - AI Development projects showcase
 - **mpd.html** - Motion Picture & Design portfolio
 - **iis.html** - Innovative Interactive Systems experiments
 

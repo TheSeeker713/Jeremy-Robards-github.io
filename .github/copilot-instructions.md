@@ -75,7 +75,6 @@ localStorage.setItem('theme', isDark ? 'dark' : 'light');
 ### HTML Pages
 
 - `index.html` - Main landing with portfolio navigation
-- `aidev.html` - AI Development portfolio
 - `mpd.html` - Motion Picture & Design portfolio
 - `iis.html` - Innovative Interactive Systems
 - `about.html` - Personal/contact information
@@ -84,7 +83,7 @@ localStorage.setItem('theme', isDark ? 'dark' : 'light');
 
 - `/assets/` - All images, videos, and media files
 - Use `.webp` for optimized images when possible
-- Follow naming convention: `projectname_type.webp` (e.g., `aidev_button.webp`)
+- Follow naming convention: `projectname_type.webp` (e.g., `mpd_button.webp`)
 
 ## Development Workflows
 
